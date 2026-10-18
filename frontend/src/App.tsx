@@ -1,8 +1,10 @@
+import {Routes , Route } from 'react-router-dom'
+import Home from './pages/home/Home' 
+
 export default function App(){
-  return (
-    <div>
-      <h1>Dog Territory</h1>
-      <p>The best dog game ever</p>
-    </div>
-  )
+    return (
+        <Routes>
+            <Route path='/' element={<Home/>}> </Route>
+        </Routes>
+    )
 }
