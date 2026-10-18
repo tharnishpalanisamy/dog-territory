@@ -1,0 +1,75 @@
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.form-field > label {
+  color: #253252;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.input-shell {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-shell input {
+  width: 100%;
+  min-width: 0;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid #dfe4ee;
+  border-radius: 10px;
+  outline: none;
+  color: #101d43;
+  background: #fff;
+  font: 500 13px "DM Sans", sans-serif;
+  transition: border-color .18s, box-shadow .18s;
+}
+
+.input-shell input::placeholder {
+  color: #9aa3b6;
+  font-weight: 400;
+}
+
+.input-shell input:focus {
+  border-color: #6967f5;
+  box-shadow: 0 0 0 4px #5955f414;
+}
+
+.input-shell input:disabled {
+  background: #f5f6fa;
+  cursor: not-allowed;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 11px;
+  border: 0;
+  padding: 5px;
+  background: transparent;
+  color: #5955f4;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.input-shell:has(.password-toggle) input {
+  padding-right: 58px;
+}
+
+.input-hint {
+  color: #7b859a;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.form-field-small .input-shell input {
+  height: 40px;
+  border-radius: 8px;
+  font-size: 12px;
+}
