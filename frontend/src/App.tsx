@@ -1,7 +1,7 @@
 import {Routes , Route } from 'react-router-dom'
 import Home from './pages/home/Home'  
-import SignIn from './pages/Auth/Signin' 
-import SignUp from './pages/Auth/Signup' 
+import SignIn from './pages/Auth/SignIn' 
+import SignUp from './pages/Auth/SignUp' 
 
 export default function App(){
     return (

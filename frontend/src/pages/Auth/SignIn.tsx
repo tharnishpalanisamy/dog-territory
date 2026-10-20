@@ -2,8 +2,40 @@ import { Link } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import "./Auth.css";
+import React from 'react'
 
-export default function SignIn() {
+export default function SignIn() { 
+
+  async function handleSubmit(event:React.FormEvent<HTMLFormElement>){
+    event.preventDefault() ; 
+
+    const formData = new FormData(event.currentTarget) 
+    const email = formData.get('email') as string 
+    const password = formData.get('password') as string 
+    const remember = formData.get('remember') === 'on'  
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/auth/login' , {
+        method:'POST' , 
+        headers:{
+          'Content-Type' : 'application/json'
+        } , 
+        body:JSON.stringify({
+          'email' : email , 
+          'password' : password
+        })
+      }) 
+
+      const data = await response.json();  
+      localStorage.setItem('remember' , JSON.stringify(remember))
+      console.log(data)
+      return data 
+    } 
+
+    catch(error) {
+      console.log(error);
+    }
+  }
   return (
     <div className="auth-page">
       <header className="auth-topbar">
@@ -35,7 +67,7 @@ export default function SignIn() {
         </aside>
 
         <section className="auth-form-side">
-          <form className="auth-form">
+          <form className="auth-form" onSubmit={(event)=>handleSubmit(event)}>
             <div className="auth-eyebrow"><span /> WELCOME BACK</div>
             <h2>Sign in to your account</h2>
             <p className="auth-subtitle">Pick up where you left off. Your community is glad you're here.</p>
