@@ -1,9 +1,48 @@
 import { Link } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
-import "./Auth.css";
+import "./Auth.css"; 
+import React from 'react' 
 
 export default function SignUp() {
+  async function handleSubmit(event:React.FormEvent<HTMLFormElement>) {
+    event.preventDefault() 
+    
+    const formData = new FormData(event.currentTarget) 
+    const username = formData.get('fullName') 
+    const email = formData.get('email') 
+    const password = formData.get('password') 
+    const confirmPassword = formData.get('confirmPassword') 
+
+    if ( password !== confirmPassword ) {
+      return 'Passwords doesnt match' //replace with alerts
+    }   
+    const user = {
+      'email' : email , 
+      'username' : username,
+      'password' : password ,  
+      'created_at' : Date.now() , 
+      'date_of_birth' : null  
+    }
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/auth/signup' , {
+        method:'POST' , 
+        headers:{
+          'Content-Type' : 'application/json'
+        } , 
+        body: JSON.stringify(user)
+      }) 
+
+      let data = await response.json() 
+      console.log(data);
+      
+      return data
+    } 
+    catch(error) {
+      console.log(error)
+    }
+  }
   return (
     <div className="auth-page">
       <header className="auth-topbar">
@@ -35,7 +74,7 @@ export default function SignUp() {
         </aside>
 
         <section className="auth-form-side">
-          <form className="auth-form">
+          <form className="auth-form" onSubmit={(event) => handleSubmit(event)}>
             <div className="auth-eyebrow"><span /> JOIN THE COMMUNITY</div>
             <h2>Create your account</h2>
             <p className="auth-subtitle">Start helping your neighborhood's street dogs today.</p>

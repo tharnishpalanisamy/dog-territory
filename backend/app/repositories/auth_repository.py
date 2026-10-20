@@ -18,3 +18,16 @@ class AuthRepository:
             raise UserNotFoundException(f"User with email {login_data.email} not found") 
 
         return user 
+
+    async def create_user(self , user ) :
+        try : 
+            self.db.add(user) 
+            await self.db.flush() 
+            await self.db.commit()  
+
+            return {
+                'message' : 'account created successfully'
+            } 
+        except Exception :
+            await self.db.rollback()
+            raise 
