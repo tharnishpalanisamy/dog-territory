@@ -21,8 +21,8 @@ export default function SignUp() {
       'email' : email , 
       'username' : username,
       'password' : password ,  
-      'created_at' : Date.now() , 
-      'date_of_birth' : null  
+      // 'created_at' : Date.now() , 
+      // 'date_of_birth' : null  
     }
 
     try {

@@ -1,5 +1,7 @@
 from app.core import hash_password , verify_password
 from app.models.user import User 
+from app.exceptions import UserNotFoundException , InvalidCredentialsException
+from app.core import create_access_token
 
 
 class AuthService:
@@ -7,22 +9,33 @@ class AuthService:
         self.db = db 
         self.repository = repository
 
-    async def authenticate_user(self , user_data) : 
-        user = await self.repository.get_by_email(user_data.email) 
-        authenticated = verify_password(user_data.password , user.password_hash)
+    async def authenticate_user(self, user_data):
+        try:
+            user = await self.repository.get_by_email(
+                user_data.email
+            )
+        except UserNotFoundException:
+            raise InvalidCredentialsException(f'Invalid Email or Password')
 
-        if authenticated : 
-            return {
+        if not verify_password(
+            user_data.password,
+            user.password_hash,
+        ):
+            raise InvalidCredentialsException(f'Invalid Email or Password') 
+
+        access_token = create_access_token(user.id) 
+        return { 
+            'access_token' : access_token , 
+            'token_type' : 'bearer' ,
+            'user' : {
                 "id": user.id,
                 "email": user.email,
                 "username": user.username,
-            } 
-        else : 
-            return {
-                'message' : 'Login failed ! ' , 
-                'info' : 'email or password is incorrect' 
             }
+            
+        }
 
+    
     async def signup_user(self, signup_data ) :
         hashed_password = hash_password(signup_data.password) 
 
@@ -32,4 +45,4 @@ class AuthService:
             username = signup_data.username
         ) 
 
-        return await self.repository.create_user(user) 
+        return await self.repository.create(user) 

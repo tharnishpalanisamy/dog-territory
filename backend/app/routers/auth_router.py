@@ -23,3 +23,5 @@ async def login_user(login_data:UserLogin , service:AuthService = Depends(get_au
 async def signup_user(signup_data:UserCreate , service:AuthService = Depends(get_auth_service)) :
     auth_services = service
     return await auth_services.signup_user(signup_data)
+
+

@@ -1,7 +1,8 @@
 from app.models.user import User 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.exceptions import UserNotFoundException
+from sqlalchemy.exc import IntegrityError
+from app.exceptions import UserNotFoundException , EmailAlreadyExists
 
 class UserRepository:
     def __init__(self , db:AsyncSession ) :
@@ -14,8 +15,12 @@ class UserRepository:
             await self.db.commit()  
 
             return {
-                'message' : 'account created successfully'
+                'message' : 'account created successfully',
+                'user_id' : user.id 
             } 
+        except IntegrityError :  
+            await self.db.rollback() 
+            raise EmailAlreadyExists(f'Email Already Exists !')
         except Exception :
             await self.db.rollback()
             raise 

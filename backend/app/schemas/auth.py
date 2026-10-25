@@ -1,5 +1,6 @@
 from pydantic import BaseModel , Field 
 from datetime import datetime , date
+from sqlalchemy import func
 
 class UserLogin(BaseModel) :
     email : str 
@@ -10,8 +11,6 @@ class UserCreate(BaseModel) :
     username : str
     email : str 
     password : str 
-    date_of_birth : date | None = Field(default=None)
-    created_at : datetime
 
 class TokenResponse(BaseModel):
     access_token: str
