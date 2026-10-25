@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from config import setting
+from app.config import setting
 
 DATABASE_URL = URL.create(
     drivername="postgresql+asyncpg",

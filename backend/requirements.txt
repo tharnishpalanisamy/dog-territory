@@ -7,3 +7,4 @@ sqlalchemy
 sqlalchemy[asyncio]
 asyncpg
 pwdlib[argon2]
+alembic

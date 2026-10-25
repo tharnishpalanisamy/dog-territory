@@ -1,0 +1,1 @@
+from .auth_dependency import get_auth_service
