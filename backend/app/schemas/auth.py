@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class UserLogin(BaseModel):
@@ -18,7 +18,7 @@ class TokenResponse(BaseModel):
 
 
 class RefreshTokenCreate(BaseModel):
-    refresh_token: str 
+    refresh_token: str
 
 
 class RefreshTokenReponse(BaseModel):

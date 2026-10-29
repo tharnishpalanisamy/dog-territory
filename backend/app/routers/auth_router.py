@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.dependencies import get_auth_service, get_current_user , admin_required
+from app.dependencies import admin_required, get_auth_service
 from app.models import User
 from app.schemas import RefreshTokenCreate, RefreshTokenReponse
 from app.schemas.auth import UserCreate, UserLogin

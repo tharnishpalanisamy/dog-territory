@@ -1,3 +1,3 @@
-from .auth_dependency import get_auth_service, get_current_user , admin_required
+from .auth_dependency import admin_required, get_auth_service, get_current_user
 
-__all__ = ["get_auth_service", "get_current_user", "admin_required"]
+__all__ = ["admin_required", "get_auth_service", "get_current_user"]
