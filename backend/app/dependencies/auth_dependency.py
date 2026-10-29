@@ -59,7 +59,11 @@ async def get_current_user(
     )
 
     if credentials is None:
-        raise credentials_exception
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
     token = credentials.credentials
 
@@ -93,7 +97,6 @@ async def admin_required(user: Annotated[User, Depends(get_current_user)]):
     if user.role != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Not authorized to perform the operations",
-            headers={"WWW-Authenticate": "Bearer"},
+            detail="You do not have permission to access this resource",
         )
     return user

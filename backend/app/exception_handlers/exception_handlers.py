@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from app.exceptions import (
     EmailAlreadyExists,
     InvalidCredentialsException,
+    InvalidRefreshTokenException,
     UserNotFoundException,
 )
 
@@ -38,6 +39,17 @@ def register_exception_handlers(app: FastAPI):
         return JSONResponse(
             status_code=401,
             content={"detail": "Invalid email or password"},
+        )
+
+    @app.exception_handler(InvalidRefreshTokenException)
+    async def invalid_refresh_token_handler(
+        request: Request,
+        exc: InvalidRefreshTokenException,
+    ):
+        return JSONResponse(
+            status_code=401,
+            content={"detail": str(exc) or "Invalid or expired refresh token"},
+            headers={"WWW-Authenticate": "Bearer"},
         )
 
     @app.exception_handler(Exception)

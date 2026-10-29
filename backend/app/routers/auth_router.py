@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.dependencies import get_auth_service, get_current_user
+from app.dependencies import get_auth_service, get_current_user , admin_required
 from app.models import User
 from app.schemas import RefreshTokenCreate, RefreshTokenReponse
 from app.schemas.auth import UserCreate, UserLogin
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api/auth")
 
 
 @router.get("/me")
-async def get_user(user: Annotated[User, Depends(get_current_user)]):
+async def get_user(user: Annotated[User, Depends(admin_required)]):
     return {"check": True}
 
 

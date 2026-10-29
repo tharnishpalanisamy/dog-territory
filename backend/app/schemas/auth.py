@@ -18,7 +18,7 @@ class TokenResponse(BaseModel):
 
 
 class RefreshTokenCreate(BaseModel):
-    refresh_token: str = Field(min_length=86, max_length=86)
+    refresh_token: str 
 
 
 class RefreshTokenReponse(BaseModel):

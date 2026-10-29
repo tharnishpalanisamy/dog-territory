@@ -41,7 +41,7 @@ class RefreshTokenRepository:
         return token
 
     async def revoke_all(self, user_id, revoked_at) -> None:
-        query = update(
+        query = update(RefreshToken).where(
             RefreshToken.user_id == user_id, RefreshToken.revoked_at.is_(None)
         ).values(revoked_at=revoked_at)
 

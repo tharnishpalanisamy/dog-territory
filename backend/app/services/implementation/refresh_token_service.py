@@ -60,7 +60,7 @@ class RefreshTokenService:
             now = datetime.now(UTC)
 
             if old_record.revoked_at is not None:
-                await self.repository.revoke_all_active_for_user(
+                await self.repository.revoke_all(
                     old_record.user_id,
                     now,
                 )
