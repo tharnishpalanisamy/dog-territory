@@ -4,3 +4,10 @@ from .user_exceptions import (
     InvalidCredentialsException,
     UserNotFoundException,
 )
+
+__all__ = [
+    "EmailAlreadyExists",
+    "InvalidCredentialsException",
+    "InvalidRefreshTokenException",
+    "UserNotFoundException",
+]

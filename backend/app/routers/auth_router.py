@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from app.dependencies import get_auth_service, get_current_user
 from app.models import User
-from app.schemas import RefreshTokenCreate , RefreshTokenReponse
+from app.schemas import RefreshTokenCreate, RefreshTokenReponse
 from app.schemas.auth import UserCreate, UserLogin
 from app.services.protocol import AuthServiceProtocol
 

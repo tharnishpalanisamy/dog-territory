@@ -1,11 +1,10 @@
-
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from app.exceptions import (
-    UserNotFoundException,
     EmailAlreadyExists,
     InvalidCredentialsException,
+    UserNotFoundException,
 )
 
 
