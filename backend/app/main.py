@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers.auth_router import router as auth_router 
+
 from app.exception_handlers import register_exception_handlers
+from app.routers import auth_router
 
 origins = [
     "http://localhost:5173",
@@ -9,7 +10,7 @@ origins = [
 ]
 
 
-app = FastAPI() 
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -20,4 +21,4 @@ app.add_middleware(
 )
 
 app.include_router(auth_router)
-register_exception_handlers(app)
+register_exception_handlers(app)

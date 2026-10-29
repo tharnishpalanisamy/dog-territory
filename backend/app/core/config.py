@@ -1,21 +1,26 @@
-
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-ENV_FILE = Path(__file__).resolve().parent.parent / ".env"
+# Points to the backend/ directory
+BASE_DIR = Path(__file__).resolve().parents[2]
+ENV_FILE = BASE_DIR / ".env"
 
 
 class Settings(BaseSettings):
+    # Database configuration
     DB_NAME: str
     DB_PASSWORD: str
     DB_HOST: str
     DB_PORT: int = 5432
-    DB_USER : str 
+    DB_USER: str
 
-    JWT_SECRET_KEY:str 
+    # JWT configuration
+    JWT_SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+    REFRESH_TOKEN_EXPIRE_DAYS: int
 
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,

@@ -1,35 +1,56 @@
-from app.database.connection import get_db 
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import Depends
-from app.repositories.implementation import UserRepository
-from app.repositories.protocols import UserProtocol
-from app.services import AuthService
+from typing import Annotated
 
 import jwt
-
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import setting
+from app.core.config import setting
+from app.database.connection import get_db
 from app.exceptions import UserNotFoundException
+from app.models import User
+from app.repositories.implementation import RefreshTokenRepository, UserRepository
+from app.repositories.protocols import RefreshTokenRepositoryProtocol, UserProtocol
+from app.services import AuthService
+from app.services.implementation import RefreshTokenService
+from app.services.protocol import AuthServiceProtocol, RefreshTokenServiceProtocol
 
 
+def get_refresh_token_repository(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> RefreshTokenRepositoryProtocol:
+    return RefreshTokenRepository(db)
 
-def get_user_repository(db:AsyncSession = Depends(get_db)):
+
+def get_refresh_token_service(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    repository: Annotated[
+        RefreshTokenRepositoryProtocol, Depends(get_refresh_token_repository)
+    ],
+) -> RefreshTokenServiceProtocol:
+    return RefreshTokenService(db, repository)
+
+
+def get_user_repository(db: Annotated[AsyncSession, Depends(get_db)]):
     return UserRepository(db)
 
-def get_auth_service(db:AsyncSession = Depends(get_db) , repository:UserProtocol = Depends(get_user_repository)) :
-    return AuthService(db , repository)
+
+def get_auth_service(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    repository: Annotated[UserProtocol, Depends(get_user_repository)],
+    refresh_token_service: Annotated[
+        RefreshTokenServiceProtocol, Depends(get_refresh_token_service)
+    ],
+) -> AuthServiceProtocol:
+    return AuthService(db, repository, refresh_token_service)
 
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials | None = Depends(
-        bearer_scheme
-    ),
-    repository: UserProtocol = Depends(get_user_repository),
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
+    repository: Annotated[UserProtocol, Depends(get_user_repository)],
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -65,4 +86,14 @@ async def get_current_user(
     except UserNotFoundException:
         raise credentials_exception
 
+    return user
+
+
+async def admin_required(user: Annotated[User, Depends(get_current_user)]):
+    if user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to perform the operations",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return user

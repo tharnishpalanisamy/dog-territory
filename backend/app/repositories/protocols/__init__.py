@@ -1,1 +1,2 @@
-from .user import UserProtocol
+from .user_repository_protocol import UserProtocol
+from .refresh_token_protocol import RefreshTokenRepositoryProtocol

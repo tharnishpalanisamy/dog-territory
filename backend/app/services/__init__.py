@@ -1,1 +1,1 @@
-from .auth_service import AuthService
+from .implementation.auth_service import AuthService

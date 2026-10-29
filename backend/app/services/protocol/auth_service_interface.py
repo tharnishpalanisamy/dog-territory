@@ -1,0 +1,9 @@
+from typing import Protocol
+
+
+class AuthServiceProtocol(Protocol):
+    async def authenticate_user(self, user_data): ...
+
+    async def signup_user(self, user_data): ...
+
+    async def refresh_token(self, token): ...

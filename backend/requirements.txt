@@ -3,9 +3,10 @@ uvicorn
 pydantic 
 pydantic-settings 
 psycopg 
-sqlalchemy
+
 sqlalchemy[asyncio]
 asyncpg
 pwdlib[argon2]
 alembic 
 PyJWT[crypto]
+ruff 
