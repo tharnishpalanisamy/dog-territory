@@ -8,7 +8,7 @@ from app.schemas import RefreshTokenCreate, RefreshTokenReponse
 from app.schemas.auth import UserCreate, UserLogin
 from app.services.protocol import AuthServiceProtocol
 
-router = APIRouter(prefix="/api/auth")
+router = APIRouter(prefix="/api/auth" , tags=['Authentication'])
 
 
 @router.get("/me")

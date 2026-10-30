@@ -13,7 +13,6 @@ class Dog(Base):
     dog_code: Mapped[str] = mapped_column(
         String(20), nullable=False, index=True, unique=True
     )
-    breed: Mapped[str | None] = mapped_column(String(100), nullable=True)
     estimated_age: Mapped[int | None] = mapped_column(Integer, nullable=True)
     color: Mapped[str | None] = mapped_column(String(50), nullable=True)
     description: Mapped[str | None] = mapped_column(String(255), nullable=True)
@@ -21,7 +20,8 @@ class Dog(Base):
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
     state: Mapped[str] = mapped_column(String(50), nullable=False)
     district: Mapped[str] = mapped_column(String(50), nullable=False)
-    area_code: Mapped[int] = mapped_column(Integer, nullable=False)
+    area_name: Mapped[int] = mapped_column(String(100), nullable=False) 
+    pin_code : Mapped[str] = mapped_column(String(6) , nullable=False , index=True  )
     latitude: Mapped[Decimal] = mapped_column(Numeric(10, 7), nullable=False)
     longitude: Mapped[Decimal] = mapped_column(Numeric(10, 7), nullable=False)
     vaccination_status: Mapped[str] = mapped_column(String(20), nullable=False)

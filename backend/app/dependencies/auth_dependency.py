@@ -5,9 +5,10 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import UserRole
 from app.core.config import setting
 from app.database.connection import get_db
-from app.exceptions import UserNotFoundException
+from app.exceptions import UserNotFoundException , NotAuthorizedException
 from app.models import User
 from app.repositories.implementation import RefreshTokenRepository, UserRepository
 from app.repositories.protocols import RefreshTokenRepositoryProtocol, UserProtocol
@@ -100,3 +101,13 @@ async def admin_required(user: Annotated[User, Depends(get_current_user)]):
             detail="You do not have permission to access this resource",
         )
     return user
+
+
+def require_roles(*allowed_roles: UserRole):
+
+    def role_checker(current_user: Annotated[User, Depends(get_current_user)]):
+        if current_user.role not in allowed_roles:
+            raise NotAuthorizedException() 
+
+        return current_user 
+    return role_checker 
