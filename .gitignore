@@ -11,9 +11,14 @@ env/
 __pycache__/
 *.py[cod]
 
+# Application logs
+logs/
+*.log
+
 # VS Code 
 .vscode/
 
 # Frontend dependencies and build output
 node_modules/
 dist/
+

@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -8,6 +10,8 @@ from app.exceptions import (
     UserNotFoundException,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def register_exception_handlers(app: FastAPI):
 
@@ -16,6 +20,8 @@ def register_exception_handlers(app: FastAPI):
         request: Request,
         exc: UserNotFoundException,
     ):
+        logger.info("User not found")
+
         return JSONResponse(
             status_code=404,
             content={"detail": str(exc) or "User not found"},
@@ -26,6 +32,8 @@ def register_exception_handlers(app: FastAPI):
         request: Request,
         exc: EmailAlreadyExists,
     ):
+        logger.info("Registration failed: email already exists")
+
         return JSONResponse(
             status_code=409,
             content={"detail": str(exc) or "Email already exists"},
@@ -36,6 +44,8 @@ def register_exception_handlers(app: FastAPI):
         request: Request,
         exc: InvalidCredentialsException,
     ):
+        logger.warning("Authentication failed: invalid credentials")
+
         return JSONResponse(
             status_code=401,
             content={"detail": "Invalid email or password"},
@@ -46,6 +56,8 @@ def register_exception_handlers(app: FastAPI):
         request: Request,
         exc: InvalidRefreshTokenException,
     ):
+        logger.warning("Refresh token validation failed")
+
         return JSONResponse(
             status_code=401,
             content={"detail": str(exc) or "Invalid or expired refresh token"},

@@ -1,5 +1,14 @@
-import logging
 import logging.config
+from pathlib import Path
+
+# Project root: backend/
+BASE_DIR = Path(__file__).resolve().parents[2]
+
+# Create logs directory if it doesn't exist
+LOG_DIR = BASE_DIR / "logs"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+
+LOG_FILE = LOG_DIR / "app.log"
 
 
 def setup_logging() -> None:
@@ -18,10 +27,19 @@ def setup_logging() -> None:
                     "level": "INFO",
                     "formatter": "standard",
                 },
+                "file": {
+                    "class": "logging.handlers.RotatingFileHandler",
+                    "filename": str(LOG_FILE),
+                    "maxBytes": 5 * 1024 * 1024,
+                    "backupCount": 3,
+                    "encoding": "utf-8",
+                    "level": "INFO",
+                    "formatter": "standard",
+                },
             },
             "root": {
                 "level": "INFO",
-                "handlers": ["console"],
+                "handlers": ["console", "file"],
             },
         }
     )
