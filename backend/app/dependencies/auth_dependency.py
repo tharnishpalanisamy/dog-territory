@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from typing import Annotated
 
 import jwt
@@ -8,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core import UserRole
 from app.core.config import setting
 from app.database.connection import get_db
-from app.exceptions import UserNotFoundException , NotAuthorizedException
+from app.exceptions import NotAuthorizedException
 from app.models import User
 from app.repositories.implementation import RefreshTokenRepository, UserRepository
 from app.repositories.protocols import RefreshTokenRepositoryProtocol, UserProtocol
@@ -32,7 +33,9 @@ def get_refresh_token_service(
     return RefreshTokenService(db, repository)
 
 
-def get_user_repository(db: Annotated[AsyncSession, Depends(get_db)]):
+def get_user_repository(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> UserProtocol:
     return UserRepository(db)
 
 
@@ -52,7 +55,7 @@ bearer_scheme = HTTPBearer(auto_error=False)
 async def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
     repository: Annotated[UserProtocol, Depends(get_user_repository)],
-):
+) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -69,32 +72,39 @@ async def get_current_user(
     token = credentials.credentials
 
     try:
-        payload = jwt.decode(
+        payload: object = jwt.decode(
             token,
             setting.JWT_SECRET_KEY,
             algorithms=[setting.JWT_ALGORITHM],
             options={"require": ["exp", "sub"]},
         )
 
+        if not isinstance(payload, dict):
+            raise credentials_exception
+
         subject = payload.get("sub")
 
         if not isinstance(subject, str) or not subject.isdecimal():
             raise credentials_exception
 
-        user_id = int(subject)
+        try:
+            user_id = int(subject)
+        except ValueError:
+            raise credentials_exception from None
 
     except jwt.InvalidTokenError:
         raise credentials_exception
 
-    try:
-        user = await repository.get_by_id(user_id)
-    except UserNotFoundException:
+    user = await repository.get_by_id(user_id)
+    if user is None:
         raise credentials_exception
 
     return user
 
 
-async def admin_required(user: Annotated[User, Depends(get_current_user)]):
+async def admin_required(
+    user: Annotated[User, Depends(get_current_user)],
+) -> User:
     if user.role != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -103,11 +113,14 @@ async def admin_required(user: Annotated[User, Depends(get_current_user)]):
     return user
 
 
-def require_roles(*allowed_roles: UserRole):
+def require_roles(*allowed_roles: UserRole) -> Callable[[User], User]:
 
-    def role_checker(current_user: Annotated[User, Depends(get_current_user)]):
+    def role_checker(
+        current_user: Annotated[User, Depends(get_current_user)],
+    ) -> User:
         if current_user.role not in allowed_roles:
-            raise NotAuthorizedException() 
+            raise NotAuthorizedException()
 
-        return current_user 
-    return role_checker 
+        return current_user
+
+    return role_checker

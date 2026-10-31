@@ -1,15 +1,28 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core import create_access_token, hash_password, verify_password
-from app.exceptions import InvalidCredentialsException, InvalidRefreshTokenException
-from app.models.user import User
+from app.exceptions import InvalidCredentialsException
+from app.models import User
+from app.repositories.protocols import UserProtocol
+from app.schemas.auth import UserCreate, UserLogin
+from app.services.protocol.auth_service_protocol import LoginResponse, RefreshResponse
+from app.services.protocol.refresh_token_service_protocol import (
+    RefreshTokenServiceProtocol,
+)
 
 
 class AuthService:
-    def __init__(self, db, repository, refresh_token_service):
+    def __init__(
+        self,
+        db: AsyncSession,
+        repository: UserProtocol,
+        refresh_token_service: RefreshTokenServiceProtocol,
+    ) -> None:
         self.db = db
         self.repository = repository
         self.refresh_token_service = refresh_token_service
 
-    async def authenticate_user(self, user_data):
+    async def authenticate_user(self, user_data: UserLogin) -> LoginResponse:
         user = await self.repository.get_by_email(user_data.email)
 
         if user is None:
@@ -34,7 +47,7 @@ class AuthService:
             },
         }
 
-    async def signup_user(self, user_data):
+    async def signup_user(self, user_data: UserCreate) -> User:
         hashed_password = hash_password(user_data.password)
 
         user = User(
@@ -45,16 +58,15 @@ class AuthService:
 
         return await self.repository.create(user)
 
-    async def refresh_token(self, token):
-        user_id, new_token = await self.refresh_token_service.rotate_refresh_token(token)
+    async def refresh_token(self, token: str) -> RefreshResponse:
+        user_id, new_token = await self.refresh_token_service.rotate_refresh_token(
+            token
+        )
 
-        if user_id is None:
-            raise InvalidRefreshTokenException()
-
-        access_token = create_access_token(user_id) 
+        access_token = create_access_token(user_id)
 
         return {
-            'access_token' : access_token , 
-            'refresh_token' : new_token , 
-            'token_type' : 'bearer'
+            "access_token": access_token,
+            "refresh_token": new_token,
+            "token_type": "bearer",
         }

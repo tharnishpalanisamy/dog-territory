@@ -2,13 +2,18 @@ import hashlib
 import secrets
 from datetime import UTC, datetime, timedelta
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.core.config import setting
 from app.exceptions import InvalidRefreshTokenException
 from app.models import RefreshToken
+from app.repositories.protocols import RefreshTokenRepositoryProtocol
 
 
 class RefreshTokenService:
-    def __init__(self, db, repository):
+    def __init__(
+        self, db: AsyncSession, repository: RefreshTokenRepositoryProtocol
+    ) -> None:
         self.db = db
         self.repository = repository
 
@@ -17,10 +22,10 @@ class RefreshTokenService:
         return secrets.token_urlsafe(64)
 
     @staticmethod
-    def hash_refresh_token(token) -> str:
+    def hash_refresh_token(token: str) -> str:
         return hashlib.sha256(token.encode("utf-8")).hexdigest()
 
-    def _build_refresh_token(self, user_id: int):
+    def _build_refresh_token(self, user_id: int) -> tuple[str, RefreshToken]:
         raw_token = self.generate_refresh_token()
 
         hashed_token = self.hash_refresh_token(raw_token)
@@ -34,7 +39,7 @@ class RefreshTokenService:
 
         return raw_token, token_record
 
-    async def issue_refresh_token(self, user_id: int):
+    async def issue_refresh_token(self, user_id: int) -> str:
 
         token, refresh_token = self._build_refresh_token(user_id)
 
@@ -48,7 +53,7 @@ class RefreshTokenService:
 
         return token
 
-    async def rotate_refresh_token(self, raw_token: str):
+    async def rotate_refresh_token(self, raw_token: str) -> tuple[int, str]:
         token_hash = self.hash_refresh_token(raw_token)
 
         try:

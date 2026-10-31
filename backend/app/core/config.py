@@ -22,6 +22,9 @@ class Settings(BaseSettings):
 
     REFRESH_TOKEN_EXPIRE_DAYS: int
 
+    def __init__(self) -> None:
+        super().__init__()
+
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,
         env_file_encoding="utf-8",

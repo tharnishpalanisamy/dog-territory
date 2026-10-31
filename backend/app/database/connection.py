@@ -1,3 +1,5 @@
+from collections.abc import AsyncIterator
+
 from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import (
     AsyncSession,
@@ -29,6 +31,6 @@ AsyncSessionLocal = async_sessionmaker(
 )
 
 
-async def get_db():
+async def get_db() -> AsyncIterator[AsyncSession]:
     async with AsyncSessionLocal() as session:
         yield session

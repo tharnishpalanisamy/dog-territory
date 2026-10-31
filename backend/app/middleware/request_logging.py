@@ -2,11 +2,15 @@ import logging
 import time
 
 from fastapi import Request
+from starlette.middleware.base import RequestResponseEndpoint
+from starlette.responses import Response
 
 logger = logging.getLogger(__name__)
 
 
-async def log_requests(request: Request, call_next):
+async def log_requests(
+    request: Request, call_next: RequestResponseEndpoint
+) -> Response:
     start_time = time.perf_counter()
     method = request.method
     path = request.url.path

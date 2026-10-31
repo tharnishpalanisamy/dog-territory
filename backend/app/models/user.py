@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, Enum, Integer, String, func
+from sqlalchemy import DateTime, Integer, String, func
+from sqlalchemy import Enum as SQLAlchemyEnum
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core import UserRole
@@ -15,7 +16,13 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(100), nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[UserRole] = mapped_column(
-        Enum(UserRole), nullable=False, default=UserRole.USER 
+        SQLAlchemyEnum(
+            UserRole,
+            name="userrole",
+            values_callable=lambda enum_cls: [role.value for role in enum_cls],
+        ),
+        nullable=False,
+        default=UserRole.USER,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
