@@ -5,16 +5,16 @@ from pydantic import BaseModel, Field
 
 
 class DogCreate(BaseModel):
+    state: str = Field(min_length=1, max_length=50)
+    district: str = Field(min_length=1, max_length=50)
+    area_name: str = Field(min_length=1, max_length=100)
+    pin_code: str = Field(pattern=r"^[1-9][0-9]{5}$")
+    
     estimated_age: int | None = Field(default=None, ge=0, le=30)
     color: str | None = Field(default=None, max_length=50)
     description: str | None = Field(default=None, max_length=255)
 
     is_sterilized: bool | None = None
-
-    state: str = Field(min_length=1, max_length=50)
-    district: str = Field(min_length=1, max_length=50)
-    area_name: str = Field(min_length=1, max_length=100)
-    pin_code: str = Field(pattern=r"^[1-9][0-9]{5}$")
 
     latitude: Decimal = Field(ge=-90, le=90)
     longitude: Decimal = Field(ge=-180, le=180)
@@ -22,3 +22,12 @@ class DogCreate(BaseModel):
     vaccination_status: str = Field(max_length=20)
     vaccination_date: datetime | None = None
     booster_dose_date: datetime | None = None
+
+
+class DogResponse(BaseModel) :
+    id : int 
+    dog_code : str 
+    status : str 
+    vaccination_status : str 
+    vaccination_date : datetime
+

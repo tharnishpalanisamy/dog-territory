@@ -1,25 +1,29 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
-
 from app.dependencies import admin_required, get_auth_service
 from app.models import User
-from app.schemas import RefreshTokenCreate, RefreshTokenReponse
-from app.schemas.auth import UserCreate, UserLogin
+from app.schemas import (
+    LoginResponse,
+    RefreshTokenCreate,
+    RefreshTokenResponse,
+    UserCreate,
+    UserLogin,
+    UserResponse,
+)
 from app.services.protocol import AuthServiceProtocol
-from app.services.protocol.auth_service_protocol import LoginResponse, RefreshResponse
+from fastapi import APIRouter, Depends, status
 
-router = APIRouter(prefix="/api/auth", tags=["Authentication"])
+router = APIRouter(prefix="/api/v1/auth", tags=["Authentication"])
 
 
-@router.get("/me")
+@router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK)
 async def get_user(
     user: Annotated[User, Depends(admin_required)],
-) -> dict[str, bool]:
-    return {"check": True}
+) -> User:
+    return user
 
 
-@router.post("/login")
+@router.post("/login", response_model=LoginResponse, status_code=status.HTTP_200_OK)
 async def login_user(
     login_data: UserLogin,
     service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
@@ -28,7 +32,9 @@ async def login_user(
     return await auth_services.authenticate_user(login_data)
 
 
-@router.post("/signup", response_model=None)
+@router.post(
+    "/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED
+)
 async def signup_user(
     signup_data: UserCreate,
     service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
@@ -37,9 +43,11 @@ async def signup_user(
     return await auth_services.signup_user(signup_data)
 
 
-@router.post("/refresh", response_model=RefreshTokenReponse)
+@router.post(
+    "/refresh", response_model=RefreshTokenResponse, status_code=status.HTTP_201_CREATED
+)
 async def refresh_token(
     token_data: RefreshTokenCreate,
     service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
-) -> RefreshResponse:
+) -> RefreshTokenResponse:
     return await service.refresh_token(token_data.refresh_token)

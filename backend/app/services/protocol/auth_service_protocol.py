@@ -1,26 +1,12 @@
-from typing import Protocol, TypedDict
+from typing import Protocol
 
 from app.models import User
-from app.schemas.auth import UserCreate, UserLogin
-
-
-class AuthenticatedUser(TypedDict):
-    id: int
-    email: str
-    username: str
-
-
-class LoginResponse(TypedDict):
-    access_token: str
-    refresh_token: str
-    token_type: str
-    user: AuthenticatedUser
-
-
-class RefreshResponse(TypedDict):
-    access_token: str
-    refresh_token: str
-    token_type: str
+from app.schemas import (
+    LoginResponse,
+    RefreshTokenResponse,
+    UserCreate,
+    UserLogin,
+)
 
 
 class AuthServiceProtocol(Protocol):
@@ -28,4 +14,4 @@ class AuthServiceProtocol(Protocol):
 
     async def signup_user(self, user_data: UserCreate) -> User: ...
 
-    async def refresh_token(self, token: str) -> RefreshResponse: ...
+    async def refresh_token(self, token: str) -> RefreshTokenResponse: ...

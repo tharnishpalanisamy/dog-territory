@@ -3,10 +3,10 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.v1 import auth_router, dog_router
 from app.core import setup_logging
 from app.exception_handlers import register_exception_handlers
 from app.middleware import log_requests
-from app.routers import auth_router, dog_router
 
 logger = logging.getLogger(__name__)
 

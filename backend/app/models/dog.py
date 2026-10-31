@@ -1,7 +1,16 @@
 from datetime import datetime
 from decimal import Decimal
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, Numeric, String, func
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.base import Base
@@ -9,10 +18,20 @@ from app.database.base import Base
 
 class Dog(Base):
     __tablename__ = "dogs"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "pincode",
+            "dog_number",
+            name="uq_dogs_pin_code_dog_number",
+        ),
+    )
+
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     dog_code: Mapped[str] = mapped_column(
         String(20), nullable=False, index=True, unique=True
     )
+    dog_number: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
     estimated_age: Mapped[int | None] = mapped_column(Integer, nullable=True)
     color: Mapped[str | None] = mapped_column(String(50), nullable=True)
     description: Mapped[str | None] = mapped_column(String(255), nullable=True)
@@ -21,7 +40,7 @@ class Dog(Base):
     state: Mapped[str] = mapped_column(String(50), nullable=False)
     district: Mapped[str] = mapped_column(String(50), nullable=False)
     area_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    pin_code: Mapped[str] = mapped_column(String(6), nullable=False, index=True)
+    pincode: Mapped[str] = mapped_column(String(6), nullable=False, index=True)
     latitude: Mapped[Decimal] = mapped_column(Numeric(10, 7), nullable=False)
     longitude: Mapped[Decimal] = mapped_column(Numeric(10, 7), nullable=False)
     vaccination_status: Mapped[str] = mapped_column(String(20), nullable=False)
