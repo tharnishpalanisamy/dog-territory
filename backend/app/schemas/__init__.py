@@ -7,6 +7,7 @@ from .auth import (
 from .dog import (
     DogCreate,
     DogDetailResponse,
+    DogFilterParams,
     DogResponse,
     DogSummaryResponse,
     DogUpdate,
@@ -16,6 +17,7 @@ from .user import UserCreate, UserResponse
 __all__ = [
     "DogCreate",
     "DogDetailResponse",
+    "DogFilterParams",
     "DogResponse",
     "DogSummaryResponse",
     "DogUpdate",

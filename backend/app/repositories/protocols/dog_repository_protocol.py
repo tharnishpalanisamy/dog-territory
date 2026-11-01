@@ -2,12 +2,13 @@ from collections.abc import Sequence
 from typing import Protocol
 
 from app.models import Dog
+from app.schemas import DogFilterParams
 
 
 class DogRepositoryProtocol(Protocol):
     async def create(self, dog: Dog) -> Dog: ...
 
-    async def get_all(self) -> Sequence[Dog]: ...
+    async def get_all(self , filters: DogFilterParams, limit: int, offset: int) -> Sequence[Dog]: ...
 
     async def get_max_count(self, pin_code: str) -> int | None: ...
 

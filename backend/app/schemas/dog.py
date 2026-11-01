@@ -25,19 +25,19 @@ class DogCreate(BaseModel):
 
 
 class DogUpdate(BaseModel):
-    state: str|None = Field(default=None, min_length=1, max_length=50)
-    district: str|None = Field(default=None, min_length=1, max_length=50)
-    area_name: str|None = Field(default=None, min_length=1, max_length=100)
-    estimated_age: int|None = Field(default=None, ge=0, le=30)
-    color: str|None = Field(default=None, max_length=50)
-    description: str|None = Field(default=None, max_length=255)
-    is_sterilized: bool|None = None
-    status: str|None = Field(default=None, min_length=1, max_length=20)
-    latitude: Decimal|None = Field(default=None, ge=-90, le=90)
-    longitude: Decimal |None= Field(default=None, ge=-180, le=180)
-    vaccination_status: str |None= Field(default=None, min_length=1, max_length=20)
+    state: str | None = Field(default=None, min_length=1, max_length=50)
+    district: str | None = Field(default=None, min_length=1, max_length=50)
+    area_name: str | None = Field(default=None, min_length=1, max_length=100)
+    estimated_age: int | None = Field(default=None, ge=0, le=30)
+    color: str | None = Field(default=None, max_length=50)
+    description: str | None = Field(default=None, max_length=255)
+    is_sterilized: bool | None = None
+    status: str | None = Field(default=None, min_length=1, max_length=20)
+    latitude: Decimal | None = Field(default=None, ge=-90, le=90)
+    longitude: Decimal | None = Field(default=None, ge=-180, le=180)
+    vaccination_status: str | None = Field(default=None, min_length=1, max_length=20)
     vaccination_date: datetime | None = None
-    booster_dose_date: datetime | None = None
+    next_booster_due_date: datetime | None = None
 
     @model_validator(mode="after")
     def require_at_least_one_field(self) -> "DogUpdate":
@@ -53,10 +53,10 @@ class DogResponse(BaseModel):
     vaccination_status: str
     vaccination_date: datetime | None
 
+
 class DogSummaryResponse(BaseModel):
     id: int
     dog_code: str
-    breed: str | None
     estimated_age: int | None
     color: str | None
     status: str
@@ -68,23 +68,39 @@ class DogSummaryResponse(BaseModel):
 class DogDetailResponse(BaseModel):
     id: int
     dog_code: str
-    breed: str | None
     estimated_age: int | None
     color: str | None
     description: str | None
 
-    is_sterilized: bool
+    is_sterilized: bool | None
     status: str
 
     vaccination_status: str
     vaccination_date: datetime | None
-    booster_dose_date: datetime | None
+    next_booster_due_date: datetime | None
 
     state: str
     district: str
-    area_code: str
+    area_name: str
+    pincode: str
 
     created_at: datetime
     updated_at: datetime | None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class DogFilterParams(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    status: str | None = None
+    is_sterilized: bool | None = None
+    vaccination_status: str | None = None
+
+    state: str | None = None
+    district: str | None = None
+    area_name: str | None = None
+    pincode: str | None = Field(default=None, pattern=r"^\d{6}$")
+
+    estimated_age_min: int | None = Field(default=None, ge=0)
+    estimated_age_max: int | None = Field(default=None, le=30)

@@ -8,9 +8,10 @@ from app.schemas import (
     DogDetailResponse,
     DogSummaryResponse,
     DogUpdate,
+    DogFilterParams
 )
 from app.services.protocol import DogServiceProtocol
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Query, Response, status
 
 router = APIRouter(prefix="/api/v1/dogs", tags=["Dog"])
 
@@ -47,8 +48,15 @@ async def get_all_dogs(
         ),
     ],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
+    filters: Annotated[DogFilterParams, Depends()],
+    limit: int = Query(ge=1, default=20),
+    offset: int = Query(ge=0, default=0),
 ):
-    return await service.get_all_dogs()
+    return await service.get_all_dogs(
+        filters=filters,
+        limit=limit,
+        offset=offset,
+    )
 
 
 # GET DOG BY ID (DETAIL)

@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.exceptions import DogNotFoundException
 from app.models import Dog, User
 from app.repositories.protocols import DogRepositoryProtocol
-from app.schemas import DogCreate, DogUpdate
+from app.schemas import DogCreate, DogFilterParams, DogUpdate
 
 
 class DogService:
@@ -39,7 +39,7 @@ class DogService:
             longitude=dog_data.longitude,
             vaccination_status=dog_data.vaccination_status,
             vaccination_date=dog_data.vaccination_date,
-            booster_dose_date=dog_data.booster_dose_date,
+            next_booster_due_date=dog_data.booster_dose_date,
             created_by=current_user.id,
         )
 
@@ -49,9 +49,10 @@ class DogService:
 
         return result
 
-    async def get_all_dogs(self) -> Sequence[Dog]:
-        result = await self.repository.get_all()
-
+    async def get_all_dogs(
+        self, filters: DogFilterParams, limit: int, offset: int
+    ) -> Sequence[Dog]:
+        result = await self.repository.get_all(filters, limit, offset)
         return result
 
     async def get_dog_by_id(self, id) -> Dog:
@@ -62,7 +63,7 @@ class DogService:
             raise DogNotFoundException(f"Dog with ID {id} not found")
         return dog
 
-    async def get_dog_by_dog_code(self, dog_code:str):
+    async def get_dog_by_dog_code(self, dog_code: str):
         dog = await self.repository.get_by_dog_code(dog_code)
 
         if dog is None:
@@ -89,13 +90,8 @@ class DogService:
         await self.db.commit()
         return updated_dog
 
-    async def delete_dog_by_dog_code(self , dog_code:str ) -> None : 
-        return await self.repository.delete_dog_code(dog_code )  
+    async def delete_dog_by_dog_code(self, dog_code: str) -> None:
+        return await self.repository.delete_dog_code(dog_code)
 
-    async def delete_dog_by_id(self , dog_id:int ) -> None :
-        return await self.repository.delete_by_id(dog_id) 
-
-
-
-
-
+    async def delete_dog_by_id(self, dog_id: int) -> None:
+        return await self.repository.delete_by_id(dog_id)
