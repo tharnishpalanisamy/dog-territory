@@ -91,16 +91,32 @@ class DogDetailResponse(BaseModel):
 
 
 class DogFilterParams(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
 
-    status: str | None = None
+    status: str | None = Field(default=None, min_length=1, max_length=20)
     is_sterilized: bool | None = None
-    vaccination_status: str | None = None
+    vaccination_status: str | None = Field(default=None, min_length=1, max_length=20)
 
-    state: str | None = None
-    district: str | None = None
-    area_name: str | None = None
-    pincode: str | None = Field(default=None, pattern=r"^\d{6}$")
+    state: str | None = Field(default=None, min_length=1, max_length=50)
+    district: str | None = Field(default=None, min_length=1, max_length=50)
+    area_name: str | None = Field(default=None, min_length=1, max_length=100)
+    pincode: str | None = Field(default=None, pattern=r"^[1-9][0-9]{5}$")
 
-    estimated_age_min: int | None = Field(default=None, ge=0)
-    estimated_age_max: int | None = Field(default=None, le=30)
+    estimated_age_min: int | None = Field(default=None, ge=0, le=30)
+    estimated_age_max: int | None = Field(default=None, ge=0, le=30)
+
+    @model_validator(mode="after")
+    def validate_age_range(self):
+        if (
+            self.estimated_age_min is not None
+            and self.estimated_age_max is not None
+            and self.estimated_age_min > self.estimated_age_max
+        ):
+            raise ValueError(
+                "estimated_age_min cannot be greater than estimated_age_max"
+            )
+
+        return self

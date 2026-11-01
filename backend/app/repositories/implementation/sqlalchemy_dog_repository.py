@@ -71,6 +71,9 @@ class DogRepository:
         if conditions:
             query = query.where(*conditions)
 
+        query = query.order_by(
+            Dog.id.asc(),
+        )
         query = query.limit(limit).offset(offset)
 
         

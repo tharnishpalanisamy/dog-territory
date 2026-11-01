@@ -8,6 +8,7 @@ from app.exceptions import (
     EmailAlreadyExists,
     InvalidCredentialsException,
     InvalidRefreshTokenException,
+    NotAuthorizedException,
     UserNotFoundException,
 )
 
@@ -77,6 +78,20 @@ def register_exception_handlers(app: FastAPI) -> None:
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+    @app.exception_handler(NotAuthorizedException)
+    async def not_authorized_handler(
+        request: Request,
+        exc: NotAuthorizedException,
+    ) -> JSONResponse:
+        logger.warning("Authorization failed")
+
+        return JSONResponse(
+            status_code=403,
+            content={
+                "detail": str(exc) or "You are not authorized to perform this action"
+            },
+        )
+
     @app.exception_handler(Exception)
     async def global_exception_handler(
         request: Request,
@@ -86,5 +101,3 @@ def register_exception_handlers(app: FastAPI) -> None:
             status_code=500,
             content={"detail": "An internal server error occurred"},
         )
-
-

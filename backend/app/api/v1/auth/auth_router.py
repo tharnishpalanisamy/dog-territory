@@ -1,6 +1,7 @@
 from typing import Annotated
 
-from app.dependencies import admin_required, get_auth_service
+from app.dependencies import admin_required, get_auth_service , require_roles
+from app.core import UserRole
 from app.models import User
 from app.schemas import (
     LoginResponse,
@@ -18,7 +19,7 @@ router = APIRouter(prefix="/api/v1/auth", tags=["Authentication"])
 
 @router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK)
 async def get_user(
-    user: Annotated[User, Depends(admin_required)],
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
 ) -> User:
     return user
 
