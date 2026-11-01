@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select , delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Dog
@@ -29,13 +29,48 @@ class DogRepository:
             Dog.id == id 
         )
 
-        return await self.db.scalar(query)
+        return await self.db.scalar(query) 
 
-    async def update_by_id(self, id, dog):
-        pass
+    async def get_by_dog_code(self, dog_code : str ) -> Dog | None :
+        query = select(Dog).where(
+            Dog.dog_code == dog_code
+        )
+
+        return await self.db.scalar(query) 
+
+    async def update_by_id(self, dog: Dog, fields: dict[str, object]) -> Dog:
+        for field, value in fields.items():
+            setattr(dog, field, value)
+
+        await self.db.flush()
+        return dog
+
+    async def update_by_dog_code(self, dog: Dog, fields: dict[str, object]) -> Dog:
+        for field, value in fields.items():
+            setattr(dog, field, value)
+
+        await self.db.flush()
+        return dog
 
     async def get_max_count(self, pin_code: str) -> int | None:
         query = select(func.max(Dog.dog_number)).where(Dog.pincode == pin_code)
 
         result = await self.db.scalar(query)
         return result
+
+    async def delete_by_dog_code(self , dog_code : str ) :
+        query = delete(Dog).where(
+            Dog.dog_code == dog_code
+        )
+
+        return await self.db.execute(query)
+
+    async def delete_by_id(self , id : int ) :
+        query = delete(Dog).where(
+            Dog.id == id
+        )
+
+        return await self.db.execute(query) 
+
+
+

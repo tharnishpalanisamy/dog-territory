@@ -2,10 +2,10 @@ from collections.abc import Sequence
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.exceptions import DogNotFoundException
 from app.models import Dog, User
 from app.repositories.protocols import DogRepositoryProtocol
-from app.schemas import DogCreate
-from app.exceptions import DogNotFoundException
+from app.schemas import DogCreate, DogUpdate
 
 
 class DogService:
@@ -56,18 +56,46 @@ class DogService:
 
     async def get_dog_by_id(self, id) -> Dog:
 
-        dog = await self.repository.get_by_id(id) 
+        dog = await self.repository.get_by_id(id)
 
-        if dog is None :
-            raise DogNotFoundException(f"Dog with {id} not found ")
-        return dog 
+        if dog is None:
+            raise DogNotFoundException(f"Dog with ID {id} not found")
+        return dog
 
-    async def get_dog_by_dogcode(self, dogcode):
-        dog = await self.repository.get_by_id(dogcode) 
+    async def get_dog_by_dog_code(self, dog_code:str):
+        dog = await self.repository.get_by_dog_code(dog_code)
 
-        if dog is None :
-            raise DogNotFoundException(f"Dog with {dogcode} not found ")
-        return dog 
+        if dog is None:
+            raise DogNotFoundException(f"Dog with code {dog_code} not found")
+        return dog
 
-    async def update_dog_by_id(self, id, dog_data):
-        pass
+    async def update_dog_by_id(self, dog_id: int, dog_data: DogUpdate) -> Dog:
+        dog = await self.repository.get_by_id(dog_id)
+        if dog is None:
+            raise DogNotFoundException(f"Dog with ID {dog_id} not found")
+
+        fields = dog_data.model_dump(exclude_unset=True)
+        updated_dog = await self.repository.update_by_id(dog, fields)
+        await self.db.commit()
+        return updated_dog
+
+    async def update_dog_by_dog_code(self, dog_code: str, dog_data: DogUpdate) -> Dog:
+        dog = await self.repository.get_by_dog_code(dog_code)
+        if dog is None:
+            raise DogNotFoundException(f"Dog with code {dog_code} not found")
+
+        fields = dog_data.model_dump(exclude_unset=True)
+        updated_dog = await self.repository.update_by_dog_code(dog, fields)
+        await self.db.commit()
+        return updated_dog
+
+    async def delete_dog_by_dog_code(self , dog_code:str ) -> None : 
+        return await self.repository.delete_dog_code(dog_code )  
+
+    async def delete_dog_by_id(self , dog_id:int ) -> None :
+        return await self.repository.delete_by_id(dog_id) 
+
+
+
+
+

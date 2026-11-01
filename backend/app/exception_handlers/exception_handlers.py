@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from app.exceptions import (
+    DogNotFoundException,
     EmailAlreadyExists,
     InvalidCredentialsException,
     InvalidRefreshTokenException,
@@ -25,6 +26,18 @@ def register_exception_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=404,
             content={"detail": str(exc) or "User not found"},
+        )
+
+    @app.exception_handler(DogNotFoundException)
+    async def dog_not_found_handler(
+        request: Request,
+        exc: DogNotFoundException,
+    ) -> JSONResponse:
+        logger.info("Dog not found")
+
+        return JSONResponse(
+            status_code=404,
+            content={"detail": str(exc) or "Dog not found"},
         )
 
     @app.exception_handler(EmailAlreadyExists)
@@ -73,3 +86,5 @@ def register_exception_handlers(app: FastAPI) -> None:
             status_code=500,
             content={"detail": "An internal server error occurred"},
         )
+
+

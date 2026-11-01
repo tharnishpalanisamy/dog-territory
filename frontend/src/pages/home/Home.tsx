@@ -44,7 +44,7 @@ const features = [
     description:
       "Explore verified dog locations, sightings, and territories across your city.",
     image:
-      "https://images.unsplash.com/photo-1524666041070-9b8767618fce?auto=format&fit=crop&w=900&q=85",
+      "https://q-gate.co/images/Location-Intelligence.webp",
     alt: "Map with streets and location markers",
   },
   {

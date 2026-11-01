@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from typing import Protocol
 
 from app.models import Dog, User
-from app.schemas import DogCreate
+from app.schemas import DogCreate, DogUpdate
 
 
 class DogServiceProtocol(Protocol):
@@ -12,4 +12,13 @@ class DogServiceProtocol(Protocol):
 
     async def get_dog_by_id(self, id) -> Dog: ...
 
-    async def update_dog_by_id(self, id, dog_data): ...
+    async def get_dog_by_dog_code(self, dog_code:str) -> Dog: ... 
+
+    async def delete_dog_by_dog_code(self , dog_code:str ) -> None : ...  
+
+    async def delete_dog_by_id(self , dog_id:int ) -> None : ... 
+
+    async def update_dog_by_id(self, dog_id: int, dog_data: DogUpdate) -> Dog: ...
+
+    async def update_dog_by_dog_code(self, dog_code: str, dog_data: DogUpdate) -> Dog: ...
+

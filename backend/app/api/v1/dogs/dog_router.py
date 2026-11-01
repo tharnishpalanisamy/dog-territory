@@ -3,14 +3,24 @@ from typing import Annotated
 from app.core import UserRole
 from app.dependencies import get_dog_service, require_roles
 from app.models import User
-from app.schemas import DogCreate, DogResponse
+from app.schemas import (
+    DogCreate,
+    DogDetailResponse,
+    DogSummaryResponse,
+    DogUpdate,
+)
 from app.services.protocol import DogServiceProtocol
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Response, status
 
 router = APIRouter(prefix="/api/v1/dogs", tags=["Dog"])
 
 
-@router.post("/", response_model=DogResponse, status_code=status.HTTP_201_CREATED)
+# CREATE DOG
+@router.post(
+    "/",
+    response_model=DogDetailResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_dog(
     dog_data: DogCreate,
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
@@ -19,13 +29,20 @@ async def create_dog(
     return await service.create_dog(dog_data, user)
 
 
-@router.get("/", response_model=list[DogResponse])
+# GET ALL DOGS (SUMMARY)
+@router.get(
+    "/",
+    response_model=list[DogSummaryResponse],
+)
 async def get_all_dogs(
     user: Annotated[
         User,
         Depends(
             require_roles(
-                UserRole.USER, UserRole.ADMIN, UserRole.VOLUNTEER, UserRole.VETERINARIAN
+                UserRole.USER,
+                UserRole.ADMIN,
+                UserRole.VOLUNTEER,
+                UserRole.VETERINARIAN,
             )
         ),
     ],
@@ -34,17 +51,105 @@ async def get_all_dogs(
     return await service.get_all_dogs()
 
 
-@router.get('/{dog_id}' , response_model=DogResponse)  
+# GET DOG BY ID (DETAIL)
+@router.get(
+    "/{dog_id:int}",
+    response_model=DogDetailResponse,
+)
 async def get_dog_by_id(
-    dog_id : int , 
+    dog_id: int,
     user: Annotated[
         User,
         Depends(
             require_roles(
-                UserRole.USER, UserRole.ADMIN, UserRole.VOLUNTEER, UserRole.VETERINARIAN
+                UserRole.USER,
+                UserRole.ADMIN,
+                UserRole.VOLUNTEER,
+                UserRole.VETERINARIAN,
             )
         ),
     ],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
 ):
     return await service.get_dog_by_id(dog_id)
+
+
+# UPDATE DOG BY ID
+@router.patch(
+    "/{dog_id:int}",
+    response_model=DogDetailResponse,
+)
+async def update_dog_by_id(
+    dog_id: int,
+    dog_data: DogUpdate,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
+    service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
+):
+    return await service.update_dog_by_id(dog_id, dog_data)
+
+
+# UPDATE DOG BY DOG CODE
+@router.patch(
+    "/code/{dog_code}",
+    response_model=DogDetailResponse,
+)
+async def update_dog_by_dog_code(
+    dog_code: str,
+    dog_data: DogUpdate,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
+    service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
+):
+    return await service.update_dog_by_dog_code(dog_code, dog_data)
+
+
+# DELETE DOG BY ID
+@router.delete(
+    "/{dog_id:int}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
+)
+async def delete_dog_by_id(
+    dog_id: int,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
+    service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
+):
+    await service.delete_dog_by_id(dog_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+# GET DOG BY DOG CODE (DETAIL)
+@router.get(
+    "/code/{dog_code}",
+    response_model=DogDetailResponse,
+)
+async def get_dog_by_dog_code(
+    dog_code: str,
+    user: Annotated[
+        User,
+        Depends(
+            require_roles(
+                UserRole.USER,
+                UserRole.ADMIN,
+                UserRole.VOLUNTEER,
+                UserRole.VETERINARIAN,
+            )
+        ),
+    ],
+    service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
+):
+    return await service.get_dog_by_dog_code(dog_code)
+
+
+# DELETE DOG BY DOG CODE
+@router.delete(
+    "/code/{dog_code}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    response_class=Response,
+)
+async def delete_dog_by_dog_code(
+    dog_code: str,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
+    service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
+):
+    await service.delete_dog_by_dog_code(dog_code)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
