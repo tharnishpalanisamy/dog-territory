@@ -34,5 +34,4 @@ app.middleware("http")(log_requests)
 app.include_router(router_v1)
 
 
-
 register_exception_handlers(app)

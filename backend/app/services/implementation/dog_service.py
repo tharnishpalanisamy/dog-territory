@@ -70,8 +70,6 @@ class DogService:
             raise DogNotFoundException(f"Dog with code {dog_code} not found")
         return dog
 
-    
-
     async def update_dog_by_id(self, dog_id: int, dog_data: DogUpdate) -> Dog:
         dog = await self.repository.get_by_id(dog_id)
         if dog is None:
@@ -81,8 +79,6 @@ class DogService:
         updated_dog = await self.repository.update_by_id(dog, fields)
         await self.db.commit()
         return updated_dog
-
-
 
     async def update_dog_by_dog_code(self, dog_code: str, dog_data: DogUpdate) -> Dog:
         dog = await self.repository.get_by_dog_code(dog_code)

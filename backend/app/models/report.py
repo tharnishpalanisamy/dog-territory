@@ -1,7 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func , Enum
+from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
+
 from app.core import ReportStatus
 from app.database.base import Base
 
@@ -20,10 +21,12 @@ class Report(Base):
 
     status: Mapped[ReportStatus] = mapped_column(
         Enum(
-            ReportStatus , 
+            ReportStatus,
             name="report_status",
             values_callable=lambda enum_cls: [role.value for role in enum_cls],
-        ), nullable=False, default="pending"
+        ),
+        nullable=False,
+        default="pending",
     )
 
     created_at: Mapped[datetime] = mapped_column(

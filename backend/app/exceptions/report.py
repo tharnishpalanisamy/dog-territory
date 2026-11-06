@@ -1,2 +1,2 @@
-class ReportNotFoundException(Exception) :
-    pass 
+class ReportNotFoundException(Exception):
+    pass

@@ -8,17 +8,15 @@ class UserRole(str, enum.Enum):
     VETERINARIAN = "veterinarian"
 
 
-class DogReportType(str, enum.Enum) :
-    AGGRESSIVE = 'aggessive' 
-    SICK = 'sick' 
-    INJURED = 'injured' 
-    UNCOLLARED = 'uncollared' 
+class DogReportType(str, enum.Enum):
+    AGGRESSIVE = "aggessive"
+    SICK = "sick"
+    INJURED = "injured"
+    UNCOLLARED = "uncollared"
 
 
-class ReportStatus(str , enum.Enum) :
-    PENDING = 'pending' 
-    IN_PROGRESS = 'in_progress' 
-    RESOLVED = 'resolved' 
-    REJECTED = 'rejected' 
-
-    
+class ReportStatus(str, enum.Enum):
+    PENDING = "pending"
+    IN_PROGRESS = "in_progress"
+    RESOLVED = "resolved"
+    REJECTED = "rejected"

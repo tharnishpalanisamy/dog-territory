@@ -59,6 +59,6 @@ class ReportsService:
             raise ReportNotFoundException(f"Report with id {report_id} is not Found !")
         return result
 
-    async def get_current_user_reports(self, user: User) -> list[Report]: 
-        result = await self.report_repository.get_by_reporter_id(user.id) 
-        return result 
+    async def get_current_user_reports(self, user: User) -> list[Report]:
+        result = await self.report_repository.get_by_reporter_id(user.id)
+        return result

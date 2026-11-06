@@ -31,7 +31,7 @@ class Dog(Base):
     dog_code: Mapped[str] = mapped_column(
         String(20), nullable=False, index=True, unique=True
     )
-    dog_number: Mapped[int] = mapped_column(Integer, nullable=False, index=True)    
+    dog_number: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
     estimated_age: Mapped[int | None] = mapped_column(Integer, nullable=True)
     color: Mapped[str | None] = mapped_column(String(50), nullable=True)
     description: Mapped[str | None] = mapped_column(String(255), nullable=True)
@@ -44,8 +44,12 @@ class Dog(Base):
     latitude: Mapped[Decimal] = mapped_column(Numeric(10, 7), nullable=False)
     longitude: Mapped[Decimal] = mapped_column(Numeric(10, 7), nullable=False)
     vaccination_status: Mapped[str] = mapped_column(String(20), nullable=False)
-    vaccination_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    next_booster_due_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    vaccination_date: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    next_booster_due_date: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()

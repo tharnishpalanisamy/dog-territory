@@ -1,5 +1,7 @@
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile, status
+
 from app.core import DogReportType, UserRole
 from app.dependencies import get_current_user, get_reports_service, require_roles
 from app.models import User
@@ -10,7 +12,6 @@ from app.schemas import (
     ReportSummaryResponse,
 )
 from app.services.protocol import ReportsServiceProtocol
-from fastapi import APIRouter, Depends, File, Form, Query, UploadFile, status
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
@@ -51,6 +52,7 @@ async def get_all_reports(
 
     return await service.get_all_reports(filters, limit, offset)
 
+
 @router.get("/me", response_model=list[ReportResponse])
 async def get_current_user_reports(
     user: Annotated[User, Depends(get_current_user)],
@@ -58,12 +60,15 @@ async def get_current_user_reports(
 ):
     return await service.get_current_user_reports(user)
 
-@router.get('/assigned' , response_model=list[ReportResponse]) 
+
+@router.get("/assigned", response_model=list[ReportResponse])
 async def get_assigned_reports(
     user: Annotated[User, Depends(get_current_user)],
-    service: Annotated[ReportsServiceProtocol, Depends(require_roles(UserRole.VETERINARIAN))] , 
-) :
-    return await service.get_assigned_reports(user) 
+    service: Annotated[
+        ReportsServiceProtocol, Depends(require_roles(UserRole.VETERINARIAN))
+    ],
+):
+    return await service.get_assigned_reports(user)
 
 
 @router.get("/{report_id}", response_model=ReportSummaryResponse)
@@ -73,5 +78,3 @@ async def get_report_by_id(
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
 ):
     return await service.get_report_by_id(report_id)
-
-

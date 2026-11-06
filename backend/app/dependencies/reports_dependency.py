@@ -22,4 +22,4 @@ def get_reports_service(
     repository: Annotated[ReportsRepositoryProtocol, Depends(get_reports_repository)],
     dog_repository: Annotated[DogRepositoryProtocol, Depends(get_dog_repository)],
 ) -> ReportsServiceProtocol:
-    return ReportsService(db, repository , dog_repository)
+    return ReportsService(db, repository, dog_repository)

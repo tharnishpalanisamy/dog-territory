@@ -13,7 +13,8 @@ async def save_image(file: UploadFile) -> str:
 
     if extension not in ALLOWED_EXTENSIONS:
         raise HTTPException(
-            status_code=400, detail=f"Invalid format . Allowed format = {ALLOWED_EXTENSIONS}" 
+            status_code=400,
+            detail=f"Invalid format . Allowed format = {ALLOWED_EXTENSIONS}",
         )
 
     content = await file.read(MAX_FILE_SIZE + 1)

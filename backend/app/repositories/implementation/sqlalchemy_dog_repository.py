@@ -21,52 +21,34 @@ class DogRepository:
     async def get_all(
         self, filters: DogFilterParams, limit: int, offset: int
     ) -> Sequence[Dog]:
-        query = select(Dog) 
+        query = select(Dog)
 
-        conditions = [] 
-        if filters.status is not None :
-            conditions.append(
-                Dog.status == filters.status
-            )
-        
+        conditions = []
+        if filters.status is not None:
+            conditions.append(Dog.status == filters.status)
+
         if filters.is_sterilized is not None:
-            conditions.append(
-                Dog.is_sterilized == filters.is_sterilized
-            )
+            conditions.append(Dog.is_sterilized == filters.is_sterilized)
 
         if filters.vaccination_status is not None:
-            conditions.append(
-                Dog.vaccination_status == filters.vaccination_status
-            )
+            conditions.append(Dog.vaccination_status == filters.vaccination_status)
 
         if filters.state is not None:
-            conditions.append(
-                Dog.state == filters.state
-            )
+            conditions.append(Dog.state == filters.state)
 
         if filters.district is not None:
-            conditions.append(
-                Dog.district == filters.district
-            )
+            conditions.append(Dog.district == filters.district)
 
         if filters.area_name is not None:
-            conditions.append(
-                Dog.area_name == filters.area_name
-            )
+            conditions.append(Dog.area_name == filters.area_name)
         if filters.pincode is not None:
-            conditions.append(
-                Dog.pincode == filters.pincode
-            )
+            conditions.append(Dog.pincode == filters.pincode)
 
         if filters.estimated_age_min is not None:
-            conditions.append(
-                Dog.estimated_age >= filters.estimated_age_min
-            )
+            conditions.append(Dog.estimated_age >= filters.estimated_age_min)
 
         if filters.estimated_age_max is not None:
-            conditions.append(
-                Dog.estimated_age <= filters.estimated_age_max
-            )
+            conditions.append(Dog.estimated_age <= filters.estimated_age_max)
 
         if conditions:
             query = query.where(*conditions)
@@ -76,8 +58,7 @@ class DogRepository:
         )
         query = query.limit(limit).offset(offset)
 
-        
-        result = await self.db.scalars(query) 
+        result = await self.db.scalars(query)
 
         return result.all()
 

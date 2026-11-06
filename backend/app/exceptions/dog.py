@@ -1,3 +1,2 @@
-class DogNotFoundException(Exception) :
-    pass 
-
+class DogNotFoundException(Exception):
+    pass
