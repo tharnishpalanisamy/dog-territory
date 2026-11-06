@@ -3,7 +3,7 @@ import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1 import auth_router, dog_router
+from app.api.v1 import router_v1
 from app.core import setup_logging
 from app.exception_handlers import register_exception_handlers
 from app.middleware import log_requests
@@ -31,8 +31,8 @@ app.add_middleware(
 
 app.middleware("http")(log_requests)
 
-app.include_router(auth_router)
-app.include_router(dog_router)
+app.include_router(router_v1)
+
 
 
 register_exception_handlers(app)
