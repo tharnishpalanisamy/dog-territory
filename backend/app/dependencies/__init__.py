@@ -5,11 +5,13 @@ from .auth_dependency import (
     require_roles,
 )
 from .dog_dependency import get_dog_service
+from .reports_dependency import get_reports_service
 
 __all__ = [
     "admin_required",
     "get_auth_service",
     "get_current_user",
     "get_dog_service",
+    "get_reports_service",
     "require_roles",
 ]
