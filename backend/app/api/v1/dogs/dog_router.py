@@ -122,7 +122,6 @@ async def delete_dog_by_id(
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
 ):
     await service.delete_dog_by_id(dog_id)
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 # GET DOG BY DOG CODE (DETAIL)
@@ -160,4 +159,3 @@ async def delete_dog_by_dog_code(
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
 ):
     await service.delete_dog_by_dog_code(dog_code)
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
