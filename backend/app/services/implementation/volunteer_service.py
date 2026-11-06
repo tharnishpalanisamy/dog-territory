@@ -1,0 +1,2 @@
+class VolunteerService:
+    pass

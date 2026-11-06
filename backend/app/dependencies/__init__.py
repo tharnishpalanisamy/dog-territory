@@ -6,6 +6,7 @@ from .auth_dependency import (
 )
 from .dog_dependency import get_dog_service
 from .reports_dependency import get_reports_service
+from .volunteers_dependency import get_volunteer_repository, get_volunteers_service
 
 __all__ = [
     "admin_required",
@@ -13,5 +14,7 @@ __all__ = [
     "get_current_user",
     "get_dog_service",
     "get_reports_service",
+    "get_volunteer_repository",
+    "get_volunteers_service",
     "require_roles",
 ]

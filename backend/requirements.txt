@@ -12,3 +12,6 @@ pwdlib[argon2]
 alembic 
 PyJWT[crypto]
 ruff 
+pytest
+pytest-asyncio
+httpx

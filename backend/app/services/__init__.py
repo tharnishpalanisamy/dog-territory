@@ -3,12 +3,14 @@ from .implementation import (
     DogService,
     RefreshTokenService,
     ReportsService,
+    VolunteerService,
 )
 from .protocol import (
     AuthServiceProtocol,
     DogServiceProtocol,
     RefreshTokenServiceProtocol,
     ReportsServiceProtocol,
+    VolunteerServiceProtocol,
 )
 
 __all__ = [
@@ -20,4 +22,6 @@ __all__ = [
     "RefreshTokenServiceProtocol",
     "ReportsService",
     "ReportsServiceProtocol",
+    "VolunteerService",
+    "VolunteerServiceProtocol",
 ]
