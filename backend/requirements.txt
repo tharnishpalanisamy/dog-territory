@@ -3,8 +3,9 @@ uvicorn
 pydantic 
 email-validator
 pydantic-settings 
+pydantic[email]
 psycopg 
-
+python-multipart
 sqlalchemy[asyncio]
 asyncpg
 pwdlib[argon2]

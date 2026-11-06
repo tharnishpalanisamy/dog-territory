@@ -1,5 +1,18 @@
 from typing import Protocol
 
+from app.models import Report , User
+from app.schemas import ReportFilterParams
+
 
 class ReportsRepositoryProtocol(Protocol):
-    async def create(): ...
+    async def create(self, report: Report) -> Report: ...
+
+    async def get_all(
+        self, filters: ReportFilterParams, limit: int, offset: int
+    ) -> list[Report]: ...
+
+    async def get_by_id(self, id: int) -> Report | None: ...
+
+    async def get_by_reporter_id(self , reporter_id) -> list[Report] : ... 
+
+    async def get_assigned_reports(self , user:User) -> list[Report] : ...

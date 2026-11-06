@@ -12,6 +12,12 @@ from .dog import (
     DogSummaryResponse,
     DogUpdate,
 )
+from .report import (
+    ReportCreate,
+    ReportFilterParams,
+    ReportResponse,
+    ReportSummaryResponse,
+)
 from .user import UserCreate, UserResponse
 
 __all__ = [
@@ -24,6 +30,10 @@ __all__ = [
     "LoginResponse",
     "RefreshTokenCreate",
     "RefreshTokenResponse",
+    "ReportCreate",
+    "ReportFilterParams",
+    "ReportResponse",
+    "ReportSummaryResponse",
     "UserCreate",
     "UserLogin",
     "UserResponse",

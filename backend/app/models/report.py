@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func , Enum
 from sqlalchemy.orm import Mapped, mapped_column
-
+from app.core import ReportStatus
 from app.database.base import Base
 
 
@@ -17,7 +17,15 @@ class Report(Base):
     location: Mapped[str] = mapped_column(Text, nullable=False)
     image_filename: Mapped[str | None] = mapped_column(String(255), nullable=True)
     image_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
+
+    status: Mapped[ReportStatus] = mapped_column(
+        Enum(
+            ReportStatus , 
+            name="report_status",
+            values_callable=lambda enum_cls: [role.value for role in enum_cls],
+        ), nullable=False, default="pending"
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),

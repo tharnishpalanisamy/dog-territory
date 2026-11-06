@@ -40,10 +40,8 @@ async def get_all_dogs(
         User,
         Depends(
             require_roles(
-                UserRole.USER,
                 UserRole.ADMIN,
                 UserRole.VOLUNTEER,
-                UserRole.VETERINARIAN,
             )
         ),
     ],
