@@ -1,4 +1,4 @@
-from typing import Annotated
+﻿from typing import Annotated
 
 from app.dependencies import admin_required, get_auth_service , require_roles
 from app.core import UserRole

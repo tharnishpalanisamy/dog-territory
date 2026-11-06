@@ -1,4 +1,4 @@
-from typing import Annotated
+﻿from typing import Annotated
 
 from app.core import UserRole
 from app.dependencies import get_dog_service, require_roles
