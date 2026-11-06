@@ -1,7 +1,6 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, status
-
 from app.dependencies import (
     get_auth_service,
     get_current_user,

@@ -27,7 +27,7 @@ async def create_dog(
     dog_data: DogCreate,
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
-):
+) -> DogDetailResponse:
     return await service.create_dog(dog_data, user)
 
 
@@ -50,7 +50,7 @@ async def get_all_dogs(
     filters: Annotated[DogFilterParams, Depends()],
     limit: int = Query(ge=1, le=100, default=20),
     offset: int = Query(ge=0, default=0),
-):
+) -> list[DogSummaryResponse]:
     return await service.get_all_dogs(
         filters=filters,
         limit=limit,
@@ -77,7 +77,7 @@ async def get_dog_by_id(
         ),
     ],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
-):
+) -> DogDetailResponse:
     return await service.get_dog_by_id(dog_id)
 
 
@@ -91,7 +91,7 @@ async def update_dog_by_id(
     dog_data: DogUpdate,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
-):
+) -> DogDetailResponse:
     return await service.update_dog_by_id(dog_id, dog_data)
 
 
@@ -105,7 +105,7 @@ async def update_dog_by_dog_code(
     dog_data: DogUpdate,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
-):
+) -> DogDetailResponse:
     return await service.update_dog_by_dog_code(dog_code, dog_data)
 
 
@@ -119,7 +119,7 @@ async def delete_dog_by_id(
     dog_id: int,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
-):
+) -> None:
     await service.delete_dog_by_id(dog_id)
 
 
@@ -142,7 +142,7 @@ async def get_dog_by_dog_code(
         ),
     ],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
-):
+) -> DogDetailResponse:
     return await service.get_dog_by_dog_code(dog_code)
 
 
@@ -156,5 +156,5 @@ async def delete_dog_by_dog_code(
     dog_code: str,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
-):
+) -> None:
     await service.delete_dog_by_dog_code(dog_code)

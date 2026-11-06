@@ -109,7 +109,7 @@ class DogFilterParams(BaseModel):
     estimated_age_max: int | None = Field(default=None, ge=0, le=30)
 
     @model_validator(mode="after")
-    def validate_age_range(self):
+    def validate_age_range(self) -> "DogFilterParams":
         if (
             self.estimated_age_min is not None
             and self.estimated_age_max is not None
