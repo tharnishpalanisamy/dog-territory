@@ -1,7 +1,5 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Response, status
-
 from app.core import UserRole
 from app.dependencies import get_dog_service, require_roles
 from app.models import User
@@ -13,6 +11,7 @@ from app.schemas import (
     DogUpdate,
 )
 from app.services.protocol import DogServiceProtocol
+from fastapi import APIRouter, Depends, Query, Response, status
 
 router = APIRouter(prefix="/api/v1/dogs", tags=["Dog"])
 

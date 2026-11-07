@@ -41,6 +41,6 @@ class ReportSummaryResponse(BaseModel):
 
 
 class ReportFilterParams(BaseModel):
-    report_type: DogReportType | None
+    report_type: DogReportType | None = None 
     status: ReportStatus | None = None
     pincode: str | None = Field(min_length=6, max_length=6, default=None)

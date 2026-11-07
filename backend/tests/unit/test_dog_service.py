@@ -2,7 +2,6 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
-
 from app.exceptions import DogNotFoundException
 from app.schemas import DogFilterParams, DogUpdate
 from app.services.implementation.dog_service import DogService
@@ -30,12 +29,19 @@ async def test_create_dog_assigns_next_pincode_code(dog_service, user_factory):
     service, db, repo = dog_service
     repo.create.side_effect = lambda dog: dog
     data = {
-        "state": "State", "district": "District", "area_name": "Area",
-        "pin_code": "560001", "latitude": 12.9, "longitude": 77.6,
+        "state": "State",
+        "district": "District",
+        "area_name": "Area",
+        "pin_code": "560001",
+        "latitude": 12.9,
+        "longitude": 77.6,
         "vaccination_status": "unknown",
     }
 
-    result = await service.create_dog(__import__("app.schemas", fromlist=["DogCreate"]).DogCreate(**data), user_factory())
+    result = await service.create_dog(
+        __import__("app.schemas", fromlist=["DogCreate"]).DogCreate(**data),
+        user_factory(),
+    )
 
     assert result.dog_code == "560001-5"
     assert result.dog_number == 5
