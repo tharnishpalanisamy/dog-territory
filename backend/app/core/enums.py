@@ -20,3 +20,35 @@ class ReportStatus(str, enum.Enum):
     IN_PROGRESS = "in_progress"
     RESOLVED = "resolved"
     REJECTED = "rejected"
+
+
+class AssignmentType(str, enum.Enum):
+    RESCUE = "RESCUE"
+    TRANSPORT = "TRANSPORT"
+    VACCINATION = "VACCINATION"
+    STERILIZATION = "STERILIZATION"
+    MEDICAL_CARE = "MEDICAL_CARE"
+    FEEDING = "FEEDING"
+    OTHER = "OTHER"
+
+
+class AssignmentPriority(str, enum.Enum):
+    LOW = "LOW"
+    NORMAL = "NORMAL"
+    HIGH = "HIGH"
+    URGENT = "URGENT"
+
+
+class AssignmentStatus(str, enum.Enum):
+    OPEN = "OPEN"
+    ACCEPTED = "ACCEPTED"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
+
+
+class AssignmentUpdateType(str , enum.Enum):
+    PROGRESS = "PROGRESS"
+    NOTE = "NOTE"
+    ISSUE = "ISSUE"
+    LOCATION = "LOCATION"

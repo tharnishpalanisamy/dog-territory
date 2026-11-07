@@ -1,10 +1,15 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, Text, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core import ReportStatus
 from app.database.base import Base
+
+if TYPE_CHECKING:
+    from app.models.report import Report
+    from app.models.work_assignments import WorkAssignment
 
 
 class Report(Base):
@@ -38,4 +43,9 @@ class Report(Base):
         DateTime(timezone=True),
         onupdate=func.now(),
         nullable=True,
+    )
+
+    work_assignments: Mapped[list["WorkAssignment"]] = relationship(
+        back_populates="report",
+        cascade="all, delete-orphan",
     )

@@ -13,7 +13,7 @@ from app.schemas import (
 from app.services.protocol import DogServiceProtocol
 from fastapi import APIRouter, Depends, Query, Response, status
 
-router = APIRouter(prefix="/api/v1/dogs", tags=["Dog"])
+router = APIRouter(prefix="/dogs", tags=["Dog"])
 
 
 # CREATE DOG

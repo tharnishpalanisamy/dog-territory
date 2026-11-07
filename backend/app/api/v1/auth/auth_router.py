@@ -16,7 +16,7 @@ from app.schemas import (
 from app.services.protocol import AuthServiceProtocol
 from fastapi import APIRouter, Depends, status
 
-router = APIRouter(prefix="/api/v1/auth", tags=["Authentication"])
+router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK)

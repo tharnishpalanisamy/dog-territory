@@ -8,7 +8,7 @@ from app.schemas import ReportCreate
 
 class ReportsServiceProtocol(Protocol):
     async def create_report(
-        self, user: User, data: ReportCreate, image: UploadFile
+        self, user: User, data: ReportCreate, image: UploadFile | None
     ): ...
 
     async def get_all_reports(self , filters, limit: int, offset: int): ...
