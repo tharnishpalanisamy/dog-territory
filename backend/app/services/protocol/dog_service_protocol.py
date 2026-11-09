@@ -1,16 +1,23 @@
-from collections.abc import Sequence
 from typing import Protocol
 
 from app.models import Dog, User
-from app.schemas import DogCreate, DogFilterParams, DogUpdate
+from app.schemas import (
+    DogCreate,
+    DogDetailResponse,
+    DogFilterParams,
+    DogSummaryResponse,
+    DogUpdate,
+)
 
 
 class DogServiceProtocol(Protocol):
-    async def create_dog(self, dog_data: DogCreate, current_user: User) -> Dog: ...
+    async def create_dog(
+        self, dog_data: DogCreate, current_user: User
+    ) -> DogDetailResponse: ...
 
     async def get_all_dogs(
         self, filters: DogFilterParams, limit: int, offset: int
-    ) -> Sequence[Dog]: ...
+    ) -> list[DogSummaryResponse]: ...
 
     async def get_dog_by_id(self, id) -> Dog: ...
 

@@ -31,6 +31,9 @@ class ReportsService:
             dog_id=None if data.dog_code is None else dog.id,
             report_type=data.report_type,
             description=data.description,
+            state = data.state , 
+            district = data.district , 
+            area_name = data.area_name ,
             pincode=data.pincode,
             location=data.location,
             image_filename=None if image is None else filename,
@@ -62,4 +65,15 @@ class ReportsService:
     async def get_current_user_reports(self, user: User) -> list[Report]:
         result = await self.report_repository.get_by_reporter_id(user.id)
         return result
-    
+
+    async def update_status_by_report_id(self, report_id, report_data):
+        report = await self.report_repository.get_by_id(report_id)
+
+        if report is None:
+            raise ReportNotFoundException(f"Report with id {report_id} not found ")
+        
+        result = await self.report_repository.update_status_by_id(
+            report, report_data.status
+        )
+        await self.db.commit()
+        return result

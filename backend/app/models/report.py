@@ -19,7 +19,17 @@ class Report(Base):
     dog_id: Mapped[int | None] = mapped_column(ForeignKey("dogs.id"), nullable=True)
     report_type: Mapped[str] = mapped_column(String(50), nullable=False)
     description: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    state: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False,
+        default="Tamil Nadu",
+    )
+    district: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False,
+    )
     pincode: Mapped[str] = mapped_column(String(10), nullable=False)
+    area_name: Mapped[str] = mapped_column(String(100), nullable=False)
     location: Mapped[str] = mapped_column(Text, nullable=False)
     image_filename: Mapped[str | None] = mapped_column(String(255), nullable=True)
     image_path: Mapped[str | None] = mapped_column(String(500), nullable=True)

@@ -53,3 +53,9 @@ class ReportsRepository:
 
     async def get_assigned_reports(self, user: User) -> list[Report]:
         return await self.get_by_reporter_id(user.id)
+
+    async def update_status_by_id(self, report, status):
+        report.status = status
+        await self.db.flush()
+        await self.db.refresh(report)
+        return report

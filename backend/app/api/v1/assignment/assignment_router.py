@@ -1,0 +1,77 @@
+from typing import Annotated
+
+from app.core import UserRole
+from app.dependencies import get_work_assignment_service, require_roles
+from app.models import User
+from app.schemas import (
+    WorkAssignmentCreate,
+    WorkAssignmentDetailResponse,
+    WorkAssignmentFilterParams,
+    WorkAssignmentResponse,
+    WorkAssignmentSummaryResponse,
+)
+from app.services.protocol import WorkAssignmentServiceProtocol
+from fastapi import APIRouter, Depends, Query, status
+
+router = APIRouter(prefix="/assignments", tags=["assignment"])
+
+
+@router.post(
+    "/", status_code=status.HTTP_201_CREATED, response_model=WorkAssignmentResponse
+)
+async def create_assignment(
+    assignment_data: WorkAssignmentCreate,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
+    service: Annotated[
+        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+    ],
+):
+    return await service.create_work_assignment(user, assignment_data)
+
+
+@router.get("/", response_model=list[WorkAssignmentSummaryResponse])
+async def get_all_assignments(
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
+    service: Annotated[
+        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+    ],
+    filters: Annotated[WorkAssignmentFilterParams, Depends()],
+    limit: int = Query(ge=1, default=20, le=100),
+    offset: int = Query(ge=0, default=0),
+):
+    return await service.get_all_assignments(filters, limit, offset)
+
+
+@router.get("/available", response_model=list[WorkAssignmentSummaryResponse])
+async def get_available_assignments():
+    pass
+
+
+@router.get("/assigned", response_model=list[WorkAssignmentSummaryResponse])
+async def get_current_user_assignments():
+    pass
+
+
+@router.get("/{assignment_id}", response_model=WorkAssignmentDetailResponse)
+async def get_assignment_by_id(assignment_id: int):
+    pass
+
+
+@router.post("/{assignment_id}/claim")
+async def claim_assignment(assignment_id: int):
+    pass
+
+
+@router.patch("/{assignment_id}/assign")
+async def assign_assignment(assignment_id: int):
+    pass
+
+
+@router.patch("/{assignment_id}/status")
+async def status_assignment(assignment_id: int):
+    pass
+
+
+@router.post("/{assignment_id}/updates")
+async def updates_assignment(assignment_id: int):
+    pass

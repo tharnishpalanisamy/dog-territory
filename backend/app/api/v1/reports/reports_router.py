@@ -7,6 +7,7 @@ from app.schemas import (
     ReportCreate,
     ReportFilterParams,
     ReportResponse,
+    ReportStatusUpdate,
     ReportSummaryResponse,
 )
 from app.services.protocol import ReportsServiceProtocol
@@ -23,6 +24,9 @@ async def create_report(
     user: Annotated[User, Depends(get_current_user)],
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
     description: str = Form(...),
+    state:str = Form(...) , 
+    district : str = Form(...) , 
+    area_name:str = Form(...) ,
     pincode: str = Form(...),
     location: str = Form(...),
     dog_code: Annotated[str | None, Form()] = None,
@@ -32,6 +36,9 @@ async def create_report(
     data = ReportCreate(
         report_type=report_type,
         description=description,
+        state = state ,
+        district = district ,
+        area_name = area_name , 
         pincode=pincode,
         location=location,
         dog_code=dog_code,
@@ -60,16 +67,6 @@ async def get_current_user_reports(
     return await service.get_current_user_reports(user)
 
 
-@router.get("/assigned", response_model=list[ReportResponse])
-async def get_assigned_reports(
-    user: Annotated[User, Depends(get_current_user)],
-    service: Annotated[
-        ReportsServiceProtocol, Depends(require_roles(UserRole.VETERINARIAN))
-    ],
-):
-    return await service.get_assigned_reports(user)
-
-
 @router.get("/{report_id}", response_model=ReportSummaryResponse)
 async def get_report_by_id(
     report_id: int,
@@ -77,3 +74,13 @@ async def get_report_by_id(
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
 ):
     return await service.get_report_by_id(report_id)
+
+
+@router.patch("/{report_id}/status", response_model=ReportResponse)
+async def update_report_status(
+    report_id: int,
+    report_data: ReportStatusUpdate,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
+    service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
+):
+    return await service.update_status_by_report_id(report_id, report_data)

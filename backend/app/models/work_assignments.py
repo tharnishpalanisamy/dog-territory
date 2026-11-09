@@ -17,7 +17,6 @@ from app.database.base import Base
 
 if TYPE_CHECKING:
     from app.models.assignment_update import AssignmentUpdate
-    from app.models.dog import Dog
     from app.models.report import Report
     from app.models.user import User
     from app.models.work_assignments import WorkAssignment
@@ -35,12 +34,6 @@ class WorkAssignment(Base):
     report_id: Mapped[int] = mapped_column(
         ForeignKey("reports.id", ondelete="CASCADE"),
         nullable=False,
-        index=True,
-    )
-
-    dog_id: Mapped[int | None] = mapped_column(
-        ForeignKey("dogs.id", ondelete="SET NULL"),
-        nullable=True,
         index=True,
     )
 
@@ -125,8 +118,6 @@ class WorkAssignment(Base):
     report: Mapped["Report"] = relationship(
         back_populates="work_assignments",
     )
-
-    dog: Mapped["Dog | None"] = relationship()
 
     assignee: Mapped["User | None"] = relationship(
         foreign_keys=[assigned_to],

@@ -8,6 +8,9 @@ from app.core import DogReportType, ReportStatus
 class ReportCreate(BaseModel):
     report_type: DogReportType
     description: str | None = None
+    state: str
+    district: str
+    area_name: str
     pincode: str
     location: str
     dog_code: str | None = None
@@ -41,6 +44,10 @@ class ReportSummaryResponse(BaseModel):
 
 
 class ReportFilterParams(BaseModel):
-    report_type: DogReportType | None = None 
+    report_type: DogReportType | None = None
     status: ReportStatus | None = None
     pincode: str | None = Field(min_length=6, max_length=6, default=None)
+
+
+class ReportStatusUpdate(BaseModel):
+    status: ReportStatus

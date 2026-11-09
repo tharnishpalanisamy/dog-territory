@@ -16,11 +16,21 @@ from .report import (
     ReportCreate,
     ReportFilterParams,
     ReportResponse,
+    ReportStatusUpdate,
     ReportSummaryResponse,
 )
 from .user import UserCreate, UserResponse
+from .work_assignment import (
+    AssignmentReportResponse,
+    WorkAssignmentCreate,
+    WorkAssignmentDetailResponse,
+    WorkAssignmentFilterParams,
+    WorkAssignmentResponse,
+    WorkAssignmentSummaryResponse,
+)
 
 __all__ = [
+    "AssignmentReportResponse",
     "DogCreate",
     "DogDetailResponse",
     "DogFilterParams",
@@ -33,8 +43,14 @@ __all__ = [
     "ReportCreate",
     "ReportFilterParams",
     "ReportResponse",
+    "ReportStatusUpdate",
     "ReportSummaryResponse",
     "UserCreate",
     "UserLogin",
     "UserResponse",
+    "WorkAssignmentCreate",
+    "WorkAssignmentDetailResponse",
+    "WorkAssignmentFilterParams",
+    "WorkAssignmentResponse",
+    "WorkAssignmentSummaryResponse",
 ]
