@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core import create_access_token, hash_password, verify_password
 from app.exceptions import InvalidCredentialsException
 from app.models import User
-from app.repositories.protocols import UserProtocol
+from app.repositories.protocols import UserRepositoryProtocol
 from app.schemas import (
     LoginResponse,
     RefreshTokenResponse,
@@ -20,7 +20,7 @@ class AuthService:
     def __init__(
         self,
         db: AsyncSession,
-        repository: UserProtocol,
+        repository: UserRepositoryProtocol,
         refresh_token_service: RefreshTokenServiceProtocol,
     ) -> None:
         self.db = db

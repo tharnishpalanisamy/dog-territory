@@ -118,7 +118,7 @@ class WorkAssignmentRepository:
         return result.all()
 
     async def get_by_id(self, id) -> WorkAssignment | None:
-        query = await self.db.execute(
+        query = (
             select(WorkAssignment)
             .options(selectinload(WorkAssignment.report))
             .where(WorkAssignment.id == id)
@@ -126,8 +126,11 @@ class WorkAssignmentRepository:
         result = await self.db.scalar(query)
         return result
 
-    async def update_assigned_to(self, assignment, assigned_to) -> WorkAssignment:
+    async def update_assigned_to(
+        self, assignment: WorkAssignment, assigned_to: int, assigned_by: int
+    ) -> WorkAssignment:
         assignment.assigned_to = assigned_to
+        assignment.assigned_by = assigned_by
         await self.db.flush()
         await self.db.refresh(assignment)
 

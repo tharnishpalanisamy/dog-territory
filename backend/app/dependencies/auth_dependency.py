@@ -12,7 +12,10 @@ from app.database.connection import get_db
 from app.exceptions import NotAuthorizedException
 from app.models import User
 from app.repositories.implementation import RefreshTokenRepository, UserRepository
-from app.repositories.protocols import RefreshTokenRepositoryProtocol, UserProtocol
+from app.repositories.protocols import (
+    RefreshTokenRepositoryProtocol,
+    UserRepositoryProtocol,
+)
 from app.services import AuthService
 from app.services.implementation import RefreshTokenService
 from app.services.protocol import AuthServiceProtocol, RefreshTokenServiceProtocol
@@ -35,13 +38,13 @@ def get_refresh_token_service(
 
 def get_user_repository(
     db: Annotated[AsyncSession, Depends(get_db)],
-) -> UserProtocol:
+) -> UserRepositoryProtocol:
     return UserRepository(db)
 
 
 def get_auth_service(
     db: Annotated[AsyncSession, Depends(get_db)],
-    repository: Annotated[UserProtocol, Depends(get_user_repository)],
+    repository: Annotated[UserRepositoryProtocol, Depends(get_user_repository)],
     refresh_token_service: Annotated[
         RefreshTokenServiceProtocol, Depends(get_refresh_token_service)
     ],
@@ -54,7 +57,7 @@ bearer_scheme = HTTPBearer(auto_error=False)
 
 async def get_current_user(
     credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)],
-    repository: Annotated[UserProtocol, Depends(get_user_repository)],
+    repository: Annotated[UserRepositoryProtocol, Depends(get_user_repository)],
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

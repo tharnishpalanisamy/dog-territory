@@ -10,7 +10,7 @@ from app.repositories.protocols import (
     VolunteerRepositoryProtocol,
     WorkAssignmentRepositoryProtocol,
 )
-from app.schemas import WorkAssignmentCreate
+from app.schemas import AssignAssignment, WorkAssignmentCreate
 
 
 class WorkAssignmentService:
@@ -73,7 +73,9 @@ class WorkAssignmentService:
 
         return result
 
-    async def update_assigned_to(self, assignment_id: int, data) -> WorkAssignment:
+    async def update_assigned_to(
+        self, assignment_id: int, data: AssignAssignment, user: User
+    ) -> WorkAssignment:
         assignment = await self.repository.get_by_id(assignment_id)
 
         if assignment is None:
@@ -89,9 +91,9 @@ class WorkAssignmentService:
         if assignment.report.pincode not in volunteer.service_pincodes:
             raise VolunteerServiceNotAvailable("Volunteer does not serve that location")
         result = await self.repository.update_assigned_to(
-            assignment_id, data.assigned_to
+            assignment, data.assigned_to, user.id
         )
 
-        self.db.commit()
+        await self.db.commit()
 
         return result

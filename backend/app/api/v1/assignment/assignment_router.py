@@ -88,7 +88,7 @@ async def assign_assignment(
         WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
     ],
 ):
-    return await service.update_assigned_to(assignment_id ,data )
+    return await service.update_assigned_to(assignment_id, data, user)
 
 
 @router.patch("/{assignment_id}/status")

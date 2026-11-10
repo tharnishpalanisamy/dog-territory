@@ -1,11 +1,20 @@
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core import VolunteerAvailability
+
 
 class VolunteerCreate(BaseModel):
     phone_number: str = Field(min_length=10, max_length=20)
+
     state: str = Field(min_length=2, max_length=100)
     district: str = Field(min_length=2, max_length=100)
-    areas: list[str] = Field(default_factory=list)
+
+    area_name: str = Field(min_length=2, max_length=150)
+    pincode: str = Field(min_length=4, max_length=10)
+
+    availability: VolunteerAvailability = VolunteerAvailability.WEEKENDS
+
+    service_pincodes: list[str] = Field(default_factory=list)
 
 
 class VolunteerUpdate(BaseModel):

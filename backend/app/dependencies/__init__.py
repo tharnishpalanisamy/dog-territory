@@ -6,7 +6,7 @@ from .auth_dependency import (
 )
 from .dog_dependency import get_dog_service
 from .reports_dependency import get_reports_service
-from .volunteers_dependency import get_volunteer_repository, get_volunteers_service
+from .volunteers_dependency import get_volunteer_repository, get_volunteer_service
 from .work_assignment_dependency import get_work_assignment_service
 
 __all__ = [
@@ -16,7 +16,7 @@ __all__ = [
     "get_dog_service",
     "get_reports_service",
     "get_volunteer_repository",
-    "get_volunteers_service",
+    "get_volunteer_service",
     "get_work_assignment_service",
     "require_roles",
 ]

@@ -24,7 +24,11 @@ class Volunteer(Base):
     pincode: Mapped[str] = mapped_column(String(10), nullable=False)
 
     availability: Mapped[VolunteerAvailability] = mapped_column(
-        Enum(VolunteerAvailability, name="Volunteer_availability_enum"),
+        Enum(
+            VolunteerAvailability,
+            name="Volunteer_availability_enum",
+            values_callable=lambda enum: [e.value for e in enum],
+        ),
         nullable=False,
         default=VolunteerAvailability.WEEKENDS,
     )

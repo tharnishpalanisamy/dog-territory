@@ -6,7 +6,8 @@ from app.dependencies import (
     require_roles,
 )
 from app.models import User
-from app.services.protocols import VolunteerServiceProtocol
+from app.schemas import VolunteerApprovalUpdate, VolunteerCreate, VolunteerUpdate
+from app.services.protocol import VolunteerServiceProtocol
 from fastapi import APIRouter, Depends, Query, status
 
 router = APIRouter(prefix="/volunteers", tags=["Volunteers"])
@@ -14,6 +15,7 @@ router = APIRouter(prefix="/volunteers", tags=["Volunteers"])
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_volunteer_profile(
+    data: VolunteerCreate,
     user: Annotated[
         User,
         Depends(require_roles(UserRole.USER)),
@@ -23,7 +25,7 @@ async def create_volunteer_profile(
         Depends(get_volunteer_service),
     ],
 ):
-    return await service.create_profile(user.id)
+    return await service.create_profile(user.id, data)
 
 
 @router.get("/me")
@@ -42,6 +44,7 @@ async def get_my_volunteer_profile(
 
 @router.patch("/me")
 async def update_my_volunteer_profile(
+    data: VolunteerUpdate,
     user: Annotated[
         User,
         Depends(require_roles(UserRole.VOLUNTEER)),
@@ -51,7 +54,7 @@ async def update_my_volunteer_profile(
         Depends(get_volunteer_service),
     ],
 ):
-    return await service.update_profile(user.id)
+    return await service.update_profile(user.id, data)
 
 
 @router.get("/")
@@ -88,6 +91,7 @@ async def get_volunteer(
 @router.patch("/{volunteer_id}/approval")
 async def update_volunteer_approval(
     volunteer_id: int,
+    data: VolunteerApprovalUpdate,
     user: Annotated[
         User,
         Depends(require_roles(UserRole.ADMIN)),
@@ -97,7 +101,7 @@ async def update_volunteer_approval(
         Depends(get_volunteer_service),
     ],
 ):
-    return await service.update_approval(volunteer_id)
+    return await service.update_approval(volunteer_id, data)
 
 
 @router.delete("/{volunteer_id}", status_code=status.HTTP_204_NO_CONTENT)
