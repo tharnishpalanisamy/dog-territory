@@ -119,3 +119,7 @@ class AvailableAssignmentFilterParams(BaseModel):
     priority: AssignmentPriority | None = None
     task_type: AssignmentType | None = None
     search: str | None = None
+
+
+class AssignAssignment(BaseModel) :
+    assigned_to : int 

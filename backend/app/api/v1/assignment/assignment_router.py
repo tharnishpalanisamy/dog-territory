@@ -10,6 +10,7 @@ from app.schemas import (
     WorkAssignmentFilterParams,
     WorkAssignmentResponse,
     WorkAssignmentSummaryResponse,
+    AssignAssignment
 )
 from app.services.protocol import WorkAssignmentServiceProtocol
 from fastapi import APIRouter, Depends, Query, status
@@ -81,12 +82,13 @@ async def claim_assignment(assignment_id: int):
 @router.patch("/{assignment_id}/assign")
 async def assign_assignment(
     assignment_id: int,
+    data:AssignAssignment , 
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
     service: Annotated[
         WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
     ],
 ):
-    return await service.update_assigned_to(assignment_id , )
+    return await service.update_assigned_to(assignment_id ,data )
 
 
 @router.patch("/{assignment_id}/status")

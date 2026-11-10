@@ -20,7 +20,14 @@ from .report import (
     ReportSummaryResponse,
 )
 from .user import UserCreate, UserResponse
+from .volunteer import (
+    VolunteerApprovalUpdate,
+    VolunteerCreate,
+    VolunteerResponse,
+    VolunteerUpdate,
+)
 from .work_assignment import (
+    AssignAssignment,
     AssignmentReportResponse,
     AvailableAssignmentFilterParams,
     WorkAssignmentCreate,
@@ -31,6 +38,7 @@ from .work_assignment import (
 )
 
 __all__ = [
+    "AssignAssignment",
     "AssignmentReportResponse",
     "AvailableAssignmentFilterParams",
     "DogCreate",
@@ -50,6 +58,10 @@ __all__ = [
     "UserCreate",
     "UserLogin",
     "UserResponse",
+    "VolunteerApprovalUpdate",
+    "VolunteerCreate",
+    "VolunteerResponse",
+    "VolunteerUpdate",
     "WorkAssignmentCreate",
     "WorkAssignmentDetailResponse",
     "WorkAssignmentFilterParams",

@@ -7,9 +7,15 @@ from .user_exceptions import (
     NotAuthorizedException,
     UserNotFoundException,
 )
-from .volunteer import VolunteerNotFoundException
+from .volunteer import (
+    VolunteerAlreadyExistsException,
+    VolunteerNotFoundException,
+    VolunteerServiceNotAvailable,
+)
+from .work_assignment import AssignmentNotFoundException
 
 __all__ = [
+    "AssignmentNotFoundException",
     "DogNotFoundException",
     "EmailAlreadyExists",
     "InvalidCredentialsException",
@@ -17,5 +23,7 @@ __all__ = [
     "NotAuthorizedException",
     "ReportNotFoundException",
     "UserNotFoundException",
+    "VolunteerAlreadyExistsException",
     "VolunteerNotFoundException",
+    "VolunteerServiceNotAvailable",
 ]
