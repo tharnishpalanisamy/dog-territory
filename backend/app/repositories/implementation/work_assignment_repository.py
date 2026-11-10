@@ -1,8 +1,10 @@
+from datetime import UTC, datetime
+
 from sqlalchemy import or_, select
 from sqlalchemy.orm import selectinload
 
 from app.core import AssignmentStatus
-from app.models import User, WorkAssignment
+from app.models import Report, WorkAssignment
 
 
 class WorkAssignmentRepository:
@@ -78,6 +80,7 @@ class WorkAssignmentRepository:
         conditions = []
 
         conditions.append(WorkAssignment.status == AssignmentStatus.OPEN)
+        conditions.append(WorkAssignment.assigned_to.is_(None))
 
         if filters.state is not None:
             conditions.append(WorkAssignment.report.state == filters.state)
@@ -112,15 +115,15 @@ class WorkAssignmentRepository:
 
         return result.all()
 
-    async def get_assigned_assignments(self, user: User) -> list[WorkAssignment]:
-        query = select(WorkAssignment).where(WorkAssignment.assigned_to == user.id)
+    async def get_assignments_by_volunteer_id(self, id) -> list[WorkAssignment]:
+        query = select(WorkAssignment).where(WorkAssignment.assigned_to == id)
         result = await self.db.scalars(query)
         return result.all()
 
     async def get_by_id(self, id) -> WorkAssignment | None:
         query = (
             select(WorkAssignment)
-            .options(selectinload(WorkAssignment.report))
+            .options(selectinload(WorkAssignment.report).selectinload(Report.dog))
             .where(WorkAssignment.id == id)
         )
         result = await self.db.scalar(query)
@@ -129,9 +132,26 @@ class WorkAssignmentRepository:
     async def update_assigned_to(
         self, assignment: WorkAssignment, assigned_to: int, assigned_by: int
     ) -> WorkAssignment:
+
         assignment.assigned_to = assigned_to
         assignment.assigned_by = assigned_by
         await self.db.flush()
         await self.db.refresh(assignment)
 
+        return assignment
+
+    async def claim_assignment(
+        self, assignment: WorkAssignment, assigned_to
+    ) -> WorkAssignment:
+        assignment.assigned_to = assigned_to
+        assignment.accepted_at = datetime.now(UTC)
+        assignment.status = AssignmentStatus.ACCEPTED
+        await self.db.flush()
+        await self.db.refresh(assignment)
+        return assignment
+
+    async def update_status(self, assignment, status) -> WorkAssignment:
+        assignment.status = status
+        await self.db.flush()
+        await self.db.refresh(assignment)
         return assignment

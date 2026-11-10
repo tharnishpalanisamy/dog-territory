@@ -12,9 +12,13 @@ from .volunteer import (
     VolunteerNotFoundException,
     VolunteerServiceNotAvailable,
 )
-from .work_assignment import AssignmentNotFoundException
+from .work_assignment import (
+    AssignmentAlreadyClaimedException,
+    AssignmentNotFoundException,
+)
 
 __all__ = [
+    "AssignmentAlreadyClaimedException",
     "AssignmentNotFoundException",
     "DogNotFoundException",
     "EmailAlreadyExists",

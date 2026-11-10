@@ -123,3 +123,7 @@ class AvailableAssignmentFilterParams(BaseModel):
 
 class AssignAssignment(BaseModel) :
     assigned_to : int 
+
+
+class UpdateAssignmentStatus(BaseModel) :
+    status:AssignmentStatus 

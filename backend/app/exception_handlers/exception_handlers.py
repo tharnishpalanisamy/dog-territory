@@ -4,12 +4,17 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from app.exceptions import (
+    AssignmentNotFoundException,
     DogNotFoundException,
     EmailAlreadyExists,
     InvalidCredentialsException,
     InvalidRefreshTokenException,
     NotAuthorizedException,
+    ReportNotFoundException,
     UserNotFoundException,
+    VolunteerAlreadyExistsException,
+    VolunteerNotFoundException,
+    VolunteerServiceNotAvailable,
 )
 
 logger = logging.getLogger(__name__)
@@ -39,6 +44,61 @@ def register_exception_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=404,
             content={"detail": str(exc) or "Dog not found"},
+        )
+
+    @app.exception_handler(ReportNotFoundException)
+    async def report_not_found_handler(
+        request: Request,
+        exc: ReportNotFoundException,
+    ) -> JSONResponse:
+        logger.info("Report not found")
+        return JSONResponse(
+            status_code=404,
+            content={"detail": str(exc) or "Report not found"},
+        )
+
+    @app.exception_handler(AssignmentNotFoundException)
+    async def assignment_not_found_handler(
+        request: Request,
+        exc: AssignmentNotFoundException,
+    ) -> JSONResponse:
+        logger.info("Assignment not found")
+        return JSONResponse(
+            status_code=404,
+            content={"detail": str(exc) or "Assignment not found"},
+        )
+
+    @app.exception_handler(VolunteerNotFoundException)
+    async def volunteer_not_found_handler(
+        request: Request,
+        exc: VolunteerNotFoundException,
+    ) -> JSONResponse:
+        logger.info("Volunteer not found")
+        return JSONResponse(
+            status_code=404,
+            content={"detail": str(exc) or "Volunteer not found"},
+        )
+
+    @app.exception_handler(VolunteerServiceNotAvailable)
+    async def volunteer_service_not_available_handler(
+        request: Request,
+        exc: VolunteerServiceNotAvailable,
+    ) -> JSONResponse:
+        logger.info("Volunteer does not serve the requested location")
+        return JSONResponse(
+            status_code=422,
+            content={"detail": str(exc) or "Volunteer does not serve that location"},
+        )
+
+    @app.exception_handler(VolunteerAlreadyExistsException)
+    async def volunteer_already_exists_handler(
+        request: Request,
+        exc: VolunteerAlreadyExistsException,
+    ) -> JSONResponse:
+        logger.info("Volunteer already exists")
+        return JSONResponse(
+            status_code=409,
+            content={"detail": str(exc) or "Volunteer already exists"},
         )
 
     @app.exception_handler(EmailAlreadyExists)

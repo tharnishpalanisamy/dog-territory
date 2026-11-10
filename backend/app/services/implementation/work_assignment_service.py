@@ -1,13 +1,18 @@
 from app.exceptions import (
+    AssignmentAlreadyClaimedException,
     AssignmentNotFoundException,
+    NotAuthorizedException,
     ReportNotFoundException,
+    UserNotFoundException,
     VolunteerNotFoundException,
     VolunteerServiceNotAvailable,
 )
+from app.core import UserRole
 from app.models import User, WorkAssignment
 from app.repositories.protocols import (
     ReportsRepositoryProtocol,
     VolunteerRepositoryProtocol,
+    UserRepositoryProtocol,
     WorkAssignmentRepositoryProtocol,
 )
 from app.schemas import AssignAssignment, WorkAssignmentCreate
@@ -20,24 +25,30 @@ class WorkAssignmentService:
         repository: WorkAssignmentRepositoryProtocol,
         report_repository: ReportsRepositoryProtocol,
         volunteer_repository: VolunteerRepositoryProtocol,
+        user_repository: UserRepositoryProtocol,
     ):
         self.db = db
         self.repository = repository
         self.report_repository = report_repository
         self.volunteer_repository = volunteer_repository
+        self.user_repository = user_repository
 
     async def create_work_assignment(
         self, user: User, assignment_data: WorkAssignmentCreate
     ) -> WorkAssignment:
 
         if assignment_data.assigned_to is not None:
-            volunteer = await self.volunteer_repository.get_by_id(
+            assigned_user = await self.user_repository.get_by_id(
                 assignment_data.assigned_to
             )
 
-            if volunteer is None:
-                raise VolunteerNotFoundException(
-                    f"Volunteer with id {assignment_data.assigned_to} is not found"
+            if assigned_user is None:
+                raise UserNotFoundException(
+                    f"User with id {assignment_data.assigned_to} is not found"
+                )
+            if assigned_user.role != UserRole.VOLUNTEER:
+                raise NotAuthorizedException(
+                    "Assignments can only be assigned to volunteer users"
                 )
 
         report = await self.report_repository.get_by_id(assignment_data.report_id)
@@ -47,7 +58,8 @@ class WorkAssignmentService:
                 f"Report with id {assignment_data.report_id} not found"
             )
 
-        assignment = WorkAssignment(**assignment_data.model_dump())
+        assignment_values = assignment_data.model_dump()
+        assignment = WorkAssignment(**assignment_values)
 
         result = await self.repository.create(assignment)
         await self.db.commit()
@@ -69,7 +81,15 @@ class WorkAssignmentService:
         return result
 
     async def get_assigned_assignments(self, user: User) -> list[WorkAssignment]:
-        result = await self.repository.get_assigned_assignments(user)
+
+        volunteer = await self.volunteer_repository.get_by_user_id(user.id)
+
+        if volunteer is None:
+            raise VolunteerNotFoundException(
+                "Volunteer profile associated with user is not found"
+            )
+
+        result = await self.repository.get_assignments_by_volunteer_id(user.id)
 
         return result
 
@@ -82,18 +102,74 @@ class WorkAssignmentService:
             raise AssignmentNotFoundException(
                 f"Assignment with id {assignment_id} not found"
             )
-        volunteer = await self.volunteer_repository.get_by_id(data.assigned_to)
+        assigned_user = await self.user_repository.get_by_id(data.assigned_to)
 
+        if assigned_user is None:
+            raise UserNotFoundException(
+                f"User with id {data.assigned_to} is not found"
+            )
+        if assigned_user.role != UserRole.VOLUNTEER:
+            raise NotAuthorizedException(
+                "Assignments can only be assigned to volunteer users"
+            )
+
+        volunteer = await self.volunteer_repository.get_by_user_id(assigned_user.id)
         if volunteer is None:
             raise VolunteerNotFoundException(
-                f"Volunteer with id {data.assigned_to} is not found"
+                "Volunteer profile associated with user is not found"
             )
         if assignment.report.pincode not in volunteer.service_pincodes:
             raise VolunteerServiceNotAvailable("Volunteer does not serve that location")
         result = await self.repository.update_assigned_to(
-            assignment, data.assigned_to, user.id
+            assignment, assigned_user.id, user.id
         )
 
         await self.db.commit()
 
         return result
+
+    async def get_assignment_by_id(self, assignment_id) -> WorkAssignment:
+        result = await self.repository.get_by_id(assignment_id)
+
+        if result is None:
+            raise AssignmentNotFoundException(
+                f"Work Assignment with id {assignment_id} not found"
+            )
+        return result
+
+    async def claim_assignment(self, assignment_id: int, user: User) -> WorkAssignment:
+        assignment = await self.repository.get_by_id(assignment_id)
+
+        if assignment is None:
+            raise AssignmentNotFoundException(
+                f"Work Assignment with id {assignment_id} not found"
+            )
+
+        if assignment.assigned_to is not None:
+            raise AssignmentAlreadyClaimedException(
+                "Work has already been understook by someone else"
+            )
+        result = await self.repository.claim_assignment(assignment, user.id)
+        await self.db.commit()
+
+        return result
+
+    async def update_status(self, assignment_id, data, user) -> WorkAssignment:
+        assignment = await self.repository.get_by_id(assignment_id)
+
+        if assignment is None:
+            raise AssignmentNotFoundException(
+                f"Work Assignment with id {assignment_id} not found"
+            )
+
+        if assignment.assigned_to != user.id:
+            raise NotAuthorizedException("You are not allowed to edit this resource !") 
+
+        try : 
+            result = await self.repository.update_status(assignment , data.status ) 
+            await self.db.commit() 
+            return result
+
+        except Exception :
+            await self.db.rollback() 
+            raise 

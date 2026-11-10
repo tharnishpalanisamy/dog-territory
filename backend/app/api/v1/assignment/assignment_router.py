@@ -4,13 +4,14 @@ from app.core import UserRole
 from app.dependencies import get_work_assignment_service, require_roles
 from app.models import User
 from app.schemas import (
+    AssignAssignment,
     AvailableAssignmentFilterParams,
+    UpdateAssignmentStatus,
     WorkAssignmentCreate,
     WorkAssignmentDetailResponse,
     WorkAssignmentFilterParams,
     WorkAssignmentResponse,
     WorkAssignmentSummaryResponse,
-    AssignAssignment
 )
 from app.services.protocol import WorkAssignmentServiceProtocol
 from fastapi import APIRouter, Depends, Query, status
@@ -70,19 +71,31 @@ async def get_current_user_assignments(
 
 
 @router.get("/{assignment_id}", response_model=WorkAssignmentDetailResponse)
-async def get_assignment_by_id(assignment_id: int):
-    pass
+async def get_assignment_by_id(
+    assignment_id: int,
+    user: Annotated[User, Depends(require_roles(UserRole.VOLUNTEER, UserRole.ADMIN))],
+    service: Annotated[
+        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+    ],
+):
+    return await service.get_assignment_by_id(assignment_id)
 
 
-@router.post("/{assignment_id}/claim")
-async def claim_assignment(assignment_id: int):
-    pass
+@router.patch("/{assignment_id}/claim")
+async def claim_assignment(
+    assignment_id: int,
+    user: Annotated[User, Depends(require_roles(UserRole.VOLUNTEER, UserRole.ADMIN))],
+    service: Annotated[
+        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+    ],
+):
+    return await service.claim_assignment(assignment_id, user)
 
 
 @router.patch("/{assignment_id}/assign")
 async def assign_assignment(
     assignment_id: int,
-    data:AssignAssignment , 
+    data: AssignAssignment,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
     service: Annotated[
         WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
@@ -92,10 +105,24 @@ async def assign_assignment(
 
 
 @router.patch("/{assignment_id}/status")
-async def status_assignment(assignment_id: int):
-    pass
+async def status_assignment(
+    assignment_id: int,
+    data: UpdateAssignmentStatus,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN , UserRole.VOLUNTEER))],
+    service: Annotated[
+        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+    ],
+):
+    return await service.update_status(assignment_id, data, user)
 
 
 @router.post("/{assignment_id}/updates")
-async def updates_assignment(assignment_id: int):
-    pass
+async def updates_assignment(
+    assignment_id: int,
+    data: UpdateAssignmentStatus,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
+    service: Annotated[
+        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+    ],
+):
+    return await service.update_status(assignment_id, data, user)

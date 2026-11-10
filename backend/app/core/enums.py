@@ -23,35 +23,35 @@ class ReportStatus(str, enum.Enum):
 
 
 class AssignmentType(str, enum.Enum):
-    RESCUE = "RESCUE"
-    TRANSPORT = "TRANSPORT"
-    VACCINATION = "VACCINATION"
-    STERILIZATION = "STERILIZATION"
-    MEDICAL_CARE = "MEDICAL_CARE"
-    FEEDING = "FEEDING"
-    OTHER = "OTHER"
+    RESCUE = "rescue"
+    TRANSPORT = "transport"
+    VACCINATION = "vaccination"
+    STERILIZATION = "sterilization"
+    MEDICAL_CARE = "medical_care"
+    FEEDING = "feeding"
+    OTHER = "other"
 
 
 class AssignmentPriority(str, enum.Enum):
-    LOW = "LOW"
-    NORMAL = "NORMAL"
-    HIGH = "HIGH"
-    URGENT = "URGENT"
+    LOW = "low"
+    NORMAL = "normal"
+    HIGH = "high"
+    URGENT = "urgent"
 
 
 class AssignmentStatus(str, enum.Enum):
-    OPEN = "OPEN"
-    ACCEPTED = "ACCEPTED"
-    IN_PROGRESS = "IN_PROGRESS"
-    COMPLETED = "COMPLETED"
-    CANCELLED = "CANCELLED"
+    OPEN = "open"
+    ACCEPTED = "accepted"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
 
 
 class AssignmentUpdateType(str , enum.Enum):
-    PROGRESS = "PROGRESS"
-    NOTE = "NOTE"
-    ISSUE = "ISSUE"
-    LOCATION = "LOCATION"
+    PROGRESS = "progress"
+    NOTE = "note"
+    ISSUE = "issue"
+    LOCATION = "location"
 
 
 class VolunteerAvailability(str, enum.Enum):

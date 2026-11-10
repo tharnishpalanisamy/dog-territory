@@ -8,6 +8,7 @@ from app.core import ReportStatus
 from app.database.base import Base
 
 if TYPE_CHECKING:
+    from app.models.dog import Dog
     from app.models.report import Report
     from app.models.work_assignments import WorkAssignment
 
@@ -59,3 +60,5 @@ class Report(Base):
         back_populates="report",
         cascade="all, delete-orphan",
     )
+
+    dog: Mapped["Dog | None"] = relationship()

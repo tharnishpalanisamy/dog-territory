@@ -27,6 +27,12 @@ export default function SignIn() {
       }) 
 
       const data = await response.json();  
+      if (!response.ok) {
+        throw new Error(data.detail ?? 'Sign in failed');
+      }
+
+      localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('token_type', data.token_type ?? 'bearer');
       localStorage.setItem('remember' , JSON.stringify(remember))
       console.log(data)
       return data 
