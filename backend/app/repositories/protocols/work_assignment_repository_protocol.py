@@ -1,9 +1,13 @@
 from typing import Protocol
 
-from app.models import WorkAssignment
+from app.models import User, WorkAssignment
 
 
 class WorkAssignmentRepositoryProtocol(Protocol):
     async def create(self, assignment) -> WorkAssignment: ...
 
     async def get_all(self, filters, limit, offset) -> list[WorkAssignment]: ...
+
+    async def get_available(self, filters, limit, offset) -> list[WorkAssignment]: ...
+
+    async def get_assigned_assignments(self, user: User) -> list[WorkAssignment]: ...

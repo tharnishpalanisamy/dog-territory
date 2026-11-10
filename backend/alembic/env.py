@@ -1,10 +1,19 @@
 import asyncio
 from logging.config import fileConfig
 
-import app.models  # noqa: F401
 from alembic import context
 from app.core.config import setting
 from app.database.base import Base
+from app.models import (
+    AssignmentUpdate,
+    Dog,
+    RefreshToken,
+    Report,
+    User,
+    VeterinaryRecord,
+    Volunteer,
+    WorkAssignment,
+)
 from sqlalchemy import pool
 from sqlalchemy.engine import URL, Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config

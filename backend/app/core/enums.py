@@ -52,3 +52,11 @@ class AssignmentUpdateType(str , enum.Enum):
     NOTE = "NOTE"
     ISSUE = "ISSUE"
     LOCATION = "LOCATION"
+
+
+class VolunteerAvailability(str, enum.Enum):
+    WEEKDAYS = "weekdays"
+    WEEKENDS = "weekends"
+    EVERYDAY = "everyday"
+    FLEXIBLE = "flexible"
+    UNAVAILABLE = "unavailable"

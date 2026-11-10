@@ -7,6 +7,7 @@ from .user_exceptions import (
     NotAuthorizedException,
     UserNotFoundException,
 )
+from .volunteer import VolunteerNotFoundException
 
 __all__ = [
     "DogNotFoundException",
@@ -16,4 +17,5 @@ __all__ = [
     "NotAuthorizedException",
     "ReportNotFoundException",
     "UserNotFoundException",
+    "VolunteerNotFoundException",
 ]

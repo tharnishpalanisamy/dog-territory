@@ -2,7 +2,11 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from app.core import AssignmentPriority, AssignmentStatus, AssignmentType
+from app.core import (
+    AssignmentPriority,
+    AssignmentStatus,
+    AssignmentType,
+)
 from app.schemas.dog import DogSummaryResponse
 
 
@@ -12,6 +16,7 @@ class WorkAssignmentCreate(BaseModel):
     description: str | None = None
     task_type: AssignmentType
     priority: AssignmentPriority = AssignmentPriority.NORMAL
+    assigned_to: int | None = None
 
 
 class WorkAssignmentResponse(BaseModel):
@@ -101,3 +106,16 @@ class AssignmentReportResponse(BaseModel):
 
 class WorkAssignmentDetailResponse(WorkAssignmentResponse):
     report: AssignmentReportResponse
+
+
+from pydantic import BaseModel, ConfigDict
+
+
+class AvailableAssignmentFilterParams(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    state: str | None = None
+    district: str | None = None
+    area_name: str | None = None
+    priority: AssignmentPriority | None = None
+    task_type: AssignmentType | None = None
+    search: str | None = None

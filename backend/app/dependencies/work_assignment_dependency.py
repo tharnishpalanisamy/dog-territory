@@ -5,9 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.dependencies.reports_dependency import get_reports_repository
-from app.repositories.implementation import WorkAssignmentRepository
+from app.dependencies.volunteers_dependency import get_volunteer_repository
+from app.repositories.implementation import (
+    WorkAssignmentRepository,
+)
 from app.repositories.protocols import (
     ReportsRepositoryProtocol,
+    VolunteerRepositoryProtocol,
     WorkAssignmentRepositoryProtocol,
 )
 from app.services.implementation import WorkAssignmentService
@@ -28,6 +32,11 @@ def get_work_assignment_service(
     report_repository: Annotated[
         ReportsRepositoryProtocol, Depends(get_reports_repository)
     ],
+    volunteer_repository: Annotated[
+        VolunteerRepositoryProtocol, Depends(get_volunteer_repository)
+    ],
 ) -> WorkAssignmentServiceProtocol:
 
-    return WorkAssignmentService(db, repository, report_repository)
+    return WorkAssignmentService(
+        db, repository, report_repository, volunteer_repository
+    )

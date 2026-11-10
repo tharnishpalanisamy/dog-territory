@@ -1,6 +1,7 @@
 from sqlalchemy import or_, select
 
-from app.models import WorkAssignment
+from app.core import AssignmentStatus
+from app.models import User, WorkAssignment
 
 
 class WorkAssignmentRepository:
@@ -69,4 +70,48 @@ class WorkAssignmentRepository:
 
         result = await self.db.scalars(query)
 
+        return result.all()
+
+    async def get_available(self, filters, limit, offset) -> list[WorkAssignment]:
+        query = select(WorkAssignment)
+        conditions = []
+
+        conditions.append(WorkAssignment.status == AssignmentStatus.OPEN)
+
+        if filters.state is not None:
+            conditions.append(WorkAssignment.report.state == filters.state)
+        if filters.district is not None:
+            conditions.append(WorkAssignment.report.district == filters.district)
+
+        if filters.area_name is not None:
+            conditions.append(WorkAssignment.report.area_name == filters.area_name)
+
+        if filters.priority is not None:
+            conditions.append(WorkAssignment.priority == filters.priority)
+
+        if filters.task_type is not None:
+            conditions.append(WorkAssignment.task_type == filters.task_type)
+
+        if filters.search is not None:
+            conditions.append(
+                or_(
+                    WorkAssignment.title.ilike(f"%{filters.search}%"),
+                    WorkAssignment.description.ilike(f"%{filters.search}%"),
+                )
+            )
+
+        query = (
+            query.where(*conditions)
+            .order_by(WorkAssignment.created_at)
+            .limit(limit)
+            .offset(offset)
+        )
+
+        result = await self.db.scalars(query)
+
+        return result.all()
+
+    async def get_assigned_assignments(self, user: User) -> list[WorkAssignment]:
+        query = select(WorkAssignment).where(WorkAssignment.assigned_to == user.id)
+        result = await self.db.scalars(query)
         return result.all()

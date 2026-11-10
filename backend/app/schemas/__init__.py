@@ -22,6 +22,7 @@ from .report import (
 from .user import UserCreate, UserResponse
 from .work_assignment import (
     AssignmentReportResponse,
+    AvailableAssignmentFilterParams,
     WorkAssignmentCreate,
     WorkAssignmentDetailResponse,
     WorkAssignmentFilterParams,
@@ -31,6 +32,7 @@ from .work_assignment import (
 
 __all__ = [
     "AssignmentReportResponse",
+    "AvailableAssignmentFilterParams",
     "DogCreate",
     "DogDetailResponse",
     "DogFilterParams",

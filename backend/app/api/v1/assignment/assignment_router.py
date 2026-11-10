@@ -4,6 +4,7 @@ from app.core import UserRole
 from app.dependencies import get_work_assignment_service, require_roles
 from app.models import User
 from app.schemas import (
+    AvailableAssignmentFilterParams,
     WorkAssignmentCreate,
     WorkAssignmentDetailResponse,
     WorkAssignmentFilterParams,
@@ -43,13 +44,28 @@ async def get_all_assignments(
 
 
 @router.get("/available", response_model=list[WorkAssignmentSummaryResponse])
-async def get_available_assignments():
-    pass
+async def get_available_assignments(
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
+    service: Annotated[
+        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+    ],
+    filters: Annotated[AvailableAssignmentFilterParams, Depends()],
+    limit: int = Query(ge=1, default=20, le=100),
+    offset: int = Query(ge=0, default=0),
+):
+    return await service.get_available_work_assignments(filters, limit, offset)
 
 
 @router.get("/assigned", response_model=list[WorkAssignmentSummaryResponse])
-async def get_current_user_assignments():
-    pass
+async def get_current_user_assignments(
+    user: Annotated[
+        User, Depends(require_roles(UserRole.VOLUNTEER, UserRole.VETERINARIAN))
+    ],
+    service: Annotated[
+        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+    ],
+):
+    return await service.get_assigned_assignments(user)
 
 
 @router.get("/{assignment_id}", response_model=WorkAssignmentDetailResponse)
@@ -63,8 +79,14 @@ async def claim_assignment(assignment_id: int):
 
 
 @router.patch("/{assignment_id}/assign")
-async def assign_assignment(assignment_id: int):
-    pass
+async def assign_assignment(
+    assignment_id: int,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
+    service: Annotated[
+        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+    ],
+):
+    return await service.update_assigned_to(assignment_id , )
 
 
 @router.patch("/{assignment_id}/status")

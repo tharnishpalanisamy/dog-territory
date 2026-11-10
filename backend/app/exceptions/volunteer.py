@@ -1,0 +1,2 @@
+class VolunteerNotFoundException(Exception) :
+    pass 
