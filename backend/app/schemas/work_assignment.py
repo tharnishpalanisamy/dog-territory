@@ -6,6 +6,7 @@ from app.core import (
     AssignmentPriority,
     AssignmentStatus,
     AssignmentType,
+    AssignmentUpdateType,
 )
 from app.schemas.dog import DogSummaryResponse
 
@@ -121,9 +122,14 @@ class AvailableAssignmentFilterParams(BaseModel):
     search: str | None = None
 
 
-class AssignAssignment(BaseModel) :
-    assigned_to : int 
+class AssignAssignment(BaseModel):
+    assigned_to: int
 
 
-class UpdateAssignmentStatus(BaseModel) :
-    status:AssignmentStatus 
+class UpdateAssignmentStatus(BaseModel):
+    status: AssignmentStatus
+
+
+class AssignmentUpdateCreate(BaseModel):
+    update_type: AssignmentUpdateType
+    description: str = Field(min_length=1, max_length=2000)

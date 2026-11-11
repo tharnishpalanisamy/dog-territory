@@ -1,3 +1,4 @@
+from .assignment_update_repository import AssignmentUpdateRepository
 from .sqlalchemy_dog_repository import DogRepository
 from .sqlalchemy_refresh_token_repository import RefreshTokenRepository
 from .sqlalchemy_reports_repository import ReportsRepository
@@ -6,6 +7,7 @@ from .sqlalchemy_volunteer_repository import VolunteerRepository
 from .work_assignment_repository import WorkAssignmentRepository
 
 __all__ = [
+    "AssignmentUpdateRepository",
     "DogRepository",
     "RefreshTokenRepository",
     "ReportsRepository",

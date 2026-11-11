@@ -1,3 +1,4 @@
+from app.core import UserRole
 from app.exceptions import (
     AssignmentAlreadyClaimedException,
     AssignmentNotFoundException,
@@ -7,12 +8,12 @@ from app.exceptions import (
     VolunteerNotFoundException,
     VolunteerServiceNotAvailable,
 )
-from app.core import UserRole
-from app.models import User, WorkAssignment
+from app.models import AssignmentUpdate, User, WorkAssignment
 from app.repositories.protocols import (
+    AssignmentUpdateRepositoryProtocol,
     ReportsRepositoryProtocol,
-    VolunteerRepositoryProtocol,
     UserRepositoryProtocol,
+    VolunteerRepositoryProtocol,
     WorkAssignmentRepositoryProtocol,
 )
 from app.schemas import AssignAssignment, WorkAssignmentCreate
@@ -26,12 +27,14 @@ class WorkAssignmentService:
         report_repository: ReportsRepositoryProtocol,
         volunteer_repository: VolunteerRepositoryProtocol,
         user_repository: UserRepositoryProtocol,
+        assignment_update_repository: AssignmentUpdateRepositoryProtocol,
     ):
         self.db = db
         self.repository = repository
         self.report_repository = report_repository
         self.volunteer_repository = volunteer_repository
         self.user_repository = user_repository
+        self.assignment_update_repository = assignment_update_repository
 
     async def create_work_assignment(
         self, user: User, assignment_data: WorkAssignmentCreate
@@ -102,12 +105,14 @@ class WorkAssignmentService:
             raise AssignmentNotFoundException(
                 f"Assignment with id {assignment_id} not found"
             )
+        if assignment.assigned_to is not None:
+            raise AssignmentAlreadyClaimedException(
+                "Assignment has already been assigned"
+            )
         assigned_user = await self.user_repository.get_by_id(data.assigned_to)
 
         if assigned_user is None:
-            raise UserNotFoundException(
-                f"User with id {data.assigned_to} is not found"
-            )
+            raise UserNotFoundException(f"User with id {data.assigned_to} is not found")
         if assigned_user.role != UserRole.VOLUNTEER:
             raise NotAuthorizedException(
                 "Assignments can only be assigned to volunteer users"
@@ -163,13 +168,34 @@ class WorkAssignmentService:
             )
 
         if assignment.assigned_to != user.id:
-            raise NotAuthorizedException("You are not allowed to edit this resource !") 
+            raise NotAuthorizedException("You are not allowed to edit this resource !")
 
-        try : 
-            result = await self.repository.update_status(assignment , data.status ) 
-            await self.db.commit() 
+        try:
+            result = await self.repository.update_status(assignment, data.status)
+            await self.db.commit()
             return result
 
-        except Exception :
-            await self.db.rollback() 
-            raise 
+        except Exception:
+            await self.db.rollback()
+            raise
+
+    async def create_update(self, assignment_id, data, user):
+        assignment = await self.repository.get_by_id(assignment_id)
+
+        if assignment is None:
+            raise AssignmentNotFoundException(f"Assignment with id {id} not found")
+
+        work_update = AssignmentUpdate(
+            assignment_id=assignment_id,
+            updated_by=user.id,
+            update_type=data.update_type,
+            description=data.description,
+        )
+
+        try:
+            result = await self.assignment_update_repository.create(work_update)
+            await self.db.commit()
+            return result
+        except Exception:
+            self.db.rollback()
+            raise

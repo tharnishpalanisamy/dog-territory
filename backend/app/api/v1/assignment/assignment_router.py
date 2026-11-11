@@ -5,6 +5,7 @@ from app.dependencies import get_work_assignment_service, require_roles
 from app.models import User
 from app.schemas import (
     AssignAssignment,
+    AssignmentUpdateCreate,
     AvailableAssignmentFilterParams,
     UpdateAssignmentStatus,
     WorkAssignmentCreate,
@@ -108,7 +109,7 @@ async def assign_assignment(
 async def status_assignment(
     assignment_id: int,
     data: UpdateAssignmentStatus,
-    user: Annotated[User, Depends(require_roles(UserRole.ADMIN , UserRole.VOLUNTEER))],
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[
         WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
     ],
@@ -119,10 +120,10 @@ async def status_assignment(
 @router.post("/{assignment_id}/updates")
 async def updates_assignment(
     assignment_id: int,
-    data: UpdateAssignmentStatus,
-    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
+    data: AssignmentUpdateCreate,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[
         WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
     ],
 ):
-    return await service.update_status(assignment_id, data, user)
+    return await service.create_update(assignment_id, data, user) 

@@ -6,17 +6,16 @@ Revises: 8d788ffe1d48
 Create Date: 2026-11-10 09:56:54.695034
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # Revision identifiers
 revision: str = "f0498f498256"
-down_revision: Union[str, Sequence[str], None] = "8d788ffe1d48"
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | Sequence[str] | None = "8d788ffe1d48"
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:

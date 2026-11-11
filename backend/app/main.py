@@ -2,9 +2,11 @@ import logging
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from app.api.v1 import router_v1
-from app.core import setup_logging
+from app.core import limiter, setup_logging
 from app.exception_handlers import register_exception_handlers
 from app.middleware import log_requests
 
@@ -20,6 +22,9 @@ origins = [
 
 
 app = FastAPI()
+app.state.limiter = limiter
+
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,

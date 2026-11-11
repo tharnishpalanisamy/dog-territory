@@ -29,6 +29,7 @@ from .volunteer import (
 from .work_assignment import (
     AssignAssignment,
     AssignmentReportResponse,
+    AssignmentUpdateCreate,
     AvailableAssignmentFilterParams,
     UpdateAssignmentStatus,
     WorkAssignmentCreate,
@@ -41,6 +42,7 @@ from .work_assignment import (
 __all__ = [
     "AssignAssignment",
     "AssignmentReportResponse",
+    "AssignmentUpdateCreate",
     "AvailableAssignmentFilterParams",
     "DogCreate",
     "DogDetailResponse",

@@ -6,14 +6,21 @@ from app.dependencies import (
     require_roles,
 )
 from app.models import User
-from app.schemas import VolunteerApprovalUpdate, VolunteerCreate, VolunteerUpdate
+from app.schemas import (
+    VolunteerApprovalUpdate,
+    VolunteerCreate,
+    VolunteerResponse,
+    VolunteerUpdate,
+)
 from app.services.protocol import VolunteerServiceProtocol
 from fastapi import APIRouter, Depends, Query, status
 
 router = APIRouter(prefix="/volunteers", tags=["Volunteers"])
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/", status_code=status.HTTP_201_CREATED, response_model=VolunteerResponse
+)
 async def create_volunteer_profile(
     data: VolunteerCreate,
     user: Annotated[
@@ -28,7 +35,7 @@ async def create_volunteer_profile(
     return await service.create_profile(user.id, data)
 
 
-@router.get("/me")
+@router.get("/me", response_model=VolunteerResponse)
 async def get_my_volunteer_profile(
     user: Annotated[
         User,
@@ -42,7 +49,7 @@ async def get_my_volunteer_profile(
     return await service.get_by_user_id(user.id)
 
 
-@router.patch("/me")
+@router.patch("/me", response_model=VolunteerResponse)
 async def update_my_volunteer_profile(
     data: VolunteerUpdate,
     user: Annotated[
@@ -57,7 +64,7 @@ async def update_my_volunteer_profile(
     return await service.update_profile(user.id, data)
 
 
-@router.get("/")
+@router.get("/", response_model=list[VolunteerResponse])
 async def get_all_volunteers(
     user: Annotated[
         User,
@@ -73,7 +80,7 @@ async def get_all_volunteers(
     return await service.get_all(limit, offset)
 
 
-@router.get("/{volunteer_id}")
+@router.get("/{volunteer_id}", response_model=VolunteerResponse)
 async def get_volunteer(
     volunteer_id: int,
     user: Annotated[
@@ -88,7 +95,7 @@ async def get_volunteer(
     return await service.get_by_id(volunteer_id)
 
 
-@router.patch("/{volunteer_id}/approval")
+@router.patch("/{volunteer_id}/approval", response_model=VolunteerResponse)
 async def update_volunteer_approval(
     volunteer_id: int,
     data: VolunteerApprovalUpdate,

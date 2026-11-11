@@ -9,6 +9,7 @@ from .enums import (
     VolunteerAvailability,
 )
 from .logging_config import setup_logging
+from .rate_limiter import limiter
 from .security import create_access_token, hash_password, verify_password
 
 __all__ = [
@@ -22,6 +23,7 @@ __all__ = [
     "VolunteerAvailability",
     "create_access_token",
     "hash_password",
+    "limiter",
     "setup_logging",
     "verify_password",
 ]

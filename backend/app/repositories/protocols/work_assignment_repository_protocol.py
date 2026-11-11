@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from app.models import User, WorkAssignment
+from app.models import WorkAssignment
 
 
 class WorkAssignmentRepositoryProtocol(Protocol):
