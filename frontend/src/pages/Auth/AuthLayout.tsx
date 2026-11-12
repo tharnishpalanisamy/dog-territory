@@ -47,10 +47,10 @@ export default function AuthLayout({ children, mode }: AuthLayoutProps) {
           <aside className="relative min-h-[270px] md:min-h-[620px] overflow-hidden flex flex-col justify-between p-7 sm:p-10 lg:p-14 text-white">
 
             <img
-              src="https://static.wixstatic.com/media/0cc78a_5febdcd482d94e97b14c2990d9603517~mv2.jpg/v1/fill/w_1200%2Ch_1200%2Cal_c%2Cq_85/0cc78a_5febdcd482d94e97b14c2990d9603517~mv2.jpg"
-              alt="Indian Indie street dog sitting on an Indian city street"
-              className="absolute inset-0 w-full h-full object-cover"
-            />
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Indian_Pariah_Dog_named_Scratchy_standing.jpg/960px-Indian_Pariah_Dog_named_Scratchy_standing.jpg"
+            alt="Indian Indie street dog"
+            className="absolute inset-0 w-full h-full object-cover"
+            />  
 
             <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-slate-900/30 to-slate-950/90" />
 

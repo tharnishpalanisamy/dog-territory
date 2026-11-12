@@ -3,7 +3,7 @@ import Home from './pages/home/Home'
 import SignIn from './pages/Auth/SignIn' 
 import SignUp from './pages/Auth/SignUp' 
 import DashboardLayout from './components/app/DashboardLayout'
-import OverviewPage from './pages/dashboard/OverviewPage'
+import OverviewPage from "./pages/admin/OverviewPage";
 import { DogsPage, DogDetailsPage, DogCreatePage, DogEditPage } from './pages/dogs/DogsPages'
 import { ReportsPage, ReportDetailsPage, CreateReportPage } from './pages/reports/ReportsPages'
 import { VolunteersPage, VolunteerDetailsPage } from './pages/volunteers/VolunteersPages'
