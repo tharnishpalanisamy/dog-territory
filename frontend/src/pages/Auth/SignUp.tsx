@@ -1,10 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link , useNavigate  } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import "./Auth.css"; 
 import React from 'react' 
+import { useToast } from "../../components/ui/Toast";
 
 export default function SignUp() {
+  const navigate = useNavigate() 
+  const { showToast } = useToast();
   async function handleSubmit(event:React.FormEvent<HTMLFormElement>) {
     event.preventDefault() 
     
@@ -15,14 +18,13 @@ export default function SignUp() {
     const confirmPassword = formData.get('confirmPassword') 
 
     if ( password !== confirmPassword ) {
-      return 'Passwords doesnt match' //replace with alerts
+      showToast("warning", "Passwords do not match. Please check them and try again.");
+      return;
     }   
     const user = {
       'email' : email , 
       'username' : username,
       'password' : password ,  
-      // 'created_at' : Date.now() , 
-      // 'date_of_birth' : null  
     }
 
     try {
@@ -34,13 +36,19 @@ export default function SignUp() {
         body: JSON.stringify(user)
       }) 
 
-      let data = await response.json() 
-      console.log(data);
+      const data = await response.json().catch(() => ({}));
       
-      return data
+      if (!response.ok) {
+        const detail = data.detail;
+        showToast("error", typeof detail === "string" ? detail : "Sign up failed. Please try again.");
+        return;
+      }
+
+      showToast("success", "Your account has been created. You can now sign in.");
+      navigate('/signin')
     } 
     catch(error) {
-      console.log(error)
+      showToast("error", error instanceof Error ? error.message : "Unable to create your account. Please try again.");
     }
   }
   return (

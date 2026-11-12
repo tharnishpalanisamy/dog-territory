@@ -1,10 +1,13 @@
-import { Link } from "react-router-dom";
+import { Link , useNavigate } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import "./Auth.css";
 import React from 'react'
+import { useToast } from "../../components/ui/Toast";
 
 export default function SignIn() { 
+  const navigate = useNavigate() 
+  const { showToast } = useToast();
 
   async function handleSubmit(event:React.FormEvent<HTMLFormElement>){
     event.preventDefault() ; 
@@ -26,20 +29,23 @@ export default function SignIn() {
         })
       }) 
 
-      const data = await response.json();  
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(data.detail ?? 'Sign in failed');
+        const detail = data.detail;
+        throw new Error(typeof detail === "string" ? detail : 'Sign in failed. Check your details and try again.');
       }
 
       localStorage.setItem('access_token', data.access_token);
+      localStorage.setItem('refresh_token', data.refresh_token ?? data.access_token);
       localStorage.setItem('token_type', data.token_type ?? 'bearer');
-      localStorage.setItem('remember' , JSON.stringify(remember))
-      console.log(data)
-      return data 
+      localStorage.setItem('user' , JSON.stringify(data.user))
+      localStorage.setItem('remember' , JSON.stringify(remember)) 
+      showToast("success", "Signed in successfully. Welcome back!");
+      navigate('/dashboard')
     } 
 
     catch(error) {
-      console.log(error);
+      showToast("error", error instanceof Error ? error.message : "Unable to sign in. Please try again.");
     }
   }
   return (
