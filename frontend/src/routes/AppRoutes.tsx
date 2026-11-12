@@ -5,6 +5,8 @@ import AppLayout from "../components/layout/AppLayout";
 
 import AdminOverview from "../pages/admin/OverviewPage";
 import VolunteerOverview from "../pages/volunteer/OverviewPage";
+import VeterinarianOverview from "../pages/veterinarian/OverviewPage";
+import UserOverview from "../pages/user/OverviewPage";
 
 import {
   DogsPage,
@@ -60,7 +62,26 @@ function AppRoutes() {
         <Route path="profile" element={<ProfilePage />} />
         <Route path="rabies-awareness" element={<RabiesAwarenessPage />} />
       </Route>
+
+
+       <Route
+        path="/veterinarian"
+        element={<AppLayout role="VETERINARIAN" />}
+        >
+            <Route index element={<VeterinarianOverview />} />
+        </Route>
+
+
+        <Route
+        path="/user"
+        element={<AppLayout role="USER" />}
+        >
+            <Route index element={<UserOverview />} />
+        </Route>
     </Routes>
+
+
+    
   );
 }
 

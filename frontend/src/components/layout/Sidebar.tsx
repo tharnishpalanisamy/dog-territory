@@ -150,7 +150,7 @@ export default function Sidebar({
         </nav>
       </div>
 
-      {role === "USER" && (
+      {/* {role === "USER" && (
         <div className="mx-5 mb-5 rounded-2xl border border-indigo-100 bg-indigo-50/70 p-5">
           <Sparkles size={19} className="mb-4 text-indigo-600" />
 
@@ -170,7 +170,7 @@ export default function Sidebar({
             <ChevronRight size={15} />
           </NavLink>
         </div>
-      )}
+      )} */}
 
       {/* Profile */}
       <div className="border-t border-slate-100 p-5">

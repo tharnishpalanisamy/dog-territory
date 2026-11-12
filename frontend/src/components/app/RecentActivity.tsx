@@ -4,7 +4,6 @@ import {
   MessageSquare,
   AlertCircle,
   MapPin,
-  ArrowUpRight,
 } from "lucide-react";
 
 export type AssignmentActivity = {
