@@ -18,6 +18,8 @@ export type AssignmentActivity = {
 
 type Props = {
   activities: AssignmentActivity[];
+  title?: string;
+  subtitle?: string;
 };
 
 const activityConfig = {
@@ -43,17 +45,22 @@ const activityConfig = {
   },
 };
 
-export default function RecentActivity({ activities }: Props) {
+export default function RecentActivity({
+  activities,
+  title = "Recent activity",
+  subtitle = "Latest updates from field assignments.",
+}: Props) {
+
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-5">
       <div className="mb-5">
         <h2 className="text-base font-bold text-slate-900">
-          Recent activity
+            {title}
         </h2>
         <p className="mt-1 text-sm text-slate-500">
-          Latest updates from field assignments.
+            {subtitle}
         </p>
-      </div>
+    </div>
 
       {activities.length === 0 ? (
         <div className="py-8 text-center">

@@ -20,7 +20,7 @@ export default function AppLayout({
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
 
       {/* Mobile overlay */}
       {menuOpen && (
@@ -33,7 +33,7 @@ export default function AppLayout({
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 transition-transform duration-300 lg:sticky lg:top-0 lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 h-screen shrink-0 transition-transform duration-300 lg:sticky lg:translate-x-0 ${
           menuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -44,16 +44,18 @@ export default function AppLayout({
         />
       </div>
 
-      {/* Main content */}
-      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
+      {/* Main content - independent scrolling */}
+      <div className="flex h-screen min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
 
-        <Navbar
-          title="Overview"
-          subtitle="Welcome to your dashboard"
-          onMenuClick={() => setMenuOpen(true)}
-        />
+        <div className="sticky top-0 z-30 shrink-0">
+          <Navbar
+            title="Overview"
+            subtitle="Welcome to your dashboard"
+            onMenuClick={() => setMenuOpen(true)}
+          />
+        </div>
 
-        <main className="flex-1 p-5 sm:p-8">
+        <main className="min-h-0 flex-1 p-5 sm:p-8">
           <Outlet />
         </main>
 
