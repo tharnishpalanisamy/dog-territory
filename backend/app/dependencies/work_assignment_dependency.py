@@ -5,6 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.dependencies.auth_dependency import get_user_repository
+from app.dependencies.medical_assignment_rependecny import (
+    get_medical_assignment_repository,
+)
 from app.dependencies.reports_dependency import get_reports_repository
 from app.dependencies.volunteers_dependency import get_volunteer_repository
 from app.repositories.implementation import (
@@ -12,6 +15,7 @@ from app.repositories.implementation import (
     WorkAssignmentUpdateRepository,
 )
 from app.repositories.protocols import (
+    MedicalAssignmentRepositoryProtocol,
     ReportsRepositoryProtocol,
     UserRepositoryProtocol,
     VolunteerRepositoryProtocol,
@@ -78,5 +82,10 @@ def get_work_assignment_update_service(
         WorkAssignmentRepositoryProtocol,
         Depends(get_work_assignment_repository),
     ],
+    medical_assignment_repository: Annotated[
+        MedicalAssignmentRepositoryProtocol, Depends(get_medical_assignment_repository)
+    ],
 ) -> WorkAssignmentUpdateServiceProtocol:
-    return WorkAssignmentUpdateService(db, repository, work_assignment_repository)
+    return WorkAssignmentUpdateService(
+        db, repository, work_assignment_repository, medical_assignment_repository
+    )

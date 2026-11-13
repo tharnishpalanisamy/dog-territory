@@ -11,15 +11,20 @@ from app.database.base import Base
 if TYPE_CHECKING:
     from app.models.medical_assignment import MedicalAssignment
     from app.models.veterinarian import Veterinarian
+    from app.models.volunteer import Volunteer
 
 
 class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
     email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+
     username: Mapped[str] = mapped_column(String(100), nullable=False)
+
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+
     role: Mapped[UserRole] = mapped_column(
         SQLAlchemyEnum(
             UserRole,
@@ -29,21 +34,32 @@ class User(Base):
         nullable=False,
         default=UserRole.USER,
     )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
     )
 
+    # Relationships
+
     veterinarian_profile: Mapped["Veterinarian | None"] = relationship(
+        back_populates="user",
         foreign_keys="Veterinarian.user_id",
         uselist=False,
     )
-
-    created_medical_assignments: Mapped[list["MedicalAssignment"]] = relationship(
-        foreign_keys="MedicalAssignment.created_by",
+    volunteer_profile: Mapped["Volunteer | None"] = relationship(
+        back_populates="user",
+        foreign_keys="Volunteer.user_id",
+        uselist=False,
     )
 
     volunteer_medical_assignments: Mapped[list["MedicalAssignment"]] = relationship(
+        back_populates="volunteer",
         foreign_keys="MedicalAssignment.volunteer_id",
+    )
+
+    created_medical_assignments: Mapped[list["MedicalAssignment"]] = relationship(
+        back_populates="creator",
+        foreign_keys="MedicalAssignment.created_by",
     )

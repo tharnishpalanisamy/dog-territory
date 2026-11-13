@@ -1,10 +1,23 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
-from sqlalchemy import ARRAY, DateTime, Enum, ForeignKey, Integer, String, func, text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import (
+    ARRAY,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    func,
+    text,
+)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core import VolunteerAvailability
 from app.database.base import Base
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class Volunteer(Base):
@@ -13,10 +26,15 @@ class Volunteer(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), unique=True, nullable=False
+        ForeignKey("users.id"),
+        unique=True,
+        nullable=False,
     )
 
-    phone_number: Mapped[str] = mapped_column(String(20), nullable=False)
+    phone_number: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+    )
 
     state: Mapped[str] = mapped_column(String(100), nullable=False)
     district: Mapped[str] = mapped_column(String(100), nullable=False)
@@ -32,6 +50,7 @@ class Volunteer(Base):
         nullable=False,
         default=VolunteerAvailability.WEEKENDS,
     )
+
     service_pincodes: Mapped[list[str]] = mapped_column(
         ARRAY(String(10)),
         nullable=False,
@@ -40,11 +59,18 @@ class Volunteer(Base):
     )
 
     approval_status: Mapped[str] = mapped_column(
-        String(20), nullable=False, default="pending"
+        String(20),
+        nullable=False,
+        default="pending",
     )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
+    )
+
+    user: Mapped["User"] = relationship(
+        back_populates="volunteer_profile",
+        foreign_keys=[user_id],
     )

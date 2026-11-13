@@ -17,6 +17,7 @@ from app.database.base import Base
 
 if TYPE_CHECKING:
     from app.models.assignment_update import AssignmentUpdate
+    from app.models.dog import Dog
     from app.models.medical_assignment import MedicalAssignment
     from app.models.report import Report
     from app.models.user import User
@@ -114,6 +115,8 @@ class WorkAssignment(Base):
         nullable=True,
         index=True,
     )
+
+    dog: Mapped["Dog | None"] = relationship(back_populates="work_assignments")
 
     updates: Mapped[list["AssignmentUpdate"]] = relationship(
         back_populates="assignment",

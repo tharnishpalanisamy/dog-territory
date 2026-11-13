@@ -19,7 +19,9 @@ class WorkAssignmentRepository:
         return assignment
 
     async def get_all(self, filters, limit, offset) -> list[WorkAssignment]:
-        query = select(WorkAssignment)
+        # Report filters need an explicit join; otherwise SQLAlchemy adds a
+        # disconnected reports table to the FROM clause.
+        query = select(WorkAssignment).join(WorkAssignment.report)
 
         conditions = []
 
@@ -50,19 +52,16 @@ class WorkAssignmentRepository:
         if filters.created_to is not None:
             conditions.append(WorkAssignment.created_at <= filters.created_to)
 
-        if filters.state is not None:
-            conditions.append(WorkAssignment.report.state == filters.state)
-
         if filters.pincode is not None:
-            conditions.append(WorkAssignment.report.pincode == filters.pincode)
+            conditions.append(Report.pincode == filters.pincode)
         if filters.state is not None:
-            conditions.append(WorkAssignment.report.state == filters.state)
+            conditions.append(Report.state == filters.state)
 
         if filters.district is not None:
-            conditions.append(WorkAssignment.report.district == filters.district)
+            conditions.append(Report.district == filters.district)
 
         if filters.area_name is not None:
-            conditions.append(WorkAssignment.report.area_name == filters.area_name)
+            conditions.append(Report.area_name == filters.area_name)
 
         query = (
             query.where(*conditions)
@@ -76,19 +75,19 @@ class WorkAssignmentRepository:
         return result.all()
 
     async def get_available(self, filters, limit, offset) -> list[WorkAssignment]:
-        query = select(WorkAssignment)
+        query = select(WorkAssignment).join(WorkAssignment.report)
         conditions = []
 
         conditions.append(WorkAssignment.status == AssignmentStatus.OPEN)
         conditions.append(WorkAssignment.assigned_to.is_(None))
 
         if filters.state is not None:
-            conditions.append(WorkAssignment.report.state == filters.state)
+            conditions.append(Report.state == filters.state)
         if filters.district is not None:
-            conditions.append(WorkAssignment.report.district == filters.district)
+            conditions.append(Report.district == filters.district)
 
         if filters.area_name is not None:
-            conditions.append(WorkAssignment.report.area_name == filters.area_name)
+            conditions.append(Report.area_name == filters.area_name)
 
         if filters.priority is not None:
             conditions.append(WorkAssignment.priority == filters.priority)

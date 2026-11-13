@@ -8,6 +8,7 @@ from app.exceptions import (
 )
 from app.models import AssignmentUpdate, MedicalAssignment, User
 from app.repositories.protocols import (
+    MedicalAssignmentRepositoryProtocol,
     WorkAssignmentRepositoryProtocol,
     WorkAssignmentUpdateRepositoryProtocol,
 )
@@ -20,10 +21,12 @@ class WorkAssignmentUpdateService:
         db: AsyncSession,
         repository: WorkAssignmentUpdateRepositoryProtocol,
         work_assignment_repository: WorkAssignmentRepositoryProtocol,
+        medical_assignment_repository: MedicalAssignmentRepositoryProtocol,
     ):
         self.db = db
         self.repository = repository
         self.work_assignment_repository = work_assignment_repository
+        self.medical_assignment_repository = medical_assignment_repository
 
     async def get_all_updates(
         self, filters, limit: int, offset: int
@@ -119,5 +122,6 @@ class WorkAssignmentUpdateService:
             mode=data.mode,
             status=data.status,
         )
-
-        return medical_assignment
+        result = await self.medical_assignment_repository.create(medical_assignment)
+        await self.db.commit()
+        return result

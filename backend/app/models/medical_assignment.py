@@ -130,10 +130,11 @@ class MedicalAssignment(Base):
     )
 
     creator: Mapped["User"] = relationship(
+        back_populates="created_medical_assignments",
         foreign_keys=[created_by],
     )
-
     volunteer: Mapped["User | None"] = relationship(
+        back_populates="volunteer_medical_assignments",
         foreign_keys=[volunteer_id],
     )
 
@@ -141,6 +142,8 @@ class MedicalAssignment(Base):
         back_populates="medical_assignments",
         foreign_keys=[veterinarian_id],
     )
+
+    
 
     updates: Mapped[list["MedicalAssignmentUpdate"]] = relationship(
         back_populates="assignment",
