@@ -7,6 +7,8 @@ from app.exceptions import (
     AssignmentAlreadyClaimedException,
     AssignmentNotFoundException,
     AssignmentUpdateNotFoundException,
+    ClinicInUseException,
+    ClinicNotFoundException,
     DogNotFoundException,
     EmailAlreadyExists,
     InvalidCredentialsException,
@@ -79,6 +81,28 @@ def register_exception_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=404,
             content={"detail": str(exc) or "Assignment update not found"},
+        )
+
+    @app.exception_handler(ClinicNotFoundException)
+    async def clinic_not_found_handler(
+        request: Request,
+        exc: ClinicNotFoundException,
+    ) -> JSONResponse:
+        logger.info("Clinic not found")
+        return JSONResponse(
+            status_code=404,
+            content={"detail": str(exc) or "Clinic not found"},
+        )
+
+    @app.exception_handler(ClinicInUseException)
+    async def clinic_in_use_handler(
+        request: Request,
+        exc: ClinicInUseException,
+    ) -> JSONResponse:
+        logger.info("Clinic is still referenced")
+        return JSONResponse(
+            status_code=409,
+            content={"detail": str(exc) or "Clinic is still in use"},
         )
 
     @app.exception_handler(AssignmentAlreadyClaimedException)

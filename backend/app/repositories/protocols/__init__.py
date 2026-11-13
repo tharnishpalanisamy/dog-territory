@@ -1,3 +1,4 @@
+from .clinic_repository_protocol import ClinicRepositoryProtocol
 from .dog_repository_protocol import DogRepositoryProtocol
 from .refresh_token_protocol import RefreshTokenRepositoryProtocol
 from .reports_repository_protocol import ReportsRepositoryProtocol
@@ -9,6 +10,7 @@ from .work_assignment_update_repository_protocol import (
 )
 
 __all__ = [
+    "ClinicRepositoryProtocol",
     "DogRepositoryProtocol",
     "RefreshTokenRepositoryProtocol",
     "ReportsRepositoryProtocol",

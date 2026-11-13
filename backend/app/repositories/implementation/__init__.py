@@ -1,3 +1,4 @@
+from .clinic_repository import ClinicRepository
 from .sqlalchemy_dog_repository import DogRepository
 from .sqlalchemy_refresh_token_repository import RefreshTokenRepository
 from .sqlalchemy_reports_repository import ReportsRepository
@@ -7,6 +8,7 @@ from .work_assignment_repository import WorkAssignmentRepository
 from .work_assignment_update_repository import WorkAssignmentUpdateRepository
 
 __all__ = [
+    "ClinicRepository",
     "DogRepository",
     "RefreshTokenRepository",
     "ReportsRepository",

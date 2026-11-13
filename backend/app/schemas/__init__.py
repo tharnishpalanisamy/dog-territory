@@ -10,6 +10,7 @@ from .auth import (
     RefreshTokenResponse,
     UserLogin,
 )
+from .clinic import ClinicCreate, ClinicFilterParams, ClinicResponse, ClinicUpdate
 from .dog import (
     DogCreate,
     DogDetailResponse,
@@ -54,6 +55,10 @@ __all__ = [
     "AssignmentUpdatePatch",
     "AssignmentUpdateResponse",
     "AvailableAssignmentFilterParams",
+    "ClinicCreate",
+    "ClinicFilterParams",
+    "ClinicResponse",
+    "ClinicUpdate",
     "DogCreate",
     "DogDetailResponse",
     "DogFilterParams",

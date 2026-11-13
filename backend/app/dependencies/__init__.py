@@ -4,6 +4,7 @@ from .auth_dependency import (
     get_current_user,
     require_roles,
 )
+from .clinic_dependency import get_clinic_service
 from .dog_dependency import get_dog_service
 from .reports_dependency import get_reports_service
 from .volunteers_dependency import get_volunteer_repository, get_volunteer_service
@@ -15,6 +16,7 @@ from .work_assignment_dependency import (
 __all__ = [
     "admin_required",
     "get_auth_service",
+    "get_clinic_service",
     "get_current_user",
     "get_dog_service",
     "get_reports_service",

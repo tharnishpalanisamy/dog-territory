@@ -16,12 +16,16 @@ from .work_assignment import (
     AssignmentAlreadyClaimedException,
     AssignmentNotFoundException,
     AssignmentUpdateNotFoundException,
+    ClinicInUseException,
+    ClinicNotFoundException,
 )
 
 __all__ = [
     "AssignmentAlreadyClaimedException",
     "AssignmentNotFoundException",
     "AssignmentUpdateNotFoundException",
+    "ClinicInUseException",
+    "ClinicNotFoundException",
     "DogNotFoundException",
     "EmailAlreadyExists",
     "InvalidCredentialsException",

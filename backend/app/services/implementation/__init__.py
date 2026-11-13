@@ -8,6 +8,7 @@ from .work_assignment_update_service import WorkAssignmentUpdateService
 
 __all__ = [
     "AuthService",
+    "ClinicService",
     "DogService",
     "RefreshTokenService",
     "ReportsService",
@@ -15,3 +16,4 @@ __all__ = [
     "WorkAssignmentService",
     "WorkAssignmentUpdateService",
 ]
+from .clinic_service import ClinicService
