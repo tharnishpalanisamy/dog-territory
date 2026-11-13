@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from app.core import AssignmentUpdateType
+from app.core import AssignmentUpdateType, MedicalAssignmentMode
 
 
 class AssignmentUpdateCreate(BaseModel):
@@ -54,5 +54,6 @@ class AssignmentUpdateResponse(BaseModel):
 
 class ClinicAdmissionCreate(BaseModel):
     clinic_id: int
-    dog_id: int | None = None
-    admission_notes: str | None = None
+    title: str = Field(min_length=3, max_length=150)
+    description: str = Field(min_length=5)
+    mode: MedicalAssignmentMode

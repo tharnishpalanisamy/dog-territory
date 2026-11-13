@@ -42,6 +42,7 @@ class AssignmentPriority(str, enum.Enum):
 
 class AssignmentStatus(str, enum.Enum):
     OPEN = "open"
+    ASSIGNED = "assigned"
     ACCEPTED = "accepted"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"
@@ -62,6 +63,15 @@ class VolunteerAvailability(str, enum.Enum):
     FLEXIBLE = "flexible"
     UNAVAILABLE = "unavailable"
 
+
+class VolunteerApprovalStatus(str, enum.Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+
+class VolunteerApprovalDecision(str, enum.Enum):
+    APPROVED = "approved"
+    REJECTED = "rejected"
 
 class VeterinarianApprovalStatus(str, enum.Enum):
     PENDING = "pending"

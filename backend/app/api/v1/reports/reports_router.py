@@ -1,7 +1,14 @@
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile, status
+
 from app.core import DogReportType, UserRole
-from app.dependencies import get_current_user, get_reports_service, require_roles
+from app.dependencies import (
+    get_current_user,
+    get_reports_service,
+    get_volunteer_service,
+    require_roles,
+)
 from app.models import User
 from app.schemas import (
     ReportCreate,
@@ -11,8 +18,7 @@ from app.schemas import (
     ReportSummaryResponse,
     ReportUpdate,
 )
-from app.services.protocol import ReportsServiceProtocol
-from fastapi import APIRouter, Depends, File, Form, Query, UploadFile, status
+from app.services.protocol import ReportsServiceProtocol, VolunteerServiceProtocol
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
@@ -53,10 +59,14 @@ async def get_all_reports(
     user: Annotated[User, Depends(require_roles(UserRole.VOLUNTEER, UserRole.ADMIN))],
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
     filters: Annotated[ReportFilterParams, Depends()],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
     limit: int = Query(ge=1, le=100, default=20),
     offset: int = Query(ge=0, default=0),
 ):
-
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.get_all_reports(filters, limit, offset)
 
 
@@ -73,7 +83,12 @@ async def get_report_by_id(
     report_id: int,
     user: Annotated[User, Depends(require_roles(UserRole.VOLUNTEER, UserRole.ADMIN))],
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.get_report_by_id(report_id)
 
 

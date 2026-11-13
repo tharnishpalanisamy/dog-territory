@@ -1,7 +1,13 @@
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, Query, status
+
 from app.core import UserRole
-from app.dependencies import get_work_assignment_update_service, require_roles
+from app.dependencies import (
+    get_volunteer_service,
+    get_work_assignment_update_service,
+    require_roles,
+)
 from app.models import User
 from app.schemas import (
     AssignmentUpdateCreate,
@@ -10,8 +16,10 @@ from app.schemas import (
     AssignmentUpdateResponse,
     ClinicAdmissionCreate,
 )
-from app.services.protocol import WorkAssignmentUpdateServiceProtocol
-from fastapi import APIRouter, Depends, Query, status
+from app.services.protocol import (
+    VolunteerServiceProtocol,
+    WorkAssignmentUpdateServiceProtocol,
+)
 
 router = APIRouter(prefix="/assignment-updates", tags=["Assignment updates"])
 
@@ -38,7 +46,12 @@ async def get_update_by_id(
         WorkAssignmentUpdateServiceProtocol,
         Depends(get_work_assignment_update_service),
     ],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.get_update_by_id(update_id)
 
 
@@ -50,7 +63,12 @@ async def updates_assignment(
         WorkAssignmentUpdateServiceProtocol,
         Depends(get_work_assignment_update_service),
     ],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.create_update(data, user)
 
 
@@ -63,7 +81,12 @@ async def update_assignment_update(
         WorkAssignmentUpdateServiceProtocol,
         Depends(get_work_assignment_update_service),
     ],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.update_update(update_id, data, user)
 
 
@@ -75,7 +98,12 @@ async def delete_assignment_update(
         WorkAssignmentUpdateServiceProtocol,
         Depends(get_work_assignment_update_service),
     ],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     await service.delete_update(update_id, user)
 
 
@@ -87,5 +115,10 @@ async def create_clinic_admission(
     service: Annotated[
         WorkAssignmentUpdateServiceProtocol, Depends(get_work_assignment_update_service)
     ],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.create_clinic_admission(assignment_id, data, user)

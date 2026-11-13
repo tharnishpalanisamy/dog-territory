@@ -17,6 +17,7 @@ from app.exceptions import (
     ReportNotFoundException,
     UserNotFoundException,
     VolunteerAlreadyExistsException,
+    VolunteerNotApprovedException,
     VolunteerNotFoundException,
     VolunteerServiceNotAvailable,
 )
@@ -125,6 +126,16 @@ def register_exception_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=404,
             content={"detail": str(exc) or "Volunteer not found"},
+        )
+
+    @app.exception_handler(VolunteerNotApprovedException)
+    async def volunteer_not_approved_handler(
+        request: Request,
+        exc: VolunteerNotApprovedException,
+    ) -> JSONResponse:
+        return JSONResponse(
+            status_code=403,
+            content={"detail": str(exc) or "Volunteer approval is required"},
         )
 
     @app.exception_handler(VolunteerServiceNotAvailable)

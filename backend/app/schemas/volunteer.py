@@ -1,6 +1,10 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from app.core import VolunteerAvailability
+from app.core import (
+    VolunteerApprovalDecision,
+    VolunteerApprovalStatus,
+    VolunteerAvailability,
+)
 
 
 class VolunteerCreate(BaseModel):
@@ -44,7 +48,7 @@ class VolunteerUpdate(BaseModel):
 
 
 class VolunteerApprovalUpdate(BaseModel):
-    is_approved: bool
+    approval_status: VolunteerApprovalDecision
 
 
 class VolunteerResponse(BaseModel):
@@ -59,4 +63,4 @@ class VolunteerResponse(BaseModel):
     pincode: str
     availability: VolunteerAvailability
     service_pincodes: list[str]
-    approval_status: str
+    approval_status: VolunteerApprovalStatus

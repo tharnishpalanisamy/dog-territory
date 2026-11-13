@@ -85,7 +85,14 @@ def get_work_assignment_update_service(
     medical_assignment_repository: Annotated[
         MedicalAssignmentRepositoryProtocol, Depends(get_medical_assignment_repository)
     ],
+    volunteer_repository: Annotated[
+        VolunteerRepositoryProtocol, Depends(get_volunteer_repository)
+    ],
 ) -> WorkAssignmentUpdateServiceProtocol:
     return WorkAssignmentUpdateService(
-        db, repository, work_assignment_repository, medical_assignment_repository
+        db,
+        repository,
+        work_assignment_repository,
+        medical_assignment_repository,
+        volunteer_repository,
     )

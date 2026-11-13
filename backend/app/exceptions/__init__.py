@@ -6,6 +6,7 @@ from .user_exceptions import (
     InvalidCredentialsException,
     NotAuthorizedException,
     UserNotFoundException,
+    VolunteerNotApprovedException,
 )
 from .volunteer import (
     VolunteerAlreadyExistsException,
@@ -34,6 +35,7 @@ __all__ = [
     "ReportNotFoundException",
     "UserNotFoundException",
     "VolunteerAlreadyExistsException",
+    "VolunteerNotApprovedException",
     "VolunteerNotFoundException",
     "VolunteerServiceNotAvailable",
 ]

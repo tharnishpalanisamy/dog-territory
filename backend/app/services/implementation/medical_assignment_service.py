@@ -2,8 +2,18 @@ from datetime import UTC, datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core import MedicalAssignmentStatus, UserRole, VeterinarianApprovalStatus
-from app.exceptions import AssignmentNotFoundException, NotAuthorizedException
+from app.core import (
+    MedicalAssignmentStatus,
+    UserRole,
+    VeterinarianApprovalStatus,
+    VolunteerApprovalStatus,
+)
+from app.exceptions import (
+    AssignmentNotFoundException,
+    NotAuthorizedException,
+    VolunteerNotApprovedException,
+    VolunteerNotFoundException,
+)
 from app.models import MedicalAssignment, User
 from app.repositories.protocols import (
     MedicalAssignmentRepositoryProtocol,
@@ -28,6 +38,7 @@ class MedicalAssignmentService:
     ) -> MedicalAssignment:
         if user.role != UserRole.VOLUNTEER:
             raise NotAuthorizedException("Only volunteers can admit dogs to a clinic")
+        await self._require_approved_volunteer(user)
         assignment = MedicalAssignment(
             **data.model_dump(),
             created_by=user.id,
@@ -62,6 +73,7 @@ class MedicalAssignmentService:
                 **{**filters.model_dump(), "clinic_id": veterinarian.clinic_id}
             )
         elif user and user.role == UserRole.VOLUNTEER:
+            await self._require_approved_volunteer(user)
             filters = MedicalAssignmentFilterParams(
                 **{**filters.model_dump(), "volunteer_id": user.id}
             )
@@ -82,6 +94,7 @@ class MedicalAssignmentService:
         if user.role == UserRole.ADMIN:
             return assignment
         if user.role == UserRole.VOLUNTEER and assignment.volunteer_id == user.id:
+            await self._require_approved_volunteer(user)
             return assignment
         if user.role == UserRole.VETERINARIAN:
             veterinarian = await self.repository.get_veterinarian_for_user(user.id)
@@ -146,6 +159,8 @@ class MedicalAssignmentService:
 
     async def release(self, assignment_id: int, user: User) -> MedicalAssignment:
         assignment = await self.get_by_id(assignment_id)
+        if user.role == UserRole.VOLUNTEER:
+            await self._require_approved_volunteer(user)
         if user.role != UserRole.ADMIN and assignment.volunteer_id != user.id:
             raise NotAuthorizedException(
                 "Only the assigned volunteer or an admin can release it"
@@ -242,3 +257,14 @@ class MedicalAssignmentService:
         except Exception:
             await self.db.rollback()
             raise
+
+    async def _require_approved_volunteer(self, user: User) -> None:
+        volunteer = await self.repository.get_volunteer_by_user_id(user.id)
+        if volunteer is None:
+            raise VolunteerNotFoundException(
+                "Volunteer profile associated with user is not found"
+            )
+        if volunteer.approval_status != VolunteerApprovalStatus.APPROVED:
+            raise VolunteerNotApprovedException(
+                "Volunteer approval is required to perform this action"
+            )

@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from app.models import MedicalAssignment
+from app.models import MedicalAssignment, Volunteer
 
 
 class MedicalAssignmentRepositoryProtocol(Protocol):
@@ -17,6 +17,8 @@ class MedicalAssignmentRepositoryProtocol(Protocol):
     ) -> list[MedicalAssignment]: ...
 
     async def get_veterinarian_for_user(self, user_id: int): ...
+
+    async def get_volunteer_by_user_id(self, user_id: int) -> Volunteer | None: ...
 
     async def get_veterinarian_by_id(self, veterinarian_id: int): ...
 

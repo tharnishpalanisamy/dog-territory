@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Query, Response, status
 
 from app.core import UserRole
-from app.dependencies import get_dog_service, require_roles
+from app.dependencies import get_dog_service, get_volunteer_service, require_roles
 from app.models import User
 from app.schemas import (
     DogCreate,
@@ -12,7 +12,7 @@ from app.schemas import (
     DogSummaryResponse,
     DogUpdate,
 )
-from app.services.protocol import DogServiceProtocol
+from app.services.protocol import DogServiceProtocol, VolunteerServiceProtocol
 
 router = APIRouter(prefix="/dogs", tags=["Dog"])
 
@@ -27,7 +27,12 @@ async def create_dog(
     dog_data: DogCreate,
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ) -> DogDetailResponse:
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.create_dog(dog_data, user)
 
 
@@ -48,9 +53,14 @@ async def get_all_dogs(
     ],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
     filters: Annotated[DogFilterParams, Depends()],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
     limit: int = Query(ge=1, le=100, default=20),
     offset: int = Query(ge=0, default=0),
 ) -> list[DogSummaryResponse]:
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.get_all_dogs(
         filters=filters,
         limit=limit,
@@ -77,7 +87,12 @@ async def get_dog_by_id(
         ),
     ],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ) -> DogDetailResponse:
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.get_dog_by_id(dog_id)
 
 
@@ -91,7 +106,12 @@ async def update_dog_by_id(
     dog_data: DogUpdate,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ) -> DogDetailResponse:
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.update_dog_by_id(dog_id, dog_data)
 
 
@@ -105,7 +125,12 @@ async def update_dog_by_dog_code(
     dog_data: DogUpdate,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ) -> DogDetailResponse:
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.update_dog_by_dog_code(dog_code, dog_data)
 
 
@@ -142,7 +167,12 @@ async def get_dog_by_dog_code(
         ),
     ],
     service: Annotated[DogServiceProtocol, Depends(get_dog_service)],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ) -> DogDetailResponse:
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.get_dog_by_dog_code(dog_code)
 
 

@@ -2,7 +2,7 @@ from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.models import MedicalAssignment, Veterinarian
+from app.models import MedicalAssignment, Veterinarian, Volunteer
 
 
 class MedicalAssignmentRepository:
@@ -80,6 +80,11 @@ class MedicalAssignmentRepository:
     async def get_veterinarian_for_user(self, user_id: int) -> Veterinarian | None:
         return await self.db.scalar(
             select(Veterinarian).where(Veterinarian.user_id == user_id)
+        )
+
+    async def get_volunteer_by_user_id(self, user_id: int) -> Volunteer | None:
+        return await self.db.scalar(
+            select(Volunteer).where(Volunteer.user_id == user_id)
         )
 
     async def get_veterinarian_by_id(self, veterinarian_id: int) -> Veterinarian | None:

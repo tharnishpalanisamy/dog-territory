@@ -4,7 +4,7 @@ from sqlalchemy import or_, select
 from sqlalchemy.orm import selectinload
 
 from app.core import AssignmentStatus
-from app.models import Report, WorkAssignment
+from app.models import Report, Volunteer, WorkAssignment
 
 
 class WorkAssignmentRepository:
@@ -128,12 +128,17 @@ class WorkAssignmentRepository:
         result = await self.db.scalar(query)
         return result
 
+    async def get_volunteer_by_user_id(self, user_id: int) -> Volunteer | None:
+        query = select(Volunteer).where(Volunteer.user_id == user_id)
+        return await self.db.scalar(query)
+
     async def update_assigned_to(
         self, assignment: WorkAssignment, assigned_to: int, assigned_by: int
     ) -> WorkAssignment:
 
         assignment.assigned_to = assigned_to
         assignment.assigned_by = assigned_by
+        assignment.status = AssignmentStatus.ASSIGNED
         await self.db.flush()
         await self.db.refresh(assignment)
 

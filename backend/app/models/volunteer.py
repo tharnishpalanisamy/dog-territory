@@ -13,7 +13,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core import VolunteerAvailability
+from app.core import VolunteerApprovalStatus, VolunteerAvailability
 from app.database.base import Base
 
 if TYPE_CHECKING:
@@ -58,10 +58,14 @@ class Volunteer(Base):
         server_default=text("ARRAY[]::varchar[]"),
     )
 
-    approval_status: Mapped[str] = mapped_column(
-        String(20),
+    approval_status: Mapped[VolunteerApprovalStatus] = mapped_column(
+        Enum(
+            VolunteerApprovalStatus,
+            name="volunteer_approval_enum",
+            values_callable=lambda enum_cls: [e.value for e in enum_cls],
+        ),
         nullable=False,
-        default="pending",
+        default=VolunteerApprovalStatus.PENDING,
     )
 
     created_at: Mapped[datetime] = mapped_column(

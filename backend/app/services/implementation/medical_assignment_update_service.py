@@ -1,10 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core import UserRole, VeterinarianApprovalStatus
+from app.core import UserRole, VeterinarianApprovalStatus, VolunteerApprovalStatus
 from app.exceptions import (
     AssignmentNotFoundException,
     AssignmentUpdateNotFoundException,
     NotAuthorizedException,
+    VolunteerNotApprovedException,
+    VolunteerNotFoundException,
 )
 from app.models import MedicalAssignmentUpdate, User
 from app.repositories.protocols import (
@@ -54,6 +56,10 @@ class MedicalAssignmentUpdateService:
         if user.role == UserRole.ADMIN:
             return update
         if user.role == UserRole.VOLUNTEER and assignment.volunteer_id == user.id:
+            volunteer = await self.assignment_repository.get_volunteer_by_user_id(
+                user.id
+            )
+            self._require_approved_volunteer(volunteer)
             return update
         if user.role == UserRole.VETERINARIAN:
             veterinarian = await self.assignment_repository.get_veterinarian_for_user(
@@ -146,3 +152,14 @@ class MedicalAssignmentUpdateService:
         except Exception:
             await self.db.rollback()
             raise
+
+    @staticmethod
+    def _require_approved_volunteer(volunteer) -> None:
+        if volunteer is None:
+            raise VolunteerNotFoundException(
+                "Volunteer profile associated with user is not found"
+            )
+        if volunteer.approval_status != VolunteerApprovalStatus.APPROVED:
+            raise VolunteerNotApprovedException(
+                "Volunteer approval is required to perform this action"
+            )

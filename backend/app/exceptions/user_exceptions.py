@@ -12,3 +12,7 @@ class InvalidCredentialsException(Exception):
 
 class NotAuthorizedException(Exception):
     pass
+
+
+class VolunteerNotApprovedException(NotAuthorizedException):
+    pass

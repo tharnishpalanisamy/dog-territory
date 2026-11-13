@@ -1,5 +1,7 @@
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, Query, status
+
 from app.core import UserRole
 from app.dependencies import (
     get_work_assignment_service,
@@ -24,7 +26,6 @@ from app.services.protocol import (
     WorkAssignmentServiceProtocol,
     WorkAssignmentUpdateServiceProtocol,
 )
-from fastapi import APIRouter, Depends, Query, status
 
 router = APIRouter(prefix="/assignments", tags=["assignment"])
 
@@ -52,6 +53,8 @@ async def get_all_assignments(
     limit: int = Query(ge=1, default=20, le=100),
     offset: int = Query(ge=0, default=0),
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await service.require_approved_volunteer(user)
     return await service.get_all_assignments(filters, limit, offset)
 
 
@@ -65,6 +68,8 @@ async def get_available_assignments(
     limit: int = Query(ge=1, default=20, le=100),
     offset: int = Query(ge=0, default=0),
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await service.require_approved_volunteer(user)
     return await service.get_available_work_assignments(filters, limit, offset)
 
 
@@ -88,6 +93,8 @@ async def get_assignment_by_id(
         WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
     ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await service.require_approved_volunteer(user)
     return await service.get_assignment_by_id(assignment_id)
 
 
@@ -99,6 +106,8 @@ async def claim_assignment(
         WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
     ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await service.require_approved_volunteer(user)
     return await service.claim_assignment(assignment_id, user)
 
 
@@ -123,6 +132,8 @@ async def status_assignment(
         WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
     ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await service.require_approved_volunteer(user)
     return await service.update_status(assignment_id, data, user)
 
 
@@ -138,6 +149,8 @@ async def get_assignment_updates(
         Depends(get_work_assignment_update_service),
     ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await service.require_approved_volunteer(user)
     return await service.get_updates_by_assignment_id(assignment_id)
 
 

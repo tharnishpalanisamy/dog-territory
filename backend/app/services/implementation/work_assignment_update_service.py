@@ -1,14 +1,17 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core import UserRole
+from app.core import UserRole, VolunteerApprovalStatus
 from app.exceptions import (
     AssignmentNotFoundException,
     AssignmentUpdateNotFoundException,
     NotAuthorizedException,
+    VolunteerNotApprovedException,
+    VolunteerNotFoundException,
 )
 from app.models import AssignmentUpdate, MedicalAssignment, User
 from app.repositories.protocols import (
     MedicalAssignmentRepositoryProtocol,
+    VolunteerRepositoryProtocol,
     WorkAssignmentRepositoryProtocol,
     WorkAssignmentUpdateRepositoryProtocol,
 )
@@ -22,11 +25,13 @@ class WorkAssignmentUpdateService:
         repository: WorkAssignmentUpdateRepositoryProtocol,
         work_assignment_repository: WorkAssignmentRepositoryProtocol,
         medical_assignment_repository: MedicalAssignmentRepositoryProtocol,
+        volunteer_repository: VolunteerRepositoryProtocol,
     ):
         self.db = db
         self.repository = repository
         self.work_assignment_repository = work_assignment_repository
         self.medical_assignment_repository = medical_assignment_repository
+        self.volunteer_repository = volunteer_repository
 
     async def get_all_updates(
         self, filters, limit: int, offset: int
@@ -52,6 +57,7 @@ class WorkAssignmentUpdateService:
         return await self.repository.get_by_assignment_id(assignment_id)
 
     async def _get_owned_update(self, update_id: int, user: User) -> AssignmentUpdate:
+        await self._require_approved_volunteer(user)
         update = await self.get_update_by_id(update_id)
         if user.role != UserRole.ADMIN and update.updated_by != user.id:
             raise NotAuthorizedException("You can only edit or delete your own updates")
@@ -82,6 +88,7 @@ class WorkAssignmentUpdateService:
     async def create_update(
         self, data: AssignmentUpdateCreate, user: User
     ) -> AssignmentUpdate:
+        await self._require_approved_volunteer(user)
         assignment_id = data.assignment_id
         assignment = await self.work_assignment_repository.get_by_id(assignment_id)
         if assignment is None:
@@ -111,7 +118,13 @@ class WorkAssignmentUpdateService:
             raise AssignmentNotFoundException(
                 f"Assignment with id {assignment_id} not found "
             )
-        volunteer = ""
+        volunteer = await self.volunteer_repository.get_by_user_id(
+            assignment.assigned_to
+        )
+        if volunteer is None:
+            raise VolunteerNotFoundException(
+                "Volunteer assigned to the assignment is not found"
+            )
         medical_assignment = MedicalAssignment(
             dog_id=assignment.report.dog_id,
             work_assignment_id=assignment.id,
@@ -119,9 +132,24 @@ class WorkAssignmentUpdateService:
             created_by=user.id,
             volunteer_id=volunteer.id,
             title=data.title,
+            description=data.description,
             mode=data.mode,
-            status=data.status,
         )
         result = await self.medical_assignment_repository.create(medical_assignment)
         await self.db.commit()
         return result
+
+    async def _require_approved_volunteer(self, user: User) -> None:
+        if user.role != UserRole.VOLUNTEER:
+            return
+        volunteer = await self.work_assignment_repository.get_volunteer_by_user_id(
+            user.id
+        )
+        if volunteer is None:
+            raise VolunteerNotFoundException(
+                "Volunteer profile associated with user is not found"
+            )
+        if volunteer.approval_status != VolunteerApprovalStatus.APPROVED:
+            raise VolunteerNotApprovedException(
+                "Volunteer approval is required to perform this action"
+            )

@@ -1,9 +1,12 @@
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, Query, status
+
 from app.core import UserRole
 from app.dependencies import (
     get_medical_assignment_service,
     get_medical_assignment_update_service,
+    get_volunteer_service,
     require_roles,
 )
 from app.models import User
@@ -19,8 +22,8 @@ from app.schemas import (
 from app.services.protocol import (
     MedicalAssignmentServiceProtocol,
     MedicalAssignmentUpdateServiceProtocol,
+    VolunteerServiceProtocol,
 )
-from fastapi import APIRouter, Depends, Query, status
 
 medical_assignment_router = APIRouter(tags=["Medical Assignments"])
 router = APIRouter(prefix="/medical-assignments")
@@ -52,9 +55,14 @@ async def get_medical_assignments(
         MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
     ],
     filters: Annotated[MedicalAssignmentFilterParams, Depends()],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.get_all(filters, limit, offset, user)
 
 
@@ -70,7 +78,12 @@ async def get_medical_assignment(
     service: Annotated[
         MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
     ],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.get_authorized_by_id(assignment_id, user)
 
 
@@ -116,7 +129,12 @@ async def release_medical_assignment(
     service: Annotated[
         MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
     ],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.release(assignment_id, user)
 
 
@@ -178,7 +196,12 @@ async def get_medical_assignment_updates(
     assignment_service: Annotated[
         MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
     ],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     await assignment_service.get_authorized_by_id(assignment_id, user)
     return await service.get_updates(assignment_id)
 
@@ -199,7 +222,12 @@ async def get_medical_assignment_update(
     assignment_service: Annotated[
         MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
     ],
+    volunteer_service: Annotated[
+        VolunteerServiceProtocol, Depends(get_volunteer_service)
+    ],
 ):
+    if user.role == UserRole.VOLUNTEER:
+        await volunteer_service.require_approved_volunteer(user.id)
     return await service.get_update_for_user(update_id, user)
 
 

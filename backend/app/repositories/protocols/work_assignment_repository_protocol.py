@@ -1,6 +1,7 @@
 from typing import Protocol
 
 from app.models import WorkAssignment
+from app.models.volunteer import Volunteer
 
 
 class WorkAssignmentRepositoryProtocol(Protocol):
@@ -17,6 +18,8 @@ class WorkAssignmentRepositoryProtocol(Protocol):
     ) -> WorkAssignment: ...
 
     async def get_by_id(self, id) -> WorkAssignment | None: ...
+
+    async def get_volunteer_by_user_id(self, user_id: int) -> Volunteer | None: ...
 
     async def claim_assignment(
         self, assignment: WorkAssignment, assigned_to

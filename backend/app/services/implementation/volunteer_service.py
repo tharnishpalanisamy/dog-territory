@@ -1,11 +1,12 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core import UserRole
+from app.core import UserRole, VolunteerApprovalStatus
 
 # Use your project's existing custom exceptions here.
 from app.exceptions import (
     UserNotFoundException,
     VolunteerAlreadyExistsException,
+    VolunteerNotApprovedException,
     VolunteerNotFoundException,
 )
 from app.models import Volunteer
@@ -48,11 +49,10 @@ class VolunteerService(VolunteerServiceProtocol):
             volunteer = Volunteer(
                 user_id=user_id,
                 **data.model_dump(),
+                approval_status=VolunteerApprovalStatus.PENDING,
             )
 
             volunteer = await self.repository.create(volunteer)
-
-            user.role = UserRole.VOLUNTEER
 
             await self.db.commit()
 
@@ -69,6 +69,14 @@ class VolunteerService(VolunteerServiceProtocol):
         if volunteer is None:
             raise VolunteerNotFoundException()
 
+        return volunteer
+
+    async def require_approved_volunteer(self, user_id: int) -> Volunteer:
+        volunteer = await self.get_by_user_id(user_id)
+        if volunteer.approval_status != VolunteerApprovalStatus.APPROVED:
+            raise VolunteerNotApprovedException(
+                "Volunteer approval is required to perform this action"
+            )
         return volunteer
 
     async def update_profile(self, user_id: int, data: VolunteerUpdate) -> Volunteer:
@@ -111,13 +119,19 @@ class VolunteerService(VolunteerServiceProtocol):
     ) -> Volunteer:
 
         volunteer = await self.get_by_id(volunteer_id)
+        user = await self.user_repository.get_by_id(volunteer.user_id)
 
+        if user is None:
+            raise UserNotFoundException(
+                "User corresponding to the volunteer profile not found"
+            )
         try:
             await self.repository.update(
                 volunteer,
-                data.model_dump(),
+                {"approval_status": data.approval_status},
             )
-
+            if data.approval_status == VolunteerApprovalStatus.APPROVED:
+                user.role = UserRole.VOLUNTEER
             await self.db.commit()
 
             return volunteer

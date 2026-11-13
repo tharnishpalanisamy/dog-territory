@@ -10,6 +10,8 @@ from .enums import (
     ReportStatus,
     UserRole,
     VeterinarianApprovalStatus,
+    VolunteerApprovalDecision,
+    VolunteerApprovalStatus,
     VolunteerAvailability,
 )
 from .logging_config import setup_logging
@@ -28,6 +30,8 @@ __all__ = [
     "ReportStatus",
     "UserRole",
     "VeterinarianApprovalStatus",
+    "VolunteerApprovalDecision",
+    "VolunteerApprovalStatus",
     "VolunteerAvailability",
     "create_access_token",
     "hash_password",
