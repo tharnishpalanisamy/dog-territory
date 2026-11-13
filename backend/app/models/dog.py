@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import TYPE_CHECKING
 
 from sqlalchemy import (
     Boolean,
@@ -11,7 +12,11 @@ from sqlalchemy import (
     UniqueConstraint,
     func,
 )
-from sqlalchemy.orm import Mapped, mapped_column
+
+if TYPE_CHECKING:
+    from app.models.medical_assignment import MedicalAssignment
+    from app.models.work_assignments import WorkAssignment
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
@@ -56,4 +61,13 @@ class Dog(Base):
     )
     updated_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True, onupdate=func.now()
+    )
+
+    # relationships
+    work_assignments: Mapped[list["WorkAssignment"]] = relationship(
+        back_populates="dog"
+    )
+
+    medical_assignments: Mapped[list["MedicalAssignment"]] = relationship(
+        back_populates="dog",
     )

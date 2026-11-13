@@ -17,6 +17,7 @@ from app.database.base import Base
 
 if TYPE_CHECKING:
     from app.models.assignment_update import AssignmentUpdate
+    from app.models.medical_assignment import MedicalAssignment
     from app.models.report import Report
     from app.models.user import User
     from app.models.work_assignments import WorkAssignment
@@ -108,6 +109,11 @@ class WorkAssignment(Base):
     )
 
     # Relationships
+    dog_id: Mapped[int | None] = mapped_column(
+        ForeignKey("dogs.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
 
     updates: Mapped[list["AssignmentUpdate"]] = relationship(
         back_populates="assignment",
@@ -125,4 +131,8 @@ class WorkAssignment(Base):
 
     assigner: Mapped["User | None"] = relationship(
         foreign_keys=[assigned_by],
+    )
+
+    medical_assignments: Mapped[list["MedicalAssignment"]] = relationship(
+        back_populates="work_assignment",
     )

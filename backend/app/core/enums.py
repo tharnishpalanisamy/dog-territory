@@ -23,6 +23,7 @@ class ReportStatus(str, enum.Enum):
 
 
 class AssignmentType(str, enum.Enum):
+    REGISTRATION = "registration"
     RESCUE = "rescue"
     TRANSPORT = "transport"
     VACCINATION = "vaccination"
@@ -47,7 +48,7 @@ class AssignmentStatus(str, enum.Enum):
     CANCELLED = "cancelled"
 
 
-class AssignmentUpdateType(str , enum.Enum):
+class AssignmentUpdateType(str, enum.Enum):
     PROGRESS = "progress"
     NOTE = "note"
     ISSUE = "issue"
@@ -60,3 +61,36 @@ class VolunteerAvailability(str, enum.Enum):
     EVERYDAY = "everyday"
     FLEXIBLE = "flexible"
     UNAVAILABLE = "unavailable"
+
+
+
+class VeterinarianApprovalStatus(str, enum.Enum):
+    PENDING = "pending"
+    APPROVED = "approved"
+    REJECTED = "rejected"
+    SUSPENDED = "suspended"
+
+
+class MedicalAssignmentMode(str, enum.Enum):
+    CLINIC = "clinic"
+    FIELD = "field"
+
+
+class MedicalAssignmentStatus(str, enum.Enum):
+    OPEN = "open"
+    CLAIMED = "claimed"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+
+
+class MedicalAssignmentUpdateType(str, enum.Enum):
+    NOTE = "note"
+    DIAGNOSIS = "diagnosis"
+    TREATMENT = "treatment"
+    PROGRESS = "progress"
+    READY_FOR_RELEASE = "ready_for_release"
+    FOLLOW_UP = "follow_up"
+
+
+    

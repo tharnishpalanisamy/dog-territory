@@ -1,11 +1,16 @@
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, Integer, String, func
 from sqlalchemy import Enum as SQLAlchemyEnum
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core import UserRole
 from app.database.base import Base
+
+if TYPE_CHECKING:
+    from app.models.medical_assignment import MedicalAssignment
+    from app.models.veterinarian import Veterinarian
 
 
 class User(Base):
@@ -28,4 +33,17 @@ class User(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
+    )
+
+    veterinarian_profile: Mapped["Veterinarian | None"] = relationship(
+        foreign_keys="Veterinarian.user_id",
+        uselist=False,
+    )
+
+    created_medical_assignments: Mapped[list["MedicalAssignment"]] = relationship(
+        foreign_keys="MedicalAssignment.created_by",
+    )
+
+    volunteer_medical_assignments: Mapped[list["MedicalAssignment"]] = relationship(
+        foreign_keys="MedicalAssignment.volunteer_id",
     )

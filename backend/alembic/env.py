@@ -4,6 +4,9 @@ from logging.config import fileConfig
 from alembic import context
 from app.core.config import setting
 from app.database.base import Base
+# Import every model so all tables are registered on Base.metadata before
+# Alembic compares it with the database schema.
+import app.models  # noqa: F401
 from sqlalchemy import pool
 from sqlalchemy.engine import URL, Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
