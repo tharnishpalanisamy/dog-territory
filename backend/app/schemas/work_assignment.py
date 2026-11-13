@@ -20,6 +20,15 @@ class WorkAssignmentCreate(BaseModel):
     assigned_to: int | None = None
 
 
+class WorkAssignmentUpdate(BaseModel):
+    report_id: int | None = Field(default=None, gt=0)
+    title: str | None = Field(default=None, min_length=3, max_length=150)
+    description: str | None = None
+    task_type: AssignmentType | None = None
+    priority: AssignmentPriority | None = None
+    assigned_to: int | None = Field(default=None, gt=0)
+
+
 class WorkAssignmentResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

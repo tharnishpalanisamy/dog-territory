@@ -59,3 +59,14 @@ class ReportsRepository:
         await self.db.flush()
         await self.db.refresh(report)
         return report
+
+    async def update(self, report: Report, fields: dict) -> Report:
+        for field, value in fields.items():
+            setattr(report, field, value)
+        await self.db.flush()
+        await self.db.refresh(report)
+        return report
+
+    async def delete(self, report: Report) -> None:
+        await self.db.delete(report)
+        await self.db.flush()

@@ -155,3 +155,14 @@ class WorkAssignmentRepository:
         await self.db.flush()
         await self.db.refresh(assignment)
         return assignment
+
+    async def update(self, assignment: WorkAssignment, fields: dict) -> WorkAssignment:
+        for field, value in fields.items():
+            setattr(assignment, field, value)
+        await self.db.flush()
+        await self.db.refresh(assignment)
+        return assignment
+
+    async def delete(self, assignment: WorkAssignment) -> None:
+        await self.db.delete(assignment)
+        await self.db.flush()

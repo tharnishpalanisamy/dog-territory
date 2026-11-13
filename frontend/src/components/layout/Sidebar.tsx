@@ -11,8 +11,7 @@ import {
   ShieldCheck,
   PlusCircle,
   UserRound,
-  Sparkles,
-  ChevronRight,
+      ChevronRight,
 } from "lucide-react";
 
 type UserRole = "ADMIN" | "VOLUNTEER" | "VETERINARIAN" | "USER";

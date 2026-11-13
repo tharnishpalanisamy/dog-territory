@@ -8,6 +8,7 @@ from app.schemas import (
     ReportFilterParams,
     ReportResponse,
     ReportStatusUpdate,
+    ReportUpdate,
     ReportSummaryResponse,
 )
 from app.services.protocol import ReportsServiceProtocol
@@ -84,3 +85,22 @@ async def update_report_status(
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
 ):
     return await service.update_status_by_report_id(report_id, report_data)
+
+
+@router.patch("/{report_id}", response_model=ReportResponse)
+async def update_report(
+    report_id: int,
+    report_data: ReportUpdate,
+    user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
+):
+    return await service.update_report(user, report_id, report_data)
+
+
+@router.delete("/{report_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_report(
+    report_id: int,
+    user: Annotated[User, Depends(get_current_user)],
+    service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
+):
+    await service.delete_report(user, report_id)

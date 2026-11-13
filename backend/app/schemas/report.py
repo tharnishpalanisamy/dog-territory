@@ -16,6 +16,17 @@ class ReportCreate(BaseModel):
     dog_code: str | None = None
 
 
+class ReportUpdate(BaseModel):
+    report_type: DogReportType | None = None
+    description: str | None = None
+    state: str | None = None
+    district: str | None = None
+    area_name: str | None = None
+    pincode: str | None = None
+    location: str | None = None
+    dog_code: str | None = None
+
+
 class ReportResponse(BaseModel):
     id: int
     reporter_id: int

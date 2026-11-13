@@ -2,7 +2,7 @@ from fastapi import UploadFile
 
 from app.exceptions import DogNotFoundException, ReportNotFoundException
 from app.models import Report, User
-from app.schemas import ReportCreate
+from app.schemas import ReportCreate, ReportUpdate
 from app.utilities import delete_image, save_image
 
 
@@ -77,3 +77,41 @@ class ReportsService:
         )
         await self.db.commit()
         return result
+
+    async def update_report(self, user: User, report_id: int, data: ReportUpdate) -> Report:
+        report = await self.get_report_by_id(report_id)
+        if report.reporter_id != user.id:
+            from app.exceptions import ForbiddenException
+            raise ForbiddenException("You can only edit your own reports")
+
+        fields = data.model_dump(exclude_unset=True)
+        if "dog_code" in fields:
+            dog_code = fields.pop("dog_code")
+            if dog_code is None:
+                report.dog_id = None
+            else:
+                dog = await self.dog_repository.get_by_dog_code(dog_code)
+                if dog is None:
+                    raise DogNotFoundException(f"Dog with code {dog_code} is not found !")
+                report.dog_id = dog.id
+
+        try:
+            result = await self.report_repository.update(report, fields)
+            await self.db.commit()
+            return result
+        except Exception:
+            await self.db.rollback()
+            raise
+
+    async def delete_report(self, user: User, report_id: int) -> None:
+        report = await self.get_report_by_id(report_id)
+        if report.reporter_id != user.id:
+            from app.exceptions import ForbiddenException
+            raise ForbiddenException("You can only delete your own reports")
+
+        try:
+            await self.report_repository.delete(report)
+            await self.db.commit()
+        except Exception:
+            await self.db.rollback()
+            raise

@@ -1,7 +1,7 @@
 from typing import Protocol
 
 from app.models import User, WorkAssignment
-from app.schemas import AssignAssignment, WorkAssignmentCreate
+from app.schemas import AssignAssignment, WorkAssignmentCreate, WorkAssignmentUpdate
 
 
 class WorkAssignmentServiceProtocol(Protocol):
@@ -33,3 +33,7 @@ class WorkAssignmentServiceProtocol(Protocol):
     async def update_status(self , assignment_id , data , user ) -> WorkAssignment : ... 
 
     async def create_update(self , assignment_id, data, user) : ...
+
+    async def update_work_assignment(self, assignment_id: int, data: WorkAssignmentUpdate) -> WorkAssignment: ...
+
+    async def delete_work_assignment(self, assignment_id: int) -> None: ...

@@ -13,6 +13,7 @@ from app.schemas import (
     WorkAssignmentFilterParams,
     WorkAssignmentResponse,
     WorkAssignmentSummaryResponse,
+    WorkAssignmentUpdate,
 )
 from app.services.protocol import WorkAssignmentServiceProtocol
 from fastapi import APIRouter, Depends, Query, status
@@ -127,3 +128,26 @@ async def updates_assignment(
     ],
 ):
     return await service.create_update(assignment_id, data, user) 
+
+
+@router.patch("/{assignment_id}", response_model=WorkAssignmentResponse)
+async def update_assignment(
+    assignment_id: int,
+    assignment_data: WorkAssignmentUpdate,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
+    service: Annotated[
+        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+    ],
+):
+    return await service.update_work_assignment(assignment_id, assignment_data)
+
+
+@router.delete("/{assignment_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_assignment(
+    assignment_id: int,
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
+    service: Annotated[
+        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+    ],
+):
+    await service.delete_work_assignment(assignment_id)

@@ -17,6 +17,7 @@ from .report import (
     ReportFilterParams,
     ReportResponse,
     ReportStatusUpdate,
+    ReportUpdate,
     ReportSummaryResponse,
 )
 from .user import UserCreate, UserResponse
@@ -37,6 +38,7 @@ from .work_assignment import (
     WorkAssignmentFilterParams,
     WorkAssignmentResponse,
     WorkAssignmentSummaryResponse,
+    WorkAssignmentUpdate,
 )
 
 __all__ = [
@@ -57,6 +59,7 @@ __all__ = [
     "ReportFilterParams",
     "ReportResponse",
     "ReportStatusUpdate",
+    "ReportUpdate",
     "ReportSummaryResponse",
     "UpdateAssignmentStatus",
     "UserCreate",
@@ -71,4 +74,5 @@ __all__ = [
     "WorkAssignmentFilterParams",
     "WorkAssignmentResponse",
     "WorkAssignmentSummaryResponse",
+    "WorkAssignmentUpdate",
 ]

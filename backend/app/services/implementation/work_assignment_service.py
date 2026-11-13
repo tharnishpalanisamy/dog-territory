@@ -16,7 +16,7 @@ from app.repositories.protocols import (
     VolunteerRepositoryProtocol,
     WorkAssignmentRepositoryProtocol,
 )
-from app.schemas import AssignAssignment, WorkAssignmentCreate
+from app.schemas import AssignAssignment, WorkAssignmentCreate, WorkAssignmentUpdate
 
 
 class WorkAssignmentService:
@@ -198,4 +198,56 @@ class WorkAssignmentService:
             return result
         except Exception:
             self.db.rollback()
+            raise
+
+    async def update_work_assignment(
+        self, assignment_id: int, data: WorkAssignmentUpdate
+    ) -> WorkAssignment:
+        assignment = await self.get_assignment_by_id(assignment_id)
+        fields = data.model_dump(exclude_unset=True)
+
+        if "report_id" in fields:
+            report = await self.report_repository.get_by_id(fields["report_id"])
+            if report is None:
+                raise ReportNotFoundException(
+                    f"Report with id {fields['report_id']} not found"
+                )
+
+        if "assigned_to" in fields and fields["assigned_to"] is not None:
+            assigned_user = await self.user_repository.get_by_id(fields["assigned_to"])
+            if assigned_user is None:
+                raise UserNotFoundException(
+                    f"User with id {fields['assigned_to']} is not found"
+                )
+            if assigned_user.role != UserRole.VOLUNTEER:
+                raise NotAuthorizedException(
+                    "Assignments can only be assigned to volunteer users"
+                )
+            volunteer = await self.volunteer_repository.get_by_user_id(assigned_user.id)
+            if volunteer is None:
+                raise VolunteerNotFoundException(
+                    "Volunteer profile associated with user is not found"
+                )
+            report_id = fields.get("report_id", assignment.report_id)
+            report = await self.report_repository.get_by_id(report_id)
+            if report is None:
+                raise ReportNotFoundException(f"Report with id {report_id} not found")
+            if report.pincode not in volunteer.service_pincodes:
+                raise VolunteerServiceNotAvailable("Volunteer does not serve that location")
+
+        try:
+            result = await self.repository.update(assignment, fields)
+            await self.db.commit()
+            return result
+        except Exception:
+            await self.db.rollback()
+            raise
+
+    async def delete_work_assignment(self, assignment_id: int) -> None:
+        assignment = await self.get_assignment_by_id(assignment_id)
+        try:
+            await self.repository.delete(assignment)
+            await self.db.commit()
+        except Exception:
+            await self.db.rollback()
             raise
