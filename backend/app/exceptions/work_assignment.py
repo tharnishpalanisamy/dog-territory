@@ -1,5 +1,6 @@
-class AssignmentNotFoundException(Exception) :
-    pass 
+class AssignmentNotFoundException(Exception):
+    pass
+
 
 class AssignmentUpdateNotFoundException(Exception):
     pass
@@ -12,5 +13,6 @@ class ClinicNotFoundException(Exception):
 class ClinicInUseException(Exception):
     pass
 
-class AssignmentAlreadyClaimedException(Exception) :
-    pass 
+
+class AssignmentAlreadyClaimedException(Exception):
+    pass

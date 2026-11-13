@@ -15,7 +15,7 @@ from app.schemas import (
     UserResponse,
 )
 from app.services.protocol import AuthServiceProtocol
-from fastapi import APIRouter, Depends, status , Request
+from fastapi import APIRouter, Depends, Request, status
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -30,7 +30,7 @@ async def get_user(
 @router.post("/login", response_model=LoginResponse, status_code=status.HTTP_200_OK)
 @limiter.limit("5/minute")
 async def login_user(
-    request : Request ,
+    request: Request,
     login_data: UserLogin,
     service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
 ) -> LoginResponse:

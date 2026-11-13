@@ -14,9 +14,7 @@ class VolunteerCreate(BaseModel):
 
     availability: VolunteerAvailability = VolunteerAvailability.WEEKENDS
 
-    service_pincodes: list[str] = Field(
-        default_factory=list, max_length=20
-    )
+    service_pincodes: list[str] = Field(default_factory=list, max_length=20)
 
     @field_validator("service_pincodes")
     @classmethod
@@ -39,9 +37,7 @@ class VolunteerUpdate(BaseModel):
 
     @field_validator("service_pincodes")
     @classmethod
-    def validate_service_pincodes(
-        cls, pincodes: list[str]
-    ) -> list[str]:
+    def validate_service_pincodes(cls, pincodes: list[str]) -> list[str]:
         if any(not pincode.isdigit() or len(pincode) != 6 for pincode in pincodes):
             raise ValueError("Service pincodes must each contain exactly 6 digits")
         return list(dict.fromkeys(pincodes))

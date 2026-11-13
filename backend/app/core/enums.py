@@ -63,7 +63,6 @@ class VolunteerAvailability(str, enum.Enum):
     UNAVAILABLE = "unavailable"
 
 
-
 class VeterinarianApprovalStatus(str, enum.Enum):
     PENDING = "pending"
     APPROVED = "approved"
@@ -80,6 +79,8 @@ class MedicalAssignmentStatus(str, enum.Enum):
     OPEN = "open"
     CLAIMED = "claimed"
     IN_PROGRESS = "in_progress"
+    READY_FOR_PICKUP = "ready_for_pickup"
+    RELEASED = "released"
     COMPLETED = "completed"
     CANCELLED = "cancelled"
 
@@ -91,6 +92,3 @@ class MedicalAssignmentUpdateType(str, enum.Enum):
     PROGRESS = "progress"
     READY_FOR_RELEASE = "ready_for_release"
     FOLLOW_UP = "follow_up"
-
-
-    

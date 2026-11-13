@@ -8,8 +8,8 @@ from app.schemas import (
     ReportFilterParams,
     ReportResponse,
     ReportStatusUpdate,
-    ReportUpdate,
     ReportSummaryResponse,
+    ReportUpdate,
 )
 from app.services.protocol import ReportsServiceProtocol
 from fastapi import APIRouter, Depends, File, Form, Query, UploadFile, status
@@ -25,9 +25,9 @@ async def create_report(
     user: Annotated[User, Depends(get_current_user)],
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
     description: str = Form(...),
-    state:str = Form(...) , 
-    district : str = Form(...) , 
-    area_name:str = Form(...) ,
+    state: str = Form(...),
+    district: str = Form(...),
+    area_name: str = Form(...),
     pincode: str = Form(...),
     location: str = Form(...),
     dog_code: Annotated[str | None, Form()] = None,
@@ -37,9 +37,9 @@ async def create_report(
     data = ReportCreate(
         report_type=report_type,
         description=description,
-        state = state ,
-        district = district ,
-        area_name = area_name , 
+        state=state,
+        district=district,
+        area_name=area_name,
         pincode=pincode,
         location=location,
         dog_code=dog_code,

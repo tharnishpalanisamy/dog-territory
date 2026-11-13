@@ -20,7 +20,7 @@ class WorkAssignmentUpdateServiceProtocol(Protocol):
     ) -> list[AssignmentUpdate]: ...
 
     async def create_update(
-        self, assignment_id: int, data: AssignmentUpdateCreate, user: User
+        self, data: AssignmentUpdateCreate, user: User
     ) -> AssignmentUpdate: ...
 
     async def update_update(
@@ -28,3 +28,7 @@ class WorkAssignmentUpdateServiceProtocol(Protocol):
     ) -> AssignmentUpdate: ...
 
     async def delete_update(self, update_id: int, user: User) -> None: ...
+
+    async def create_clinic_admission(
+        assignment_id , data , user
+    ) : ... 

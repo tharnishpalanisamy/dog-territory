@@ -6,6 +6,7 @@ from app.core import AssignmentUpdateType
 
 
 class AssignmentUpdateCreate(BaseModel):
+    assignment_id: int = Field(gt=0)
     update_type: AssignmentUpdateType
     description: str = Field(min_length=1, max_length=2000)
 
@@ -31,7 +32,11 @@ class AssignmentUpdateFilterParams(BaseModel):
 
     @model_validator(mode="after")
     def validate_date_range(self):
-        if self.created_from and self.created_to and self.created_from > self.created_to:
+        if (
+            self.created_from
+            and self.created_to
+            and self.created_from > self.created_to
+        ):
             raise ValueError("created_from cannot be later than created_to")
         return self
 
@@ -45,3 +50,10 @@ class AssignmentUpdateResponse(BaseModel):
     update_type: AssignmentUpdateType
     description: str
     created_at: datetime
+
+
+
+class ClinicAdmissionCreate(BaseModel):
+    clinic_id: int 
+    dog_id: int | None = None
+    admission_notes: str | None = None

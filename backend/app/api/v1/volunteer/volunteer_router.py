@@ -18,9 +18,7 @@ from fastapi import APIRouter, Depends, Query, status
 router = APIRouter(prefix="/volunteers", tags=["Volunteers"])
 
 
-@router.post(
-    "/", status_code=status.HTTP_201_CREATED, response_model=VolunteerResponse
-)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=VolunteerResponse)
 async def create_volunteer_profile(
     data: VolunteerCreate,
     user: Annotated[

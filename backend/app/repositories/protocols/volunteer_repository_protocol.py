@@ -13,11 +13,10 @@ class VolunteerRepositoryProtocol(Protocol):
 
     async def get_all(self, limit: int, offset: int) -> Sequence[Volunteer]: ...
 
-
     async def update(
         self,
         volunteer: Volunteer,
         data: dict,
-    ) -> Volunteer:... 
-    
+    ) -> Volunteer: ...
+
     async def delete(self, volunteer: Volunteer) -> None: ...

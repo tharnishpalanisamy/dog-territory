@@ -31,9 +31,9 @@ class ReportsService:
             dog_id=None if data.dog_code is None else dog.id,
             report_type=data.report_type,
             description=data.description,
-            state = data.state , 
-            district = data.district , 
-            area_name = data.area_name ,
+            state=data.state,
+            district=data.district,
+            area_name=data.area_name,
             pincode=data.pincode,
             location=data.location,
             image_filename=None if image is None else filename,
@@ -71,17 +71,20 @@ class ReportsService:
 
         if report is None:
             raise ReportNotFoundException(f"Report with id {report_id} not found ")
-        
+
         result = await self.report_repository.update_status_by_id(
             report, report_data.status
         )
         await self.db.commit()
         return result
 
-    async def update_report(self, user: User, report_id: int, data: ReportUpdate) -> Report:
+    async def update_report(
+        self, user: User, report_id: int, data: ReportUpdate
+    ) -> Report:
         report = await self.get_report_by_id(report_id)
         if report.reporter_id != user.id:
             from app.exceptions import ForbiddenException
+
             raise ForbiddenException("You can only edit your own reports")
 
         fields = data.model_dump(exclude_unset=True)
@@ -92,7 +95,9 @@ class ReportsService:
             else:
                 dog = await self.dog_repository.get_by_dog_code(dog_code)
                 if dog is None:
-                    raise DogNotFoundException(f"Dog with code {dog_code} is not found !")
+                    raise DogNotFoundException(
+                        f"Dog with code {dog_code} is not found !"
+                    )
                 report.dog_id = dog.id
 
         try:
@@ -107,6 +112,7 @@ class ReportsService:
         report = await self.get_report_by_id(report_id)
         if report.reporter_id != user.id:
             from app.exceptions import ForbiddenException
+
             raise ForbiddenException("You can only delete your own reports")
 
         try:

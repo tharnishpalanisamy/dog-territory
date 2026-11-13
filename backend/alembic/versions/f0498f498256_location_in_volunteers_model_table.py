@@ -1,4 +1,3 @@
-
 """location in volunteers model / table
 
 Revision ID: f0498f498256
@@ -20,7 +19,9 @@ depends_on: str | Sequence[str] | None = None
 
 def upgrade() -> None:
     # Add volunteer location fields
-    op.add_column("volunteers", sa.Column("state", sa.String(length=100), nullable=True))
+    op.add_column(
+        "volunteers", sa.Column("state", sa.String(length=100), nullable=True)
+    )
 
     op.add_column(
         "volunteers",

@@ -8,6 +8,7 @@ from app.schemas import (
     AssignmentUpdateFilterParams,
     AssignmentUpdatePatch,
     AssignmentUpdateResponse,
+    ClinicAdmissionCreate,
 )
 from app.services.protocol import WorkAssignmentUpdateServiceProtocol
 from fastapi import APIRouter, Depends, Query, status
@@ -32,9 +33,7 @@ async def get_all_updates(
 @router.get("/{update_id}", response_model=AssignmentUpdateResponse)
 async def get_update_by_id(
     update_id: int,
-    user: Annotated[
-        User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))
-    ],
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[
         WorkAssignmentUpdateServiceProtocol,
         Depends(get_work_assignment_update_service),
@@ -43,11 +42,8 @@ async def get_update_by_id(
     return await service.get_update_by_id(update_id)
 
 
-@router.post(
-    "/{assignment_id}/updates", response_model=AssignmentUpdateResponse
-)
+@router.post("/", response_model=AssignmentUpdateResponse)
 async def updates_assignment(
-    assignment_id: int,
     data: AssignmentUpdateCreate,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[
@@ -55,16 +51,14 @@ async def updates_assignment(
         Depends(get_work_assignment_update_service),
     ],
 ):
-    return await service.create_update(assignment_id, data, user)
+    return await service.create_update(data, user)
 
 
 @router.patch("/{update_id}", response_model=AssignmentUpdateResponse)
 async def update_assignment_update(
     update_id: int,
     data: AssignmentUpdatePatch,
-    user: Annotated[
-        User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))
-    ],
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[
         WorkAssignmentUpdateServiceProtocol,
         Depends(get_work_assignment_update_service),
@@ -76,12 +70,22 @@ async def update_assignment_update(
 @router.delete("/{update_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_assignment_update(
     update_id: int,
-    user: Annotated[
-        User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))
-    ],
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[
         WorkAssignmentUpdateServiceProtocol,
         Depends(get_work_assignment_update_service),
     ],
 ):
     await service.delete_update(update_id, user)
+
+
+@router.post("/{assignment_id}/clinic_admission", status_code=status.HTTP_201_CREATED)
+async def create_clinic_admission(
+    assignment_id: int,
+    data: ClinicAdmissionCreate,
+    user: Annotated[User, Depends(require_roles(UserRole.VOLUNTEER, UserRole.ADMIN))],
+    service: Annotated[
+        WorkAssignmentUpdateServiceProtocol, Depends(get_work_assignment_update_service)
+    ],
+):
+    return await service.create_clinic_admission(assignment_id, data, user)

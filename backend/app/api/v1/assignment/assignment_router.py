@@ -1,5 +1,7 @@
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, Query, status
+
 from app.core import UserRole
 from app.dependencies import (
     get_work_assignment_service,
@@ -24,7 +26,6 @@ from app.services.protocol import (
     WorkAssignmentServiceProtocol,
     WorkAssignmentUpdateServiceProtocol,
 )
-from fastapi import APIRouter, Depends, Query, status
 
 router = APIRouter(prefix="/assignments", tags=["assignment"])
 
@@ -132,9 +133,7 @@ async def status_assignment(
 )
 async def get_assignment_updates(
     assignment_id: int,
-    user: Annotated[
-        User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))
-    ],
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[
         WorkAssignmentUpdateServiceProtocol,
         Depends(get_work_assignment_update_service),
@@ -143,11 +142,8 @@ async def get_assignment_updates(
     return await service.get_updates_by_assignment_id(assignment_id)
 
 
-@router.post(
-    "/{assignment_id}/updates", response_model=AssignmentUpdateResponse
-)
+@router.post("/updates", response_model=AssignmentUpdateResponse)
 async def updates_assignment(
-    assignment_id: int,
     data: AssignmentUpdateCreate,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[
@@ -155,7 +151,7 @@ async def updates_assignment(
         Depends(get_work_assignment_update_service),
     ],
 ):
-    return await service.create_update(assignment_id, data, user) 
+    return await service.create_update(data, user)
 
 
 @router.patch("/{assignment_id}", response_model=WorkAssignmentResponse)
@@ -168,6 +164,3 @@ async def update_assignment(
     ],
 ):
     return await service.update_work_assignment(assignment_id, assignment_data)
-
-
-

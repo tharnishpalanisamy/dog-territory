@@ -6,7 +6,7 @@ from app.exceptions import (
     AssignmentUpdateNotFoundException,
     NotAuthorizedException,
 )
-from app.models import AssignmentUpdate, User
+from app.models import AssignmentUpdate, MedicalAssignment, User
 from app.repositories.protocols import (
     WorkAssignmentRepositoryProtocol,
     WorkAssignmentUpdateRepositoryProtocol,
@@ -25,7 +25,9 @@ class WorkAssignmentUpdateService:
         self.repository = repository
         self.work_assignment_repository = work_assignment_repository
 
-    async def get_all_updates(self, filters, limit: int, offset: int) -> list[AssignmentUpdate]:
+    async def get_all_updates(
+        self, filters, limit: int, offset: int
+    ) -> list[AssignmentUpdate]:
         return await self.repository.get_all(filters, limit, offset)
 
     async def get_update_by_id(self, update_id: int) -> AssignmentUpdate:
@@ -75,8 +77,9 @@ class WorkAssignmentUpdateService:
             raise
 
     async def create_update(
-        self, assignment_id: int, data: AssignmentUpdateCreate, user: User
+        self, data: AssignmentUpdateCreate, user: User
     ) -> AssignmentUpdate:
+        assignment_id = data.assignment_id
         assignment = await self.work_assignment_repository.get_by_id(assignment_id)
         if assignment is None:
             raise AssignmentNotFoundException(
@@ -97,3 +100,24 @@ class WorkAssignmentUpdateService:
         except Exception:
             await self.db.rollback()
             raise
+
+    async def create_clinic_admission(self, assignment_id, data, user):
+        assignment = await self.work_assignment_repository.get_by_id(assignment_id)
+
+        if assignment is None:
+            raise AssignmentNotFoundException(
+                f"Assignment with id {assignment_id} not found "
+            )
+        volunteer = ""
+        medical_assignment = MedicalAssignment(
+            dog_id=assignment.report.dog_id,
+            work_assignment_id=assignment.id,
+            clinic_id=data.clinic_id,
+            created_by=user.id,
+            volunteer_id=volunteer.id,
+            title=data.title,
+            mode=data.mode,
+            status=data.status,
+        )
+
+        return medical_assignment

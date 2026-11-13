@@ -3,6 +3,7 @@ from .assignment_update import (
     AssignmentUpdateFilterParams,
     AssignmentUpdatePatch,
     AssignmentUpdateResponse,
+    ClinicAdmissionCreate,
 )
 from .auth import (
     LoginResponse,
@@ -11,6 +12,17 @@ from .auth import (
     UserLogin,
 )
 from .clinic import ClinicCreate, ClinicFilterParams, ClinicResponse, ClinicUpdate
+from .medical_assignment import (
+    MedicalAssignmentCreate,
+    MedicalAssignmentFilterParams,
+    MedicalAssignmentReassign,
+    MedicalAssignmentResponse,
+)
+from .medical_assignment_update import (
+    MedicalAssignmentUpdateCreate,
+    MedicalAssignmentUpdatePatch,
+    MedicalAssignmentUpdateResponse,
+)
 from .dog import (
     DogCreate,
     DogDetailResponse,
@@ -55,10 +67,18 @@ __all__ = [
     "AssignmentUpdatePatch",
     "AssignmentUpdateResponse",
     "AvailableAssignmentFilterParams",
+    "ClinicAdmissionCreate",
     "ClinicCreate",
     "ClinicFilterParams",
     "ClinicResponse",
     "ClinicUpdate",
+    "MedicalAssignmentCreate",
+    "MedicalAssignmentFilterParams",
+    "MedicalAssignmentReassign",
+    "MedicalAssignmentResponse",
+    "MedicalAssignmentUpdateCreate",
+    "MedicalAssignmentUpdatePatch",
+    "MedicalAssignmentUpdateResponse",
     "DogCreate",
     "DogDetailResponse",
     "DogFilterParams",

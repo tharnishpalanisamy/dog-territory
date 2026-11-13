@@ -6,6 +6,12 @@ from .auth_dependency import (
 )
 from .clinic_dependency import get_clinic_service
 from .dog_dependency import get_dog_service
+from .medical_assignment_rependecny import (
+    get_medical_assignment_repository,
+    get_medical_assignment_service,
+    get_medical_assignment_update_repository,
+    get_medical_assignment_update_service,
+)
 from .reports_dependency import get_reports_service
 from .volunteers_dependency import get_volunteer_repository, get_volunteer_service
 from .work_assignment_dependency import (
@@ -19,6 +25,10 @@ __all__ = [
     "get_clinic_service",
     "get_current_user",
     "get_dog_service",
+    "get_medical_assignment_repository",
+    "get_medical_assignment_service",
+    "get_medical_assignment_update_repository",
+    "get_medical_assignment_update_service",
     "get_reports_service",
     "get_volunteer_repository",
     "get_volunteer_service",

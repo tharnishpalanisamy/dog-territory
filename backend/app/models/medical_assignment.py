@@ -22,7 +22,6 @@ if TYPE_CHECKING:
     from app.models.clinic import Clinic
     from app.models.dog import Dog
     from app.models.medical_assignment_update import MedicalAssignmentUpdate
-    from app.models.report import Report
     from app.models.user import User
     from app.models.veterinarian import Veterinarian
     from app.models.work_assignments import WorkAssignment
@@ -34,12 +33,6 @@ class MedicalAssignment(Base):
     id: Mapped[int] = mapped_column(
         Integer,
         primary_key=True,
-        index=True,
-    )
-
-    report_id: Mapped[int | None] = mapped_column(
-        ForeignKey("reports.id", ondelete="SET NULL"),
-        nullable=True,
         index=True,
     )
 
@@ -60,7 +53,7 @@ class MedicalAssignment(Base):
         nullable=False,
         index=True,
     )
-
+    
     created_by: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="RESTRICT"),
         nullable=False,
@@ -127,8 +120,6 @@ class MedicalAssignment(Base):
     )
 
     # Relationships
-
-    report: Mapped["Report | None"] = relationship()
 
     dog: Mapped["Dog | None"] = relationship(
         back_populates="medical_assignments",
