@@ -1,7 +1,5 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
-
 from app.core import UserRole
 from app.dependencies import (
     get_medical_assignment_service,
@@ -22,6 +20,7 @@ from app.services.protocol import (
     MedicalAssignmentServiceProtocol,
     MedicalAssignmentUpdateServiceProtocol,
 )
+from fastapi import APIRouter, Depends, Query, status
 
 medical_assignment_router = APIRouter(tags=["Medical Assignments"])
 router = APIRouter(prefix="/medical-assignments")
