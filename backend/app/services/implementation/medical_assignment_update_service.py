@@ -1,7 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import UserRole, VeterinarianApprovalStatus
-from app.exceptions import AssignmentNotFoundException, AssignmentUpdateNotFoundException, NotAuthorizedException
+from app.exceptions import (
+    AssignmentNotFoundException,
+    AssignmentUpdateNotFoundException,
+    NotAuthorizedException,
+)
 from app.models import MedicalAssignmentUpdate, User
 from app.repositories.protocols import (
     MedicalAssignmentRepositoryProtocol,
@@ -10,8 +14,12 @@ from app.repositories.protocols import (
 
 
 class MedicalAssignmentUpdateService:
-    def __init__(self, db: AsyncSession, repository: MedicalAssignmentUpdateRepositoryProtocol,
-                 assignment_repository: MedicalAssignmentRepositoryProtocol):
+    def __init__(
+        self,
+        db: AsyncSession,
+        repository: MedicalAssignmentUpdateRepositoryProtocol,
+        assignment_repository: MedicalAssignmentRepositoryProtocol,
+    ):
         self.db = db
         self.repository = repository
         self.assignment_repository = assignment_repository
@@ -19,18 +27,26 @@ class MedicalAssignmentUpdateService:
     async def get_update_by_id(self, update_id: int) -> MedicalAssignmentUpdate:
         update = await self.repository.get_by_id(update_id)
         if update is None:
-            raise AssignmentUpdateNotFoundException(f"Medical assignment update {update_id} not found")
+            raise AssignmentUpdateNotFoundException(
+                f"Medical assignment update {update_id} not found"
+            )
         return update
 
     async def get_updates(self, assignment_id: int) -> list[MedicalAssignmentUpdate]:
         assignment = await self.assignment_repository.get_by_id(assignment_id)
         if assignment is None:
-            raise AssignmentNotFoundException(f"Medical assignment {assignment_id} not found")
+            raise AssignmentNotFoundException(
+                f"Medical assignment {assignment_id} not found"
+            )
         return await self.repository.get_by_assignment_id(assignment_id)
 
-    async def get_update_for_user(self, update_id: int, user: User) -> MedicalAssignmentUpdate:
+    async def get_update_for_user(
+        self, update_id: int, user: User
+    ) -> MedicalAssignmentUpdate:
         update = await self.get_update_by_id(update_id)
-        assignment = await self.assignment_repository.get_by_id(update.medical_assignment_id)
+        assignment = await self.assignment_repository.get_by_id(
+            update.medical_assignment_id
+        )
         if assignment is None:
             raise AssignmentNotFoundException(
                 f"Medical assignment {update.medical_assignment_id} not found"
@@ -40,22 +56,39 @@ class MedicalAssignmentUpdateService:
         if user.role == UserRole.VOLUNTEER and assignment.volunteer_id == user.id:
             return update
         if user.role == UserRole.VETERINARIAN:
-            veterinarian = await self.assignment_repository.get_veterinarian_for_user(user.id)
-            if (veterinarian
-                    and veterinarian.approval_status == VeterinarianApprovalStatus.APPROVED
-                    and veterinarian.clinic_id == assignment.clinic_id):
+            veterinarian = await self.assignment_repository.get_veterinarian_for_user(
+                user.id
+            )
+            if (
+                veterinarian
+                and veterinarian.approval_status == VeterinarianApprovalStatus.APPROVED
+                and veterinarian.clinic_id == assignment.clinic_id
+            ):
                 return update
-        raise NotAuthorizedException("You are not authorized to view this medical assignment update")
+        raise NotAuthorizedException(
+            "You are not authorized to view this medical assignment update"
+        )
 
-    async def create_update(self, assignment_id: int, data, user: User) -> MedicalAssignmentUpdate:
+    async def create_update(
+        self, assignment_id: int, data, user: User
+    ) -> MedicalAssignmentUpdate:
         assignment = await self.assignment_repository.get_by_id(assignment_id)
         if assignment is None:
-            raise AssignmentNotFoundException(f"Medical assignment {assignment_id} not found")
-        veterinarian = await self.assignment_repository.get_veterinarian_for_user(user.id)
-        if (user.role != UserRole.VETERINARIAN or veterinarian is None
-                or veterinarian.approval_status != VeterinarianApprovalStatus.APPROVED
-                or assignment.veterinarian_id != veterinarian.id):
-            raise NotAuthorizedException("Only the assigned veterinarian can add treatment updates")
+            raise AssignmentNotFoundException(
+                f"Medical assignment {assignment_id} not found"
+            )
+        veterinarian = await self.assignment_repository.get_veterinarian_for_user(
+            user.id
+        )
+        if (
+            user.role != UserRole.VETERINARIAN
+            or veterinarian is None
+            or veterinarian.approval_status != VeterinarianApprovalStatus.APPROVED
+            or assignment.veterinarian_id != veterinarian.id
+        ):
+            raise NotAuthorizedException(
+                "Only the assigned veterinarian can add treatment updates"
+            )
         update = MedicalAssignmentUpdate(
             medical_assignment_id=assignment_id,
             updated_by=user.id,
@@ -70,15 +103,27 @@ class MedicalAssignmentUpdateService:
             await self.db.rollback()
             raise
 
-    async def update_update(self, update_id: int, data, user: User) -> MedicalAssignmentUpdate:
+    async def update_update(
+        self, update_id: int, data, user: User
+    ) -> MedicalAssignmentUpdate:
         update = await self.get_update_by_id(update_id)
-        assignment = await self.assignment_repository.get_by_id(update.medical_assignment_id)
-        veterinarian = await self.assignment_repository.get_veterinarian_for_user(user.id)
-        if (user.role != UserRole.VETERINARIAN or update.updated_by != user.id
-                or assignment is None or veterinarian is None
-                or veterinarian.approval_status != VeterinarianApprovalStatus.APPROVED
-                or assignment.veterinarian_id != veterinarian.id):
-            raise NotAuthorizedException("Only the assigned veterinarian who authored it can edit this update")
+        assignment = await self.assignment_repository.get_by_id(
+            update.medical_assignment_id
+        )
+        veterinarian = await self.assignment_repository.get_veterinarian_for_user(
+            user.id
+        )
+        if (
+            user.role != UserRole.VETERINARIAN
+            or update.updated_by != user.id
+            or assignment is None
+            or veterinarian is None
+            or veterinarian.approval_status != VeterinarianApprovalStatus.APPROVED
+            or assignment.veterinarian_id != veterinarian.id
+        ):
+            raise NotAuthorizedException(
+                "Only the assigned veterinarian who authored it can edit this update"
+            )
         try:
             result = await self.repository.update(
                 update, data.model_dump(exclude_unset=True)
@@ -91,7 +136,9 @@ class MedicalAssignmentUpdateService:
 
     async def delete_update(self, update_id: int, user: User) -> None:
         if user.role != UserRole.ADMIN:
-            raise NotAuthorizedException("Only admins can delete medical assignment updates")
+            raise NotAuthorizedException(
+                "Only admins can delete medical assignment updates"
+            )
         update = await self.get_update_by_id(update_id)
         try:
             await self.repository.delete(update)

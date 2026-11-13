@@ -53,7 +53,7 @@ class MedicalAssignment(Base):
         nullable=False,
         index=True,
     )
-    
+
     created_by: Mapped[int] = mapped_column(
         ForeignKey("users.id", ondelete="RESTRICT"),
         nullable=False,

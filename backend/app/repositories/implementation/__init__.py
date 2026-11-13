@@ -11,9 +11,9 @@ from .work_assignment_update_repository import WorkAssignmentUpdateRepository
 
 __all__ = [
     "ClinicRepository",
+    "DogRepository",
     "MedicalAssignmentRepository",
     "MedicalAssignmentUpdateRepository",
-    "DogRepository",
     "RefreshTokenRepository",
     "ReportsRepository",
     "UserRepository",

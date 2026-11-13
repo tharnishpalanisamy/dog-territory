@@ -1,5 +1,7 @@
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, Query, status
+
 from app.core import UserRole
 from app.dependencies import get_clinic_service, require_roles
 from app.models import User
@@ -10,7 +12,6 @@ from app.schemas import (
     ClinicUpdate,
 )
 from app.services.protocol import ClinicServiceProtocol
-from fastapi import APIRouter, Depends, Query, status
 
 router = APIRouter(prefix="/clinics", tags=["Clinics"])
 

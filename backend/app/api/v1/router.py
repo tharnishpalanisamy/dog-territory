@@ -1,12 +1,13 @@
+from fastapi import APIRouter
+
 from app.api.v1.assignment import assignment_router
 from app.api.v1.assignment_updates import assignment_update_router
 from app.api.v1.auth import auth_router
 from app.api.v1.clinic import clinic_router
 from app.api.v1.dogs import dog_router
-from app.api.v1.reports import reports_router
 from app.api.v1.medical_assignment import medical_assignment_router
+from app.api.v1.reports import reports_router
 from app.api.v1.volunteer import volunteer_router
-from fastapi import APIRouter
 
 router = APIRouter(prefix="/api/v1")
 

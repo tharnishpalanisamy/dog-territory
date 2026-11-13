@@ -15,7 +15,9 @@ class MedicalAssignmentRepository:
         await self.db.refresh(assignment)
         return assignment
 
-    async def get_all(self, filters, limit: int, offset: int) -> list[MedicalAssignment]:
+    async def get_all(
+        self, filters, limit: int, offset: int
+    ) -> list[MedicalAssignment]:
         query = select(MedicalAssignment).options(
             selectinload(MedicalAssignment.dog),
             selectinload(MedicalAssignment.clinic),
@@ -39,7 +41,10 @@ class MedicalAssignmentRepository:
         if search is not None:
             pattern = f"%{search}%"
             conditions.append(
-                or_(MedicalAssignment.title.ilike(pattern), MedicalAssignment.description.ilike(pattern))
+                or_(
+                    MedicalAssignment.title.ilike(pattern),
+                    MedicalAssignment.description.ilike(pattern),
+                )
             )
 
         result = await self.db.scalars(
@@ -80,7 +85,9 @@ class MedicalAssignmentRepository:
     async def get_veterinarian_by_id(self, veterinarian_id: int) -> Veterinarian | None:
         return await self.db.get(Veterinarian, veterinarian_id)
 
-    async def update(self, assignment: MedicalAssignment, fields: dict) -> MedicalAssignment:
+    async def update(
+        self, assignment: MedicalAssignment, fields: dict
+    ) -> MedicalAssignment:
         for field, value in fields.items():
             setattr(assignment, field, value)
         await self.db.flush()

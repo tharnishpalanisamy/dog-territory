@@ -2,6 +2,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, patch
 
 import pytest
+
 from app.exceptions import InvalidCredentialsException
 from app.schemas import UserLogin
 from app.services.implementation.auth_service import AuthService

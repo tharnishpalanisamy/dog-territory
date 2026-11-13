@@ -14,8 +14,12 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.execute("ALTER TYPE medical_assignment_status_enum ADD VALUE IF NOT EXISTS 'ready_for_pickup'")
-    op.execute("ALTER TYPE medical_assignment_status_enum ADD VALUE IF NOT EXISTS 'released'")
+    op.execute(
+        "ALTER TYPE medical_assignment_status_enum ADD VALUE IF NOT EXISTS 'ready_for_pickup'"
+    )
+    op.execute(
+        "ALTER TYPE medical_assignment_status_enum ADD VALUE IF NOT EXISTS 'released'"
+    )
 
 
 def downgrade() -> None:

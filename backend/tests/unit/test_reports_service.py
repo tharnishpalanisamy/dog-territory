@@ -2,6 +2,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
+
 from app.exceptions import DogNotFoundException, ReportNotFoundException
 from app.schemas import ReportCreate
 from app.services.implementation.reports_service import ReportsService

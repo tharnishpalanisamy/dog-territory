@@ -52,8 +52,7 @@ class AssignmentUpdateResponse(BaseModel):
     created_at: datetime
 
 
-
 class ClinicAdmissionCreate(BaseModel):
-    clinic_id: int 
+    clinic_id: int
     dog_id: int | None = None
     admission_notes: str | None = None

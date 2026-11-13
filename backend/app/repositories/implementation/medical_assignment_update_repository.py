@@ -16,18 +16,27 @@ class MedicalAssignmentUpdateRepository:
 
     async def get_by_id(self, update_id: int) -> MedicalAssignmentUpdate | None:
         return await self.db.scalar(
-            select(MedicalAssignmentUpdate).where(MedicalAssignmentUpdate.id == update_id)
+            select(MedicalAssignmentUpdate).where(
+                MedicalAssignmentUpdate.id == update_id
+            )
         )
 
-    async def get_by_assignment_id(self, assignment_id: int) -> list[MedicalAssignmentUpdate]:
+    async def get_by_assignment_id(
+        self, assignment_id: int
+    ) -> list[MedicalAssignmentUpdate]:
         result = await self.db.scalars(
             select(MedicalAssignmentUpdate)
             .where(MedicalAssignmentUpdate.medical_assignment_id == assignment_id)
-            .order_by(MedicalAssignmentUpdate.created_at.desc(), MedicalAssignmentUpdate.id.desc())
+            .order_by(
+                MedicalAssignmentUpdate.created_at.desc(),
+                MedicalAssignmentUpdate.id.desc(),
+            )
         )
         return result.all()
 
-    async def update(self, update: MedicalAssignmentUpdate, fields: dict) -> MedicalAssignmentUpdate:
+    async def update(
+        self, update: MedicalAssignmentUpdate, fields: dict
+    ) -> MedicalAssignmentUpdate:
         for field, value in fields.items():
             setattr(update, field, value)
         await self.db.flush()

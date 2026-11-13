@@ -28,19 +28,30 @@ router = APIRouter(prefix="/medical-assignments")
 updates_router = APIRouter(prefix="/medical-assignment-updates")
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED, response_model=MedicalAssignmentResponse)
+@router.post(
+    "/", status_code=status.HTTP_201_CREATED, response_model=MedicalAssignmentResponse
+)
 async def create_medical_assignment(
     data: MedicalAssignmentCreate,
     user: Annotated[User, Depends(require_roles(UserRole.VOLUNTEER))],
-    service: Annotated[MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)],
+    service: Annotated[
+        MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
+    ],
 ):
     return await service.create(data, user)
 
 
 @router.get("/", response_model=list[MedicalAssignmentResponse])
 async def get_medical_assignments(
-    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER, UserRole.VETERINARIAN))],
-    service: Annotated[MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)],
+    user: Annotated[
+        User,
+        Depends(
+            require_roles(UserRole.ADMIN, UserRole.VOLUNTEER, UserRole.VETERINARIAN)
+        ),
+    ],
+    service: Annotated[
+        MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
+    ],
     filters: Annotated[MedicalAssignmentFilterParams, Depends()],
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
@@ -51,8 +62,15 @@ async def get_medical_assignments(
 @router.get("/{assignment_id}", response_model=MedicalAssignmentResponse)
 async def get_medical_assignment(
     assignment_id: int,
-    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER, UserRole.VETERINARIAN))],
-    service: Annotated[MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)],
+    user: Annotated[
+        User,
+        Depends(
+            require_roles(UserRole.ADMIN, UserRole.VOLUNTEER, UserRole.VETERINARIAN)
+        ),
+    ],
+    service: Annotated[
+        MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
+    ],
 ):
     return await service.get_authorized_by_id(assignment_id, user)
 
@@ -61,7 +79,9 @@ async def get_medical_assignment(
 async def claim_medical_assignment(
     assignment_id: int,
     user: Annotated[User, Depends(require_roles(UserRole.VETERINARIAN))],
-    service: Annotated[MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)],
+    service: Annotated[
+        MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
+    ],
 ):
     return await service.claim(assignment_id, user)
 
@@ -70,16 +90,22 @@ async def claim_medical_assignment(
 async def start_medical_assignment(
     assignment_id: int,
     user: Annotated[User, Depends(require_roles(UserRole.VETERINARIAN))],
-    service: Annotated[MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)],
+    service: Annotated[
+        MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
+    ],
 ):
     return await service.start(assignment_id, user)
 
 
-@router.patch("/{assignment_id}/ready-for-pickup", response_model=MedicalAssignmentResponse)
+@router.patch(
+    "/{assignment_id}/ready-for-pickup", response_model=MedicalAssignmentResponse
+)
 async def mark_ready_for_pickup(
     assignment_id: int,
     user: Annotated[User, Depends(require_roles(UserRole.VETERINARIAN))],
-    service: Annotated[MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)],
+    service: Annotated[
+        MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
+    ],
 ):
     return await service.ready_for_pickup(assignment_id, user)
 
@@ -88,7 +114,9 @@ async def mark_ready_for_pickup(
 async def release_medical_assignment(
     assignment_id: int,
     user: Annotated[User, Depends(require_roles(UserRole.VOLUNTEER, UserRole.ADMIN))],
-    service: Annotated[MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)],
+    service: Annotated[
+        MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
+    ],
 ):
     return await service.release(assignment_id, user)
 
@@ -97,7 +125,9 @@ async def release_medical_assignment(
 async def cancel_medical_assignment(
     assignment_id: int,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
-    service: Annotated[MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)],
+    service: Annotated[
+        MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
+    ],
 ):
     return await service.cancel(assignment_id, user)
 
@@ -107,27 +137,48 @@ async def reassign_medical_assignment(
     assignment_id: int,
     data: MedicalAssignmentReassign,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
-    service: Annotated[MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)],
+    service: Annotated[
+        MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
+    ],
 ):
     return await service.reassign(assignment_id, data.veterinarian_id, user)
 
 
-@router.post("/{assignment_id}/updates", status_code=status.HTTP_201_CREATED, response_model=MedicalAssignmentUpdateResponse)
+@router.post(
+    "/{assignment_id}/updates",
+    status_code=status.HTTP_201_CREATED,
+    response_model=MedicalAssignmentUpdateResponse,
+)
 async def create_medical_assignment_update(
     assignment_id: int,
     data: MedicalAssignmentUpdateCreate,
     user: Annotated[User, Depends(require_roles(UserRole.VETERINARIAN))],
-    service: Annotated[MedicalAssignmentUpdateServiceProtocol, Depends(get_medical_assignment_update_service)],
+    service: Annotated[
+        MedicalAssignmentUpdateServiceProtocol,
+        Depends(get_medical_assignment_update_service),
+    ],
 ):
     return await service.create_update(assignment_id, data, user)
 
 
-@router.get("/{assignment_id}/updates", response_model=list[MedicalAssignmentUpdateResponse])
+@router.get(
+    "/{assignment_id}/updates", response_model=list[MedicalAssignmentUpdateResponse]
+)
 async def get_medical_assignment_updates(
     assignment_id: int,
-    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VETERINARIAN, UserRole.VOLUNTEER))],
-    service: Annotated[MedicalAssignmentUpdateServiceProtocol, Depends(get_medical_assignment_update_service)],
-    assignment_service: Annotated[MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)],
+    user: Annotated[
+        User,
+        Depends(
+            require_roles(UserRole.ADMIN, UserRole.VETERINARIAN, UserRole.VOLUNTEER)
+        ),
+    ],
+    service: Annotated[
+        MedicalAssignmentUpdateServiceProtocol,
+        Depends(get_medical_assignment_update_service),
+    ],
+    assignment_service: Annotated[
+        MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
+    ],
 ):
     await assignment_service.get_authorized_by_id(assignment_id, user)
     return await service.get_updates(assignment_id)
@@ -136,9 +187,19 @@ async def get_medical_assignment_updates(
 @updates_router.get("/{update_id}", response_model=MedicalAssignmentUpdateResponse)
 async def get_medical_assignment_update(
     update_id: int,
-    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VETERINARIAN, UserRole.VOLUNTEER))],
-    service: Annotated[MedicalAssignmentUpdateServiceProtocol, Depends(get_medical_assignment_update_service)],
-    assignment_service: Annotated[MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)],
+    user: Annotated[
+        User,
+        Depends(
+            require_roles(UserRole.ADMIN, UserRole.VETERINARIAN, UserRole.VOLUNTEER)
+        ),
+    ],
+    service: Annotated[
+        MedicalAssignmentUpdateServiceProtocol,
+        Depends(get_medical_assignment_update_service),
+    ],
+    assignment_service: Annotated[
+        MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
+    ],
 ):
     return await service.get_update_for_user(update_id, user)
 
@@ -148,7 +209,10 @@ async def patch_medical_assignment_update(
     update_id: int,
     data: MedicalAssignmentUpdatePatch,
     user: Annotated[User, Depends(require_roles(UserRole.VETERINARIAN))],
-    service: Annotated[MedicalAssignmentUpdateServiceProtocol, Depends(get_medical_assignment_update_service)],
+    service: Annotated[
+        MedicalAssignmentUpdateServiceProtocol,
+        Depends(get_medical_assignment_update_service),
+    ],
 ):
     return await service.update_update(update_id, data, user)
 
@@ -157,7 +221,10 @@ async def patch_medical_assignment_update(
 async def delete_medical_assignment_update(
     update_id: int,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
-    service: Annotated[MedicalAssignmentUpdateServiceProtocol, Depends(get_medical_assignment_update_service)],
+    service: Annotated[
+        MedicalAssignmentUpdateServiceProtocol,
+        Depends(get_medical_assignment_update_service),
+    ],
 ):
     await service.delete_update(update_id, user)
 

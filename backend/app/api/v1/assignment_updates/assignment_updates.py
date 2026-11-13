@@ -1,5 +1,7 @@
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, Query, status
+
 from app.core import UserRole
 from app.dependencies import get_work_assignment_update_service, require_roles
 from app.models import User
@@ -11,7 +13,6 @@ from app.schemas import (
     ClinicAdmissionCreate,
 )
 from app.services.protocol import WorkAssignmentUpdateServiceProtocol
-from fastapi import APIRouter, Depends, Query, status
 
 router = APIRouter(prefix="/assignment-updates", tags=["Assignment updates"])
 

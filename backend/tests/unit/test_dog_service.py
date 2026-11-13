@@ -2,6 +2,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
+
 from app.exceptions import DogNotFoundException
 from app.schemas import DogFilterParams, DogUpdate
 from app.services.implementation.dog_service import DogService

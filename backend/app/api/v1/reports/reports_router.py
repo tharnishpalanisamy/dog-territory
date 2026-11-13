@@ -1,5 +1,7 @@
 from typing import Annotated
 
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile, status
+
 from app.core import DogReportType, UserRole
 from app.dependencies import get_current_user, get_reports_service, require_roles
 from app.models import User
@@ -12,7 +14,6 @@ from app.schemas import (
     ReportUpdate,
 )
 from app.services.protocol import ReportsServiceProtocol
-from fastapi import APIRouter, Depends, File, Form, Query, UploadFile, status
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 

@@ -9,8 +9,9 @@ os.environ.setdefault("JWT_SECRET_KEY", "test-secret-key")
 os.environ.setdefault("REFRESH_TOKEN_EXPIRE_DAYS", "30")
 
 import pytest
-from app.main import app
 from fastapi.testclient import TestClient
+
+from app.main import app
 
 
 @pytest.fixture

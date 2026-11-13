@@ -12,6 +12,14 @@ from .auth import (
     UserLogin,
 )
 from .clinic import ClinicCreate, ClinicFilterParams, ClinicResponse, ClinicUpdate
+from .dog import (
+    DogCreate,
+    DogDetailResponse,
+    DogFilterParams,
+    DogResponse,
+    DogSummaryResponse,
+    DogUpdate,
+)
 from .medical_assignment import (
     MedicalAssignmentCreate,
     MedicalAssignmentFilterParams,
@@ -22,14 +30,6 @@ from .medical_assignment_update import (
     MedicalAssignmentUpdateCreate,
     MedicalAssignmentUpdatePatch,
     MedicalAssignmentUpdateResponse,
-)
-from .dog import (
-    DogCreate,
-    DogDetailResponse,
-    DogFilterParams,
-    DogResponse,
-    DogSummaryResponse,
-    DogUpdate,
 )
 from .report import (
     ReportCreate,
@@ -72,13 +72,6 @@ __all__ = [
     "ClinicFilterParams",
     "ClinicResponse",
     "ClinicUpdate",
-    "MedicalAssignmentCreate",
-    "MedicalAssignmentFilterParams",
-    "MedicalAssignmentReassign",
-    "MedicalAssignmentResponse",
-    "MedicalAssignmentUpdateCreate",
-    "MedicalAssignmentUpdatePatch",
-    "MedicalAssignmentUpdateResponse",
     "DogCreate",
     "DogDetailResponse",
     "DogFilterParams",
@@ -86,6 +79,13 @@ __all__ = [
     "DogSummaryResponse",
     "DogUpdate",
     "LoginResponse",
+    "MedicalAssignmentCreate",
+    "MedicalAssignmentFilterParams",
+    "MedicalAssignmentReassign",
+    "MedicalAssignmentResponse",
+    "MedicalAssignmentUpdateCreate",
+    "MedicalAssignmentUpdatePatch",
+    "MedicalAssignmentUpdateResponse",
     "RefreshTokenCreate",
     "RefreshTokenResponse",
     "ReportCreate",

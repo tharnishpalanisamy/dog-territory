@@ -14,8 +14,14 @@ from app.repositories.protocols import (
     MedicalAssignmentUpdateRepositoryProtocol,
     WorkAssignmentRepositoryProtocol,
 )
-from app.services.implementation import MedicalAssignmentService, MedicalAssignmentUpdateService
-from app.services.protocol import MedicalAssignmentServiceProtocol, MedicalAssignmentUpdateServiceProtocol
+from app.services.implementation import (
+    MedicalAssignmentService,
+    MedicalAssignmentUpdateService,
+)
+from app.services.protocol import (
+    MedicalAssignmentServiceProtocol,
+    MedicalAssignmentUpdateServiceProtocol,
+)
 
 
 def get_work_assignment_repository(
