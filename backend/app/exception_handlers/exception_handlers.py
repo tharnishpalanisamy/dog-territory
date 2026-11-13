@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 from app.exceptions import (
     AssignmentAlreadyClaimedException,
     AssignmentNotFoundException,
+    AssignmentUpdateNotFoundException,
     DogNotFoundException,
     EmailAlreadyExists,
     InvalidCredentialsException,
@@ -67,6 +68,17 @@ def register_exception_handlers(app: FastAPI) -> None:
         return JSONResponse(
             status_code=404,
             content={"detail": str(exc) or "Assignment not found"},
+        )
+
+    @app.exception_handler(AssignmentUpdateNotFoundException)
+    async def assignment_update_not_found_handler(
+        request: Request,
+        exc: AssignmentUpdateNotFoundException,
+    ) -> JSONResponse:
+        logger.info("Assignment update not found")
+        return JSONResponse(
+            status_code=404,
+            content={"detail": str(exc) or "Assignment update not found"},
         )
 
     @app.exception_handler(AssignmentAlreadyClaimedException)

@@ -8,13 +8,13 @@ from app.exceptions import (
     VolunteerNotFoundException,
     VolunteerServiceNotAvailable,
 )
-from app.models import AssignmentUpdate, User, WorkAssignment
+from app.models import User, WorkAssignment
 from app.repositories.protocols import (
-    AssignmentUpdateRepositoryProtocol,
     ReportsRepositoryProtocol,
     UserRepositoryProtocol,
     VolunteerRepositoryProtocol,
     WorkAssignmentRepositoryProtocol,
+    WorkAssignmentUpdateRepositoryProtocol,
 )
 from app.schemas import AssignAssignment, WorkAssignmentCreate, WorkAssignmentUpdate
 
@@ -27,7 +27,7 @@ class WorkAssignmentService:
         report_repository: ReportsRepositoryProtocol,
         volunteer_repository: VolunteerRepositoryProtocol,
         user_repository: UserRepositoryProtocol,
-        assignment_update_repository: AssignmentUpdateRepositoryProtocol,
+        assignment_update_repository: WorkAssignmentUpdateRepositoryProtocol,
     ):
         self.db = db
         self.repository = repository
@@ -179,27 +179,6 @@ class WorkAssignmentService:
             await self.db.rollback()
             raise
 
-    async def create_update(self, assignment_id, data, user):
-        assignment = await self.repository.get_by_id(assignment_id)
-
-        if assignment is None:
-            raise AssignmentNotFoundException(f"Assignment with id {id} not found")
-
-        work_update = AssignmentUpdate(
-            assignment_id=assignment_id,
-            updated_by=user.id,
-            update_type=data.update_type,
-            description=data.description,
-        )
-
-        try:
-            result = await self.assignment_update_repository.create(work_update)
-            await self.db.commit()
-            return result
-        except Exception:
-            self.db.rollback()
-            raise
-
     async def update_work_assignment(
         self, assignment_id: int, data: WorkAssignmentUpdate
     ) -> WorkAssignment:
@@ -233,7 +212,9 @@ class WorkAssignmentService:
             if report is None:
                 raise ReportNotFoundException(f"Report with id {report_id} not found")
             if report.pincode not in volunteer.service_pincodes:
-                raise VolunteerServiceNotAvailable("Volunteer does not serve that location")
+                raise VolunteerServiceNotAvailable(
+                    "Volunteer does not serve that location"
+                )
 
         try:
             result = await self.repository.update(assignment, fields)

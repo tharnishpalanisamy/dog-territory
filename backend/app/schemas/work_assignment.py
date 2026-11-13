@@ -6,7 +6,6 @@ from app.core import (
     AssignmentPriority,
     AssignmentStatus,
     AssignmentType,
-    AssignmentUpdateType,
 )
 from app.schemas.dog import DogSummaryResponse
 
@@ -137,8 +136,3 @@ class AssignAssignment(BaseModel):
 
 class UpdateAssignmentStatus(BaseModel):
     status: AssignmentStatus
-
-
-class AssignmentUpdateCreate(BaseModel):
-    update_type: AssignmentUpdateType
-    description: str = Field(min_length=1, max_length=2000)

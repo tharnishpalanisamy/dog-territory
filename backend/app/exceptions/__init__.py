@@ -15,11 +15,13 @@ from .volunteer import (
 from .work_assignment import (
     AssignmentAlreadyClaimedException,
     AssignmentNotFoundException,
+    AssignmentUpdateNotFoundException,
 )
 
 __all__ = [
     "AssignmentAlreadyClaimedException",
     "AssignmentNotFoundException",
+    "AssignmentUpdateNotFoundException",
     "DogNotFoundException",
     "EmailAlreadyExists",
     "InvalidCredentialsException",

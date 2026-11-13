@@ -8,18 +8,24 @@ from app.dependencies.auth_dependency import get_user_repository
 from app.dependencies.reports_dependency import get_reports_repository
 from app.dependencies.volunteers_dependency import get_volunteer_repository
 from app.repositories.implementation import (
-    AssignmentUpdateRepository,
     WorkAssignmentRepository,
+    WorkAssignmentUpdateRepository,
 )
 from app.repositories.protocols import (
-    AssignmentUpdateRepositoryProtocol,
     ReportsRepositoryProtocol,
     UserRepositoryProtocol,
     VolunteerRepositoryProtocol,
     WorkAssignmentRepositoryProtocol,
+    WorkAssignmentUpdateRepositoryProtocol,
 )
-from app.services.implementation import WorkAssignmentService
-from app.services.protocol import WorkAssignmentServiceProtocol
+from app.services.implementation import (
+    WorkAssignmentService,
+    WorkAssignmentUpdateService,
+)
+from app.services.protocol import (
+    WorkAssignmentServiceProtocol,
+    WorkAssignmentUpdateServiceProtocol,
+)
 
 
 def get_work_assignment_repository(
@@ -28,10 +34,10 @@ def get_work_assignment_repository(
     return WorkAssignmentRepository(db)
 
 
-def get_assignment_update_repository(
+def get_work_assignment_update_repository(
     db: Annotated[AsyncSession, Depends(get_db)],
-) -> AssignmentUpdateRepositoryProtocol:
-    return AssignmentUpdateRepository(db)
+) -> WorkAssignmentUpdateRepositoryProtocol:
+    return WorkAssignmentUpdateRepository(db)
 
 
 def get_work_assignment_service(
@@ -47,7 +53,8 @@ def get_work_assignment_service(
     ],
     user_repository: Annotated[UserRepositoryProtocol, Depends(get_user_repository)],
     assignment_update_repository: Annotated[
-        AssignmentUpdateRepositoryProtocol, Depends(get_assignment_update_repository)
+        WorkAssignmentUpdateRepositoryProtocol,
+        Depends(get_work_assignment_update_repository),
     ],
 ) -> WorkAssignmentServiceProtocol:
 
@@ -59,3 +66,17 @@ def get_work_assignment_service(
         user_repository,
         assignment_update_repository,
     )
+
+
+def get_work_assignment_update_service(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    repository: Annotated[
+        WorkAssignmentUpdateRepositoryProtocol,
+        Depends(get_work_assignment_update_repository),
+    ],
+    work_assignment_repository: Annotated[
+        WorkAssignmentRepositoryProtocol,
+        Depends(get_work_assignment_repository),
+    ],
+) -> WorkAssignmentUpdateServiceProtocol:
+    return WorkAssignmentUpdateService(db, repository, work_assignment_repository)

@@ -4,6 +4,7 @@ from .refresh_token_service import RefreshTokenService
 from .reports_service import ReportsService
 from .volunteer_service import VolunteerService
 from .work_assignment_service import WorkAssignmentService
+from .work_assignment_update_service import WorkAssignmentUpdateService
 
 __all__ = [
     "AuthService",
@@ -12,4 +13,5 @@ __all__ = [
     "ReportsService",
     "VolunteerService",
     "WorkAssignmentService",
+    "WorkAssignmentUpdateService",
 ]

@@ -1,11 +1,16 @@
 from typing import Annotated
 
 from app.core import UserRole
-from app.dependencies import get_work_assignment_service, require_roles
+from app.dependencies import (
+    get_work_assignment_service,
+    get_work_assignment_update_service,
+    require_roles,
+)
 from app.models import User
 from app.schemas import (
     AssignAssignment,
     AssignmentUpdateCreate,
+    AssignmentUpdateResponse,
     AvailableAssignmentFilterParams,
     UpdateAssignmentStatus,
     WorkAssignmentCreate,
@@ -15,7 +20,10 @@ from app.schemas import (
     WorkAssignmentSummaryResponse,
     WorkAssignmentUpdate,
 )
-from app.services.protocol import WorkAssignmentServiceProtocol
+from app.services.protocol import (
+    WorkAssignmentServiceProtocol,
+    WorkAssignmentUpdateServiceProtocol,
+)
 from fastapi import APIRouter, Depends, Query, status
 
 router = APIRouter(prefix="/assignments", tags=["assignment"])
@@ -118,13 +126,33 @@ async def status_assignment(
     return await service.update_status(assignment_id, data, user)
 
 
-@router.post("/{assignment_id}/updates")
+@router.get(
+    "/{assignment_id}/updates",
+    response_model=list[AssignmentUpdateResponse],
+)
+async def get_assignment_updates(
+    assignment_id: int,
+    user: Annotated[
+        User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))
+    ],
+    service: Annotated[
+        WorkAssignmentUpdateServiceProtocol,
+        Depends(get_work_assignment_update_service),
+    ],
+):
+    return await service.get_updates_by_assignment_id(assignment_id)
+
+
+@router.post(
+    "/{assignment_id}/updates", response_model=AssignmentUpdateResponse
+)
 async def updates_assignment(
     assignment_id: int,
     data: AssignmentUpdateCreate,
     user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.VOLUNTEER))],
     service: Annotated[
-        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
+        WorkAssignmentUpdateServiceProtocol,
+        Depends(get_work_assignment_update_service),
     ],
 ):
     return await service.create_update(assignment_id, data, user) 
@@ -142,12 +170,4 @@ async def update_assignment(
     return await service.update_work_assignment(assignment_id, assignment_data)
 
 
-@router.delete("/{assignment_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_assignment(
-    assignment_id: int,
-    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
-    service: Annotated[
-        WorkAssignmentServiceProtocol, Depends(get_work_assignment_service)
-    ],
-):
-    await service.delete_work_assignment(assignment_id)
+

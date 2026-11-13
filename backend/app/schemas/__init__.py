@@ -1,3 +1,9 @@
+from .assignment_update import (
+    AssignmentUpdateCreate,
+    AssignmentUpdateFilterParams,
+    AssignmentUpdatePatch,
+    AssignmentUpdateResponse,
+)
 from .auth import (
     LoginResponse,
     RefreshTokenCreate,
@@ -17,8 +23,8 @@ from .report import (
     ReportFilterParams,
     ReportResponse,
     ReportStatusUpdate,
-    ReportUpdate,
     ReportSummaryResponse,
+    ReportUpdate,
 )
 from .user import UserCreate, UserResponse
 from .volunteer import (
@@ -30,7 +36,6 @@ from .volunteer import (
 from .work_assignment import (
     AssignAssignment,
     AssignmentReportResponse,
-    AssignmentUpdateCreate,
     AvailableAssignmentFilterParams,
     UpdateAssignmentStatus,
     WorkAssignmentCreate,
@@ -45,6 +50,9 @@ __all__ = [
     "AssignAssignment",
     "AssignmentReportResponse",
     "AssignmentUpdateCreate",
+    "AssignmentUpdateFilterParams",
+    "AssignmentUpdatePatch",
+    "AssignmentUpdateResponse",
     "AvailableAssignmentFilterParams",
     "DogCreate",
     "DogDetailResponse",
@@ -59,8 +67,8 @@ __all__ = [
     "ReportFilterParams",
     "ReportResponse",
     "ReportStatusUpdate",
-    "ReportUpdate",
     "ReportSummaryResponse",
+    "ReportUpdate",
     "UpdateAssignmentStatus",
     "UserCreate",
     "UserLogin",
