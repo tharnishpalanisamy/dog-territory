@@ -1,7 +1,5 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
-
 from app.core import UserRole
 from app.dependencies import (
     get_work_assignment_service,
@@ -26,6 +24,7 @@ from app.services.protocol import (
     WorkAssignmentServiceProtocol,
     WorkAssignmentUpdateServiceProtocol,
 )
+from fastapi import APIRouter, Depends, Query, status
 
 router = APIRouter(prefix="/assignments", tags=["assignment"])
 
