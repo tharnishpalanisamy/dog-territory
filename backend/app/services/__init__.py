@@ -4,6 +4,7 @@ from .implementation import (
     RefreshTokenService,
     ReportsService,
     VolunteerService,
+    VeterinarianService,
 )
 from .protocol import (
     AuthServiceProtocol,
@@ -11,6 +12,7 @@ from .protocol import (
     RefreshTokenServiceProtocol,
     ReportsServiceProtocol,
     VolunteerServiceProtocol,
+    VeterinarianServiceProtocol,
 )
 
 __all__ = [
@@ -24,4 +26,6 @@ __all__ = [
     "ReportsServiceProtocol",
     "VolunteerService",
     "VolunteerServiceProtocol",
+    "VeterinarianService",
+    "VeterinarianServiceProtocol",
 ]

@@ -11,12 +11,14 @@ from app.api.v1.medical_assignment import (
 )
 from app.api.v1.reports import reports_router
 from app.api.v1.volunteer import volunteer_router
+from app.api.v1.veterinarian import veterinarian_router
 
 router = APIRouter(prefix="/api/v1")
 
 router.include_router(auth_router)
 router.include_router(clinic_router)
 router.include_router(volunteer_router)
+router.include_router(veterinarian_router)
 router.include_router(dog_router)
 router.include_router(reports_router)
 router.include_router(assignment_router)

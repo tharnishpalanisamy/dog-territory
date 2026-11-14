@@ -14,6 +14,10 @@ from .medical_assignment_rependecny import (
 )
 from .reports_dependency import get_reports_service
 from .volunteers_dependency import get_volunteer_repository, get_volunteer_service
+from .veterinarian_dependency import (
+    get_veterinarian_repository,
+    get_veterinarian_service,
+)
 from .work_assignment_dependency import (
     get_work_assignment_service,
     get_work_assignment_update_service,
@@ -32,6 +36,8 @@ __all__ = [
     "get_reports_service",
     "get_volunteer_repository",
     "get_volunteer_service",
+    "get_veterinarian_repository",
+    "get_veterinarian_service",
     "get_work_assignment_service",
     "get_work_assignment_update_service",
     "require_roles",

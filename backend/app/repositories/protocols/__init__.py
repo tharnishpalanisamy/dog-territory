@@ -8,6 +8,7 @@ from .refresh_token_protocol import RefreshTokenRepositoryProtocol
 from .reports_repository_protocol import ReportsRepositoryProtocol
 from .user_repository_protocol import UserRepositoryProtocol
 from .volunteer_repository_protocol import VolunteerRepositoryProtocol
+from .veterinarian_repository_protocol import VeterinarianRepositoryProtocol
 from .work_assignment_repository_protocol import WorkAssignmentRepositoryProtocol
 from .work_assignment_update_repository_protocol import (
     WorkAssignmentUpdateRepositoryProtocol,
@@ -22,6 +23,7 @@ __all__ = [
     "ReportsRepositoryProtocol",
     "UserRepositoryProtocol",
     "VolunteerRepositoryProtocol",
+    "VeterinarianRepositoryProtocol",
     "WorkAssignmentRepositoryProtocol",
     "WorkAssignmentUpdateRepositoryProtocol",
 ]

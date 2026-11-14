@@ -46,6 +46,13 @@ from .volunteer import (
     VolunteerResponse,
     VolunteerUpdate,
 )
+from .veterinarian import (
+    VeterinarianApprovalUpdate,
+    VeterinarianCreate,
+    VeterinarianFilterParams,
+    VeterinarianResponse,
+    VeterinarianUpdate,
+)
 from .work_assignment import (
     AssignAssignment,
     AssignmentReportResponse,
@@ -102,6 +109,11 @@ __all__ = [
     "VolunteerCreate",
     "VolunteerResponse",
     "VolunteerUpdate",
+    "VeterinarianApprovalUpdate",
+    "VeterinarianCreate",
+    "VeterinarianFilterParams",
+    "VeterinarianResponse",
+    "VeterinarianUpdate",
     "WorkAssignmentCreate",
     "WorkAssignmentDetailResponse",
     "WorkAssignmentFilterParams",

@@ -18,9 +18,6 @@ def get_clinic_repository(
 
 def get_clinic_service(
     db: Annotated[AsyncSession, Depends(get_db)],
-    repository: Annotated[
-        ClinicRepositoryProtocol,
-        Depends(get_clinic_repository),
-    ],
+    repository: Annotated[ClinicRepositoryProtocol, Depends(get_clinic_repository)],
 ) -> ClinicServiceProtocol:
     return ClinicService(db, repository)

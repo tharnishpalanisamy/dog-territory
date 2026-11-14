@@ -1,7 +1,5 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request, Response, status
-
 from app.core import limiter
 from app.dependencies import (
     get_auth_service,
@@ -17,6 +15,7 @@ from app.schemas import (
     UserResponse,
 )
 from app.services.protocol import AuthServiceProtocol
+from fastapi import APIRouter, Depends, Request, Response, status
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
