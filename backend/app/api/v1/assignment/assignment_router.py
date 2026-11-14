@@ -8,6 +8,7 @@ from app.dependencies import (
     get_work_assignment_update_service,
     require_roles,
 )
+from app.exceptions import NotAuthorizedException
 from app.models import User
 from app.schemas import (
     AssignAssignment,
@@ -95,7 +96,12 @@ async def get_assignment_by_id(
 ):
     if user.role == UserRole.VOLUNTEER:
         await service.require_approved_volunteer(user)
-    return await service.get_assignment_by_id(assignment_id)
+    assignment = await service.get_assignment_by_id(assignment_id)
+    if user.role == UserRole.VOLUNTEER and assignment.assigned_to != user.id:
+        raise NotAuthorizedException(
+            "You are not authorized to view another volunteer's assignment"
+        )
+    return assignment
 
 
 @router.patch("/{assignment_id}/claim")

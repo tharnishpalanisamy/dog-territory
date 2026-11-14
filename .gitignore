@@ -14,6 +14,8 @@ __pycache__/
 # Application logs
 logs/
 *.log
+.pytest-tmp/
+backend/tests/_upload_tmp/
 
 # VS Code 
 .vscode/

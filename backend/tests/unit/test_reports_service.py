@@ -22,6 +22,9 @@ async def test_create_report_links_known_dog_and_commits():
         ReportCreate(
             report_type="sick",
             description="hurt",
+            state="Karnataka",
+            district="Bengaluru",
+            area_name="Park",
             pincode="560001",
             location="Park",
             dog_code="560001-1",
@@ -43,6 +46,9 @@ async def test_create_report_rejects_unknown_dog():
             SimpleNamespace(id=2),
             ReportCreate(
                 report_type="sick",
+                state="Karnataka",
+                district="Bengaluru",
+                area_name="Park",
                 pincode="560001",
                 location="Park",
                 dog_code="missing",

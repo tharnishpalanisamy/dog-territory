@@ -168,6 +168,9 @@ def test_report_endpoints(client, user_factory):
         data={
             "report_type": "sick",
             "description": "Injured",
+            "state": "Karnataka",
+            "district": "Bengaluru",
+            "area_name": "Park",
             "pincode": "560001",
             "location": "Park",
         },

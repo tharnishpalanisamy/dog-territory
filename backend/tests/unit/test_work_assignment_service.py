@@ -3,7 +3,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from app.core import UserRole, VolunteerStatus
+from app.core import UserRole, VolunteerApprovalStatus
 from app.exceptions import (
     AssignmentAlreadyClaimedException,
     AssignmentNotFoundException,
@@ -46,7 +46,7 @@ async def test_create_assignment_requires_existing_report():
 @pytest.mark.asyncio
 async def test_claim_assignment_sets_claim_and_commits():
     assignment = SimpleNamespace(assigned_to=None)
-    volunteer = SimpleNamespace(approval_status=VolunteerStatus.APPROVED)
+    volunteer = SimpleNamespace(approval_status=VolunteerApprovalStatus.APPROVED)
     service, db, repo = make_service(assignment=assignment, volunteer=volunteer)
     result = await service.claim_assignment(
         5, SimpleNamespace(id=8, role=UserRole.VOLUNTEER)
@@ -59,7 +59,7 @@ async def test_claim_assignment_sets_claim_and_commits():
 @pytest.mark.asyncio
 async def test_claim_assignment_rejects_already_claimed_assignment():
     assignment = SimpleNamespace(assigned_to=9)
-    volunteer = SimpleNamespace(approval_status=VolunteerStatus.APPROVED)
+    volunteer = SimpleNamespace(approval_status=VolunteerApprovalStatus.APPROVED)
     service, _, repo = make_service(assignment=assignment, volunteer=volunteer)
     with pytest.raises(AssignmentAlreadyClaimedException):
         await service.claim_assignment(
@@ -71,7 +71,7 @@ async def test_claim_assignment_rejects_already_claimed_assignment():
 @pytest.mark.asyncio
 async def test_claim_assignment_rejects_missing_assignment():
     service, _, _ = make_service(
-        volunteer=SimpleNamespace(approval_status=VolunteerStatus.APPROVED)
+        volunteer=SimpleNamespace(approval_status=VolunteerApprovalStatus.APPROVED)
     )
     with pytest.raises(AssignmentNotFoundException):
         await service.claim_assignment(
@@ -83,7 +83,7 @@ async def test_claim_assignment_rejects_missing_assignment():
 async def test_update_status_requires_assignment_owner():
     service, _, _ = make_service(
         assignment=SimpleNamespace(assigned_to=9),
-        volunteer=SimpleNamespace(approval_status=VolunteerStatus.APPROVED),
+        volunteer=SimpleNamespace(approval_status=VolunteerApprovalStatus.APPROVED),
     )
     with pytest.raises(NotAuthorizedException):
         await service.update_status(
@@ -99,7 +99,7 @@ async def test_assign_rejects_volunteer_outside_service_area():
         assigned_to=None, report=SimpleNamespace(pincode="560001")
     )
     volunteer = SimpleNamespace(
-        service_pincodes=["560002"], approval_status=VolunteerStatus.APPROVED
+        service_pincodes=["560002"], approval_status=VolunteerApprovalStatus.APPROVED
     )
     service, _, repo = make_service(
         assignment=assignment,
@@ -114,7 +114,9 @@ async def test_assign_rejects_volunteer_outside_service_area():
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("status", [VolunteerStatus.PENDING, VolunteerStatus.REJECTED])
+@pytest.mark.parametrize(
+    "status", [VolunteerApprovalStatus.PENDING, VolunteerApprovalStatus.REJECTED]
+)
 async def test_unapproved_volunteer_cannot_claim_assignment(status):
     service, _, repo = make_service(
         assignment=SimpleNamespace(assigned_to=None),
@@ -129,7 +131,9 @@ async def test_unapproved_volunteer_cannot_claim_assignment(status):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("status", [VolunteerStatus.PENDING, VolunteerStatus.REJECTED])
+@pytest.mark.parametrize(
+    "status", [VolunteerApprovalStatus.PENDING, VolunteerApprovalStatus.REJECTED]
+)
 async def test_unapproved_volunteer_cannot_be_assigned(status):
     assignment = SimpleNamespace(
         assigned_to=None, report=SimpleNamespace(pincode="560001")

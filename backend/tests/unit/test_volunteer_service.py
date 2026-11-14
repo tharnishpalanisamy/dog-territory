@@ -39,12 +39,12 @@ def volunteer_data():
 
 
 @pytest.mark.asyncio
-async def test_create_profile_sets_role_and_commits():
+async def test_create_profile_keeps_user_role_until_admin_approval():
     user = SimpleNamespace(id=4, role=UserRole.USER)
     service, db, repo, _ = make_service(user=user)
     result = await service.create_profile(4, volunteer_data())
     assert result.user_id == 4
-    assert user.role == UserRole.VOLUNTEER
+    assert user.role == UserRole.USER
     repo.create.assert_awaited_once()
     db.commit.assert_awaited_once()
 

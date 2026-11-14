@@ -118,6 +118,10 @@ class WorkAssignmentUpdateService:
             raise AssignmentNotFoundException(
                 f"Assignment with id {assignment_id} not found "
             )
+        if user.role != UserRole.ADMIN and assignment.assigned_to != user.id:
+            raise NotAuthorizedException(
+                "Only the volunteer assigned to this work can admit it to a clinic"
+            )
         volunteer = await self.volunteer_repository.get_by_user_id(
             assignment.assigned_to
         )
@@ -130,7 +134,7 @@ class WorkAssignmentUpdateService:
             work_assignment_id=assignment.id,
             clinic_id=data.clinic_id,
             created_by=user.id,
-            volunteer_id=volunteer.id,
+            volunteer_id=volunteer.user_id,
             title=data.title,
             description=data.description,
             mode=data.mode,

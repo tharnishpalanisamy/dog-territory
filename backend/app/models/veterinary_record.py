@@ -78,3 +78,6 @@ class VeterinaryRecord(Base):
     veterinarian: Mapped["User"] = relationship()
 
     assignment: Mapped["WorkAssignment | None"] = relationship()
+
+
+   

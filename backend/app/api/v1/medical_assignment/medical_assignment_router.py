@@ -1,7 +1,5 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
-
 from app.core import UserRole
 from app.dependencies import (
     get_medical_assignment_service,
@@ -15,7 +13,11 @@ from app.schemas import (
     MedicalAssignmentReassign,
     MedicalAssignmentResponse,
 )
-from app.services.protocol import MedicalAssignmentServiceProtocol, VolunteerServiceProtocol
+from app.services.protocol import (
+    MedicalAssignmentServiceProtocol,
+    VolunteerServiceProtocol,
+)
+from fastapi import APIRouter, Depends, Query, status
 
 medical_assignment_router = APIRouter(
     prefix="/medical-assignments", tags=["Medical Assignments"]
@@ -125,9 +127,7 @@ async def mark_ready_for_pickup(
 )
 async def release_medical_assignment(
     assignment_id: int,
-    user: Annotated[
-        User, Depends(require_roles(UserRole.VOLUNTEER, UserRole.ADMIN))
-    ],
+    user: Annotated[User, Depends(require_roles(UserRole.VOLUNTEER, UserRole.ADMIN))],
     service: Annotated[
         MedicalAssignmentServiceProtocol, Depends(get_medical_assignment_service)
     ],

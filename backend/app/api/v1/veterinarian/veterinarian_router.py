@@ -2,7 +2,7 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query, Request, UploadFile, status
 from fastapi.exceptions import RequestValidationError
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from app.core import UserRole, VeterinarianApprovalStatus
 from app.dependencies import get_current_user, get_veterinarian_service, require_roles
@@ -17,6 +17,30 @@ from app.schemas import (
 from app.services.protocol import VeterinarianServiceProtocol
 
 router = APIRouter(prefix="/veterinarians", tags=["Veterinarians"])
+
+
+def _request_body_schema(model: type[BaseModel]) -> dict:
+    json_schema = model.model_json_schema()
+    multipart_schema = {
+        **json_schema,
+        "properties": {
+            **json_schema.get("properties", {}),
+            "license_document": {
+                "type": "string",
+                "format": "binary",
+                "description": "Optional PDF or image license document",
+            },
+        },
+    }
+    return {
+        "requestBody": {
+            "required": True,
+            "content": {
+                "application/json": {"schema": json_schema},
+                "multipart/form-data": {"schema": multipart_schema},
+            },
+        }
+    }
 
 
 async def _parse_payload(
@@ -42,7 +66,12 @@ async def _parse_payload(
         raise RequestValidationError(exc.errors(), body=payload) from exc
 
 
-@router.post("/", response_model=VeterinarianResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/",
+    response_model=VeterinarianResponse,
+    status_code=status.HTTP_201_CREATED,
+    openapi_extra=_request_body_schema(VeterinarianCreate),
+)
 async def apply_as_veterinarian(
     request: Request,
     user: Annotated[User, Depends(require_roles(UserRole.USER))],
@@ -66,7 +95,11 @@ async def get_my_veterinarian_application(
     return await service.get_mine(user)
 
 
-@router.patch("/me", response_model=VeterinarianResponse)
+@router.patch(
+    "/me",
+    response_model=VeterinarianResponse,
+    openapi_extra=_request_body_schema(VeterinarianUpdate),
+)
 async def update_my_veterinarian_application(
     request: Request,
     user: Annotated[
