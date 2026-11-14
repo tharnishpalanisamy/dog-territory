@@ -103,3 +103,15 @@ class RefreshTokenService:
         except Exception:
             await self.db.rollback()
             raise
+
+    async def revoke_refresh_token(self, raw_token: str) -> None:
+        token_hash = self.hash_refresh_token(raw_token)
+
+        try:
+            token = await self.repository.get_token_by_hash_for_update(token_hash)
+            if token is not None and token.revoked_at is None:
+                token.revoked_at = datetime.now(UTC)
+            await self.db.commit()
+        except Exception:
+            await self.db.rollback()
+            raise

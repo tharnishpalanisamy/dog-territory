@@ -69,9 +69,11 @@ class VolunteerApprovalStatus(str, enum.Enum):
     APPROVED = "approved"
     REJECTED = "rejected"
 
+
 class VolunteerApprovalDecision(str, enum.Enum):
     APPROVED = "approved"
     REJECTED = "rejected"
+
 
 class VeterinarianApprovalStatus(str, enum.Enum):
     PENDING = "pending"

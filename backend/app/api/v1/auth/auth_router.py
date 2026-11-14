@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Depends, Request, Response, status
 
 from app.core import limiter
 from app.dependencies import (
@@ -60,6 +60,10 @@ async def refresh_token(
     return await service.refresh_token(token_data.refresh_token)
 
 
-@router.post("/logout")
-async def logout():
-    pass
+@router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
+async def logout(
+    token_data: RefreshTokenCreate,
+    service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
+) -> Response:
+    await service.logout(token_data.refresh_token)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

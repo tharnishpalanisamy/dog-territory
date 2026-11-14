@@ -54,9 +54,7 @@ class WorkAssignmentService:
                 raise NotAuthorizedException(
                     "Assignments can only be assigned to volunteer users"
                 )
-            volunteer = await self.volunteer_repository.get_by_user_id(
-                assigned_user.id
-            )
+            volunteer = await self.volunteer_repository.get_by_user_id(assigned_user.id)
             self._validate_approved_volunteer(volunteer)
 
         report = await self.report_repository.get_by_id(assignment_data.report_id)

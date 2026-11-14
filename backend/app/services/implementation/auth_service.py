@@ -77,3 +77,6 @@ class AuthService:
             refresh_token=new_token,
             token_type="bearer",
         )
+
+    async def logout(self, token: str) -> None:
+        await self.refresh_token_service.revoke_refresh_token(token)

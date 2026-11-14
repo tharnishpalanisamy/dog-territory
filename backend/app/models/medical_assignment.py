@@ -143,8 +143,6 @@ class MedicalAssignment(Base):
         foreign_keys=[veterinarian_id],
     )
 
-    
-
     updates: Mapped[list["MedicalAssignmentUpdate"]] = relationship(
         back_populates="assignment",
         cascade="all, delete-orphan",
