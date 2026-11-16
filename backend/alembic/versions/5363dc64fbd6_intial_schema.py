@@ -1,8 +1,8 @@
-"""initial schema
+"""intial schema
 
-Revision ID: 15cf87df2b8e
+Revision ID: 5363dc64fbd6
 Revises: 
-Create Date: 2026-11-14 15:01:36.118236
+Create Date: 2026-11-16 16:17:31.592371
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '15cf87df2b8e'
+revision: str = '5363dc64fbd6'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -130,6 +130,21 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('user_id')
     )
+    op.create_table('dog_images',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('dog_id', sa.Integer(), nullable=False),
+    sa.Column('storage_provider', sa.String(length=30), nullable=False),
+    sa.Column('storage_key', sa.String(length=500), nullable=False),
+    sa.Column('image_url', sa.String(length=1000), nullable=True),
+    sa.Column('is_primary', sa.Boolean(), nullable=False),
+    sa.Column('uploaded_by', sa.Integer(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.ForeignKeyConstraint(['dog_id'], ['dogs.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['uploaded_by'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('storage_key')
+    )
+    op.create_index(op.f('ix_dog_images_dog_id'), 'dog_images', ['dog_id'], unique=False)
     op.create_table('reports',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('reporter_id', sa.Integer(), nullable=False),
@@ -286,6 +301,8 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_work_assignments_assigned_to'), table_name='work_assignments')
     op.drop_table('work_assignments')
     op.drop_table('reports')
+    op.drop_index(op.f('ix_dog_images_dog_id'), table_name='dog_images')
+    op.drop_table('dog_images')
     op.drop_table('volunteers')
     op.drop_index(op.f('ix_veterinarians_user_id'), table_name='veterinarians')
     op.drop_index(op.f('ix_veterinarians_license_number'), table_name='veterinarians')

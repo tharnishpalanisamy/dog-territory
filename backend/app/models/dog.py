@@ -12,13 +12,14 @@ from sqlalchemy import (
     UniqueConstraint,
     func,
 )
-
-if TYPE_CHECKING:
-    from app.models.medical_assignment import MedicalAssignment
-    from app.models.work_assignments import WorkAssignment
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
+
+if TYPE_CHECKING:
+    from app.models.dog_image import DogImage
+    from app.models.medical_assignment import MedicalAssignment
+    from app.models.work_assignments import WorkAssignment
 
 
 class Dog(Base):
@@ -33,41 +34,64 @@ class Dog(Base):
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
     dog_code: Mapped[str] = mapped_column(
         String(20), nullable=False, index=True, unique=True
     )
+
     dog_number: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+
     estimated_age: Mapped[int | None] = mapped_column(Integer, nullable=True)
     color: Mapped[str | None] = mapped_column(String(50), nullable=True)
     description: Mapped[str | None] = mapped_column(String(255), nullable=True)
+
     is_sterilized: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
+
     state: Mapped[str] = mapped_column(String(50), nullable=False)
     district: Mapped[str] = mapped_column(String(50), nullable=False)
     area_name: Mapped[str] = mapped_column(String(100), nullable=False)
     pincode: Mapped[str] = mapped_column(String(6), nullable=False, index=True)
+
     latitude: Mapped[Decimal] = mapped_column(Numeric(10, 7), nullable=False)
     longitude: Mapped[Decimal] = mapped_column(Numeric(10, 7), nullable=False)
+
     vaccination_status: Mapped[str] = mapped_column(String(20), nullable=False)
+
     vaccination_date: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+
     next_booster_due_date: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+
     created_by: Mapped[int] = mapped_column(ForeignKey("users.id"))
+
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default=func.now()
-    )
-    updated_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True, onupdate=func.now()
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
     )
 
-    # relationships
+    updated_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        onupdate=func.now(),
+    )
+
+    # Relationships
     work_assignments: Mapped[list["WorkAssignment"]] = relationship(
         back_populates="dog"
     )
 
     medical_assignments: Mapped[list["MedicalAssignment"]] = relationship(
+        back_populates="dog"
+    )
+
+    images: Mapped[list["DogImage"]] = relationship(
         back_populates="dog",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )

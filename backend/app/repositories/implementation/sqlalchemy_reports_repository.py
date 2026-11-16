@@ -1,8 +1,9 @@
 from sqlalchemy import func, select
 
+from app.core import ReportStatus
 from app.models import Report, User
 from app.schemas import ReportFilterParams
-from app.core import ReportStatus
+
 
 class ReportsRepository:
     def __init__(self, db):
@@ -75,9 +76,11 @@ class ReportsRepository:
         query = select(func.count()).select_from(Report)
         return await self.db.scalar(query)
 
-    async def get_total_resolved_reports(self) -> int: 
-        query = select(func.count()).select_from(Report).where(
-            Report.status == ReportStatus.RESOLVED
+    async def get_total_resolved_reports(self) -> int:
+        query = (
+            select(func.count())
+            .select_from(Report)
+            .where(Report.status == ReportStatus.RESOLVED)
         )
 
-        return await self.db.scalar(query) 
+        return await self.db.scalar(query)

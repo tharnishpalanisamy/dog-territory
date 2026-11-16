@@ -5,6 +5,7 @@ from app.models.veterinarian import Veterinarian
 
 from .assignment_update import AssignmentUpdate
 from .dog import Dog
+from .dog_image import DogImage
 from .refresh_token import RefreshToken
 from .report import Report
 from .user import User
@@ -16,6 +17,7 @@ __all__ = [
     "AssignmentUpdate",
     "Clinic",
     "Dog",
+    "DogImage",
     "MedicalAssignment",
     "MedicalAssignmentUpdate",
     "RefreshToken",
