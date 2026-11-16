@@ -1,8 +1,9 @@
 from collections.abc import Sequence
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core import VolunteerApprovalStatus
 from app.models import Volunteer
 
 
@@ -55,3 +56,12 @@ class VolunteerRepository:
     async def delete(self, volunteer: Volunteer) -> None:
         await self.db.delete(volunteer)
         await self.db.flush()
+
+    async def get_total_volunteer(self) -> int:
+        query = (
+            select(func.count())
+            .select_from(Volunteer)
+            .where(Volunteer.approval_status == VolunteerApprovalStatus.APPROVED)
+        )
+
+        return await self.db.scalar(query)

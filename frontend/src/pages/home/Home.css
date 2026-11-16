@@ -201,9 +201,9 @@ button
     position:absolute;
     inset:0;
     z-index:-2;
-    background-image:url('https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=2200&q=90');
+    background-image:url('https://images.pexels.com/photos/34728031/pexels-photo-34728031.jpeg?auto=compress&cs=tinysrgb&w=1200');
     background-size:cover;
-    background-position:68% 45%;
+    background-position:68% 30%;
     opacity:.98
 }
 .hero-shade
@@ -324,96 +324,6 @@ button
 {
     color:#5555f4;
     font-size:26px
-}
-.map-float
-{
-    position:absolute;
-    width:min(340px,28vw);
-    right:27%;
-    bottom:24%;
-    z-index:3;
-    filter:drop-shadow(0 14px 26px #17244825)
-}
-.mini-map
-{
-    height:180px;
-    position:relative;
-    border:8px solid #fff;
-    border-radius:16px;
-    overflow:hidden;
-    background:#e6f0e7;
-    background-image:linear-gradient(28deg,transparent 47%,#fff 48%,#fff 50%,transparent 51%),linear-gradient(110deg,transparent 45%,#fff 46%,#fff 48%,transparent 49%),linear-gradient(0deg,transparent 65%,#f8e7ce 66%,#f8e7ce 69%,transparent 70%);
-    background-size:140px 120px,100px 130px,100% 100%
-}
-.map-road
-{
-    position:absolute;
-    background:#fff;
-    border:1px solid #d7e2df;
-    height:14px;
-    width:140%;
-    left:-15%;
-    top:45%;
-    transform:rotate(-22deg)
-}
-.road-two
-{
-    top:20%;
-    transform:rotate(45deg);
-    height:9px
-}
-.road-three
-{
-    top:78%;
-    transform:rotate(12deg);
-    height:8px
-}
-.map-water
-{
-    position:absolute;
-    width:70px;
-    height:220px;
-    background:#a8d9d4;
-    opacity:.7;
-    left:20%;
-    top:-25px;
-    transform:rotate(38deg);
-    border-radius:50%
-}
-.map-pin
-{
-    position:absolute;
-    z-index:2;
-    display:grid;
-    place-items:center;
-    color:white;
-    background:#5857f3;
-    border-radius:50% 50% 50% 0;
-    transform:rotate(-45deg);
-    width:27px;
-    height:27px;
-    font-size:11px;
-    box-shadow:0 3px 7px #283c5c40
-}
-.map-pin::first-letter
-{
-    transform:rotate(45deg)
-}
-.pin-one
-{
-    left:24%;
-    top:30%
-}
-.pin-two
-{
-    right:24%;
-    top:43%
-}
-.pin-three
-{
-    left:51%;
-    bottom:14%;
-    background:#16a99d
 }
 .dog-float-card
 {
@@ -766,7 +676,7 @@ button
     position:absolute;
     inset:0 58% 0 0;
     z-index:-1;
-    background:linear-gradient(90deg,transparent 65%,#0c2927 100%),url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=85') center/cover
+    background:linear-gradient(90deg,transparent 65%,#0c2927 100%),url('https://images.pexels.com/photos/30630829/pexels-photo-30630829.jpeg?auto=compress&cs=tinysrgb&w=1200') center/cover
 }
 .impact-copy
 {
@@ -1138,11 +1048,6 @@ button
     {
         font-size:8px
     }
-    .map-float
-    {
-        right:20%;
-        width:310px
-    }
     .hero-note
     {
         left:55%
@@ -1282,16 +1187,6 @@ button
     {
         display:none
     }
-    .map-float
-    {
-        width:260px;
-        right:5%;
-        bottom:5%
-    }
-    .mini-map
-    {
-        height:130px
-    }
     .hero-doodle
     {
         display:none
@@ -1404,7 +1299,7 @@ button
     .impact-photo
     {
         inset:0 0 55% 0;
-        background-image:linear-gradient(0deg,#0c2927 0%,transparent 65%),url('https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1200&q=85');
+        background-image:linear-gradient(0deg,#0c2927 0%,transparent 65%),url('https://images.pexels.com/photos/30630829/pexels-photo-30630829.jpeg?auto=compress&cs=tinysrgb&w=1200');
         background-position:center 45%
     }
     .impact-copy
@@ -1532,12 +1427,6 @@ button
     {
         font-size:8px
     }
-    .map-float
-    {
-        width:245px;
-        right:4%;
-        bottom:4%
-    }
     .dog-float-card>img
     {
         width:57px;
@@ -1592,3 +1481,309 @@ button
 }
 
 
+
+/* ========================================
+   TARGETED HOMEPAGE REFINEMENTS
+   Existing Dog Territory visual theme kept
+   ======================================== */
+
+/* Keep the map links visible while clearly marking the feature as pending. */
+.nav-dev-badge,
+.footer-dev-badge {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 3px 6px;
+    border-radius: 5px;
+    background: #f0efff;
+    color: #5555f4;
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.map-link-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.map-link-wrap > small {
+    padding-left: 4px;
+    color: #7a849b;
+    font-size: 10px;
+    line-height: 1.3;
+}
+
+.map-development-note {
+    width: min(1280px, calc(100% - 48px));
+    margin: 18px auto 0;
+    padding: 13px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid #e7eaf1;
+    border-radius: 12px;
+    background: #fafaff;
+    scroll-margin-top: 92px;
+}
+
+.map-development-icon {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: #eeeefe;
+    color: #5555f4;
+    font-size: 21px;
+}
+
+.map-development-note p {
+    margin: 0;
+    color: #59657e;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.map-development-note p strong {
+    color: #101d43;
+    margin-right: 4px;
+}
+
+.map-development-status {
+    margin-left: auto;
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: #f0efff;
+    color: #5555f4;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .5px;
+    white-space: nowrap;
+}
+
+/* Replace the old map panel with a standalone dog-profile preview. */
+.dog-profile-float {
+    position: absolute;
+    width: min(340px, 30vw);
+    right: 14%;
+    bottom: 12%;
+    z-index: 3;
+    filter: drop-shadow(0 14px 26px #17244825);
+}
+
+.dog-profile-float .dog-float-card {
+    width: 100%;
+    margin: 0;
+    padding: 13px;
+}
+
+.dog-float-card > img {
+    width: 78px;
+    height: 72px;
+    object-fit: cover;
+    object-position: center 38%;
+    flex: 0 0 auto;
+}
+
+.dog-card-info {
+    font-size: 11px;
+}
+
+.dog-card-info strong {
+    font-size: 13px;
+}
+
+.dog-card-info small {
+    font-size: 10px;
+}
+
+.verified {
+    font-size: 9px;
+}
+
+.tag-row span {
+    font-size: 9px;
+}
+
+.dog-card-info a {
+    font-size: 10px;
+}
+
+/* Keep feature cards equal in height and give every image a clear frame. */
+.feature-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 355px;
+}
+
+.feature-card h3 {
+    font-size: 16px;
+}
+
+.feature-card p {
+    min-height: 66px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.feature-card img {
+    display: block;
+    width: calc(100% + 32px);
+    height: 150px;
+    flex: 0 0 150px;
+    margin: auto -16px -12px;
+    object-fit: cover;
+    object-position: center 38%;
+    border-radius: 0 0 14px 14px;
+    background: #eef1f7;
+}
+
+/* Slightly improve readability without changing the type system. */
+.nav-links {
+    font-size: 13px;
+}
+
+.eyebrow {
+    font-size: 11px;
+}
+
+.hero-lead {
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.hero-trust p {
+    font-size: 11px;
+}
+
+.hero-trust small {
+    font-size: 10px;
+}
+
+.section-heading > p {
+    font-size: 14px;
+}
+
+.process-step h3 {
+    font-size: 16px;
+}
+
+.process-step p {
+    font-size: 13px;
+    line-height: 1.65;
+}
+
+.impact-copy > p {
+    font-size: 13px;
+}
+
+.impact-points b {
+    font-size: 13px;
+}
+
+.impact-points small {
+    font-size: 11px;
+}
+
+.story-copy blockquote {
+    font-size: 14px;
+}
+
+.quote-credit {
+    font-size: 12px;
+}
+
+.footer-col {
+    font-size: 12px;
+}
+
+.footer-col h4 {
+    font-size: 13px;
+}
+
+.footer-bottom {
+    font-size: 11px;
+}
+
+@media (max-width: 1100px) {
+    .dog-profile-float {
+        right: 8%;
+        width: 310px;
+    }
+}
+
+@media (max-width: 800px) {
+    .dog-profile-float {
+        width: 260px;
+        right: 5%;
+        bottom: 5%;
+    }
+
+    .map-development-note {
+        width: calc(100% - 40px);
+        align-items: flex-start;
+        flex-wrap: wrap;
+        margin-top: 14px;
+    }
+
+    .map-development-note p {
+        flex: 1 1 calc(100% - 50px);
+        font-size: 12px;
+    }
+
+    .map-development-status {
+        margin-left: 48px;
+    }
+
+    .feature-card {
+        min-height: 345px;
+    }
+
+    .feature-card h3 {
+        font-size: 14px;
+    }
+
+    .feature-card p {
+        min-height: 82px;
+        font-size: 12px;
+    }
+
+    .feature-card img {
+        width: calc(100% + 24px);
+        height: 125px;
+        flex-basis: 125px;
+        margin-inline: -12px;
+        margin-bottom: -10px;
+    }
+}
+
+@media (max-width: 430px) {
+    .dog-profile-float {
+        width: 245px;
+        right: 4%;
+        bottom: 4%;
+    }
+
+    .feature-card {
+        min-height: 350px;
+    }
+
+    .feature-card p {
+        min-height: 91px;
+        font-size: 11.5px;
+    }
+
+    .feature-card img {
+        height: 110px;
+        flex-basis: 110px;
+    }
+
+    .nav-dev-badge {
+        font-size: 8px;
+    }
+}

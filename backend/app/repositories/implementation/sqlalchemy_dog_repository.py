@@ -105,3 +105,7 @@ class DogRepository:
         query = delete(Dog).where(Dog.id == id)
 
         return await self.db.execute(query)
+
+    async def get_dogs_count(self) -> int:
+        query = select(func.count()).select_from(Dog)
+        return await self.db.scalar(query)
