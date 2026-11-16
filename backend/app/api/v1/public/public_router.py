@@ -13,3 +13,9 @@ async def get_statistics(
 ):
     return await service.get_statistics()
 
+
+@router.get("/dog")
+async def get_dog(
+    service: Annotated[PublicServiceProtocol, Depends(get_public_service)],
+):
+    return await service.get_dog() 

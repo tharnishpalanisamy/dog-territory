@@ -1,76 +1,80 @@
 import { useEffect, useState } from "react";
 import "./Home.css";
 import Button from '../../components/ui/Button'
-import axios from "axios";
-import type{Statistics  , StatCard} from '../../types/statistics' 
+import api from "../../lib/api";
+import type{Statistics  , StatCard} from '../../types/statistics'
+import DogProfileModal, { type DogProfile } from './DogProfileModal' 
 
 async function get_statistics(){
-  const response = await axios.get<Statistics>('http://127.0.0.1:8000/api/v1/public/stats') 
+  const response = await api.get<Statistics>('/public/stats')
   return response.data  
 }
 
-const dogs = [
-  {
-    name: "Muthu",
-    area: "Example neighbourhood",
-    status: "Profile preview",
-    tags: ["Street dog", "Sample record"],
-    image: "https://images.pexels.com/photos/12631184/pexels-photo-12631184.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  },
-  {
-    name: "Chutney",
-    area: "Gandhipuram",
-    status: "Verified",
-    tags: ["Vaccinated", "Community cared"],
-    image: "https://images.pexels.com/photos/30630829/pexels-photo-30630829.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  },
-  {
-    name: "Ponni",
-    area: "Vadavalli",
-    status: "Needs review",
-    tags: ["Community cared"],
-    image: "https://images.pexels.com/photos/34728031/pexels-photo-34728031.jpeg?auto=compress&cs=tinysrgb&w=1200",
-  },
-];
+async function get_dog(){
+  const response = await api.get<DogPreview | null>('/public/dog')
+  return response.data 
+}
+
+type DogPreview = DogProfile;
+// const dogs = [
+//   {
+//     name: "Muthu",
+//     area: "Example neighbourhood",
+//     status: "Profile preview",
+//     tags: ["Street dog", "Sample record"],
+//     image: "https://images.pexels.com/photos/12631184/pexels-photo-12631184.jpeg?auto=compress&cs=tinysrgb&w=1200",
+//   },
+//   {
+//     name: "Chutney",
+//     area: "Gandhipuram",
+//     status: "Verified",
+//     tags: ["Vaccinated", "Community cared"],
+//     image: "https://images.pexels.com/photos/30630829/pexels-photo-30630829.jpeg?auto=compress&cs=tinysrgb&w=1200",
+//   },
+//   {
+//     name: "Ponni",
+//     area: "Vadavalli",
+//     status: "Needs review",
+//     tags: ["Community cared"],
+//     image: "https://images.pexels.com/photos/34728031/pexels-photo-34728031.jpeg?auto=compress&cs=tinysrgb&w=1200",
+//   },
+// ];
 
 const features = [
   {
-    icon: "⌖",
-    color: "mint",
     title: "Community Reports",
-    description:
-      "Submit street-dog sightings, add photos and location details, and follow reports through review.",
-    image: "https://images.pexels.com/photos/12631184/pexels-photo-12631184.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    alt: "Indian street dog standing on a neighbourhood street",
-  },
-  {
-    icon: "♡",
-    color: "coral",
-    title: "Detailed Profiles",
-    description:
-      "View each dog's photos, identifying features, location and welfare history in one organised profile.",
-    image: "https://images.pexels.com/photos/37739680/pexels-photo-37739680.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    alt: "Mixed-breed Indian street dog in its neighbourhood",
-  },
-  {
-    icon: "✚",
+    description: "Submit street-dog sightings, add photos and location details, and follow reports through review.",
     color: "mint",
-    title: "Health Records",
-    description:
-      "Keep track of vaccinations, sterilization, treatments and ongoing welfare updates.",
-    image: "https://images.pexels.com/photos/34731842/pexels-photo-34731842.png?auto=compress&cs=tinysrgb&w=1200",
-    alt: "Close-up portrait of an Indian street dog",
+    icon: <Icon name="users" />,
+    image: 'https://www.humaneworld.org/sites/default/files/styles/responsive_3_2_800w/public/2025-03/DSC00217_Original%20file%20lucknow%20India%20dog%20Abhishek%20Rastogi.jpg.webp?h=56d0ca2e&itok=qLzD5Hr5',
+    alt: "Dog in a community",
   },
   {
-    icon: "♧",
-    color: "lavender",
+    title: "Detailed Profiles",
+    description: "View each dog's photos, identifying features, location and welfare history in one organised profile.",
+    color: "coral",
+    icon: <Icon name="heart" />,
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLFcXOW861tq5Uxi_W692_kRkqO4W2r-TrAQgCJMPy4w&s=10',
+    alt: "Detailed dog portrait",
+  },
+  {
+    title: "Health Records",
+    description: "Keep track of vaccinations, sterilization, treatments and ongoing welfare updates.",
+    color: "teal",
+    icon: <Icon name="file" />,
+    image:'https://t4.ftcdn.net/jpg/05/51/80/53/360_F_551805312_jQWSYyx9RXvQOKqfu9HD6o1bATvGBouP.jpg',
+    alt: "Dogs together",
+  },
+  {
     title: "Community Care",
-    description:
-      "Bring local residents and volunteers together to support street dogs in their neighbourhoods.",
-    image: "https://images.pexels.com/photos/22035735/pexels-photo-22035735.jpeg?auto=compress&cs=tinysrgb&w=1200",
-    alt: "Street dog resting beneath a roadside cart in India",
+    description: "Bring local residents and volunteers together to support street dogs in their neighbourhoods.",
+    color: "purple",
+    icon: <Icon name="users" />,
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAmJzk-ZKHsbOhzjSeFAH9Co7_937wgBr9bMXD5cVAhTgLAmjhF-uc1sA&s=10',
+    alt: "Dogs receiving care",
   },
 ];
+
 
 function Icon({ name }: { name: string }) {
   const common = {
@@ -86,18 +90,71 @@ function Icon({ name }: { name: string }) {
   };
 
   if (name === "paw")
-    return <svg {...common}><circle cx="7" cy="7" r="2.1" /><circle cx="12" cy="5" r="2.1" /><circle cx="17" cy="7" r="2.1" /><circle cx="19" cy="12" r="1.8" /><path d="M5.2 15.3c0-2.5 3-4.6 6.8-4.6s6.8 2.1 6.8 4.6c0 2.1-2 3.2-4 2.5-1.9-.7-3.7-.7-5.6 0-2 .7-4-.4-4-2.5Z" /></svg>;
+    return (
+      <svg {...common}>
+        <circle cx="7" cy="7" r="2.1" />
+        <circle cx="12" cy="5" r="2.1" />
+        <circle cx="17" cy="7" r="2.1" />
+        <circle cx="19" cy="12" r="1.8" />
+        <path d="M5.2 15.3c0-2.5 3-4.6 6.8-4.6s6.8 2.1 6.8 4.6c0 2.1-2 3.2-4 2.5-1.9-.7-3.7-.7-5.6 0-2 .7-4-.4-4-2.5Z" />
+      </svg>
+    );
+
   if (name === "file")
-    return <svg {...common}><path d="M7 3.5h7l4 4V21H7z" /><path d="M14 3.5V8h4M10 12h5M10 16h5" /></svg>;
+    return (
+      <svg {...common}>
+        <path d="M7 3.5h7l4 4V21H7z" />
+        <path d="M14 3.5V8h4M10 12h5M10 16h5" />
+      </svg>
+    );
+
   if (name === "heart")
-    return <svg {...common}><path d="M20.5 8.7c0 5-8.5 10-8.5 10s-8.5-5-8.5-10A4.5 4.5 0 0 1 12 6.2a4.5 4.5 0 0 1 8.5 2.5Z" /></svg>;
+    return (
+      <svg {...common}>
+        <path d="M20.5 8.7c0 5-8.5 10-8.5 10s-8.5-5-8.5-10A4.5 4.5 0 0 1 12 6.2a4.5 4.5 0 0 1 8.5 2.5Z" />
+      </svg>
+    );
+
   if (name === "users")
-    return <svg {...common}><circle cx="9" cy="8" r="3" /><path d="M3.5 20v-1.5A5.5 5.5 0 0 1 9 13h1a5.5 5.5 0 0 1 5.5 5.5V20M16 5.5a3 3 0 0 1 0 5.8M18 13.5a4.5 4.5 0 0 1 2.5 4V20" /></svg>;
-  return <svg {...common}><circle cx="12" cy="12" r="8" /></svg>;
+    return (
+      <svg {...common}>
+        <circle cx="9" cy="8" r="3" />
+        <path d="M3.5 20v-1.5A5.5 5.5 0 0 1 9 13h1a5.5 5.5 0 0 1 5.5 5.5V20M16 5.5a3 3 0 0 1 0 5.8M18 13.5a4.5 4.5 0 0 1 2.5 4V20" />
+      </svg>
+    );
+
+  // Community Reports
+  if (name === "map-pin")
+    return (
+      <svg {...common}>
+        <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" />
+        <circle cx="12" cy="10" r="2.5" />
+      </svg>
+    );
+
+  // Health Records
+  if (name === "stethoscope")
+    return (
+      <svg {...common}>
+        <path d="M6 3v5a5 5 0 0 0 10 0V3" />
+        <path d="M6 3H4M16 3h2M11 13v2a5 5 0 0 0 10 0v-2" />
+        <circle cx="21" cy="11" r="2" />
+        <circle cx="11" cy="20" r="2" />
+      </svg>
+    );
+
+  return (
+    <svg {...common}>
+      <circle cx="12" cy="12" r="8" />
+    </svg>
+  );
 }
+
+
 
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [stats , setStats] = useState<Statistics>({
     dogs_count : 0 , 
     reports_count : 0 , 
@@ -106,10 +163,19 @@ function Home() {
   }
   )
 
+  const [dog , setDog] = useState<DogPreview>({
+    "dog_code": '641025-1',
+    "area": 'edayarpalayam',
+    "status": 'Vaccinatecccccccccd',
+    "tags": ["street dog", "sample record"],
+    "image": 'https://images.pexels.com/photos/12631184/pexels-photo-12631184.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  })
+
   useEffect(()=>{
     get_statistics().then((data)=>setStats(data)).catch((error) => console.log(error)
     )
-  } , [] )
+    get_dog().then((data)=>{ if (data) setDog(data); }).catch((error) => console.error("Failed to load featured dog", error))
+  } , [] ) 
 
     const statistics:StatCard[] = [
     { label: "Dogs Documented", value: stats.dogs_count, icon: "paw" },
@@ -128,7 +194,7 @@ function Home() {
         <button className="mobile-menu" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle navigation">☰</button>
         <nav className={menuOpen ? "nav-links nav-open" : "nav-links"}>
           <a className="active" href="#home" onClick={() => setMenuOpen(false)}>Home</a>
-          <a href="#map-under-development" onClick={() => setMenuOpen(false)}>Explore Map <span className="nav-dev-badge">In development</span></a>
+          <a href="#map-under-development" onClick={() => setMenuOpen(false)}>Explore Map</a>
           <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How It Works</a>
           <a href="#impact" onClick={() => setMenuOpen(false)}>Our Impact</a>
           <a href="#about" onClick={() => setMenuOpen(false)}>About</a>
@@ -161,8 +227,8 @@ function Home() {
           <div className="hero-note">Same streets.<br />Same stories.<br /><strong>Brighter futures</strong> <span>♡</span></div>
           <div className="dog-profile-float">
             <div className="dog-float-card">
-              <img src={dogs[0].image} alt={`${dogs[0].name}, a community street dog`} />
-              <div className="dog-card-info"><strong>{dogs[0].name} <span className="verified">{dogs[0].status}</span></strong><small>⌖ {dogs[0].area}</small><div className="tag-row">{dogs[0].tags.map((tag) => <span key={tag}>{tag}</span>)}</div><a href="#features">View Profile →</a></div>
+              <img src={dog.image || features[0].image} alt={`${dog.dog_code}, a community street dog`} />
+              <div className="dog-card-info"><strong>{dog.dog_code} <span className="verified">{dog.status}</span></strong><small>⌖ {dog.area}</small><div className="tag-row">{dog.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><button className="dog-profile-trigger" type="button" onClick={() => setProfileOpen(true)}>View Profile ?</button></div>
             </div>
           </div>
           <div className="hero-doodle">Real dogs<br />Real communities<br />Real change</div>
@@ -195,13 +261,41 @@ function Home() {
 
         <section className="features-section section-wrap" id="features">
           <div className="section-heading">
-            <div><div className="eyebrow"><span className="eyebrow-dot blue" /> KEY FEATURES</div><h2>Tools for kinder,<br />more informed communities.</h2></div>
-            <p>Everything you need to report, document and support street dogs in one place.</p>
+            <div>
+              <div className="eyebrow">
+                <span className="eyebrow-dot blue" /> KEY FEATURES
+              </div>
+              <h2>
+                Tools for kinder,
+                <br />
+                more informed communities.
+              </h2>
+            </div>
+            <p>
+              Everything you need to report, document and support street dogs in one place.
+            </p>
           </div>
+
           <div className="feature-grid">
-            {features.map((feature) => <article className="feature-card" key={feature.title}>
-              <div className={`feature-icon ${feature.color}`}>{feature.icon}</div><h3>{feature.title}</h3><p>{feature.description}</p><img src={feature.image} alt={feature.alt} loading="lazy" />
-            </article>)}
+            {features.map((feature) => (
+              <article className="feature-card" key={feature.title}>
+                <div className={`feature-icon ${feature.color}`}>
+                  {feature.icon}
+                </div>
+
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+
+                {/* Wrapped image in a container for consistent sizing */}
+                <div className="feature-image-container">
+                  <img
+                    src={feature.image}
+                    alt={feature.alt}
+                    loading="lazy"
+                  />
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -213,7 +307,7 @@ function Home() {
 
         <section className="stories-section section-wrap" id="about">
           <div className="story-copy"><div className="eyebrow"><span className="eyebrow-dot blue" /> COMMUNITY STORIES</div><h2>Small actions.<br />Big impact.</h2><div className="teal-rule" /><blockquote>“Dog Territory has helped us better understand and care for the street dogs in our community. It’s easy to use and makes a real difference.”</blockquote><p className="quote-credit">— Community Volunteer</p></div>
-          <div className="story-collage"><img className="story-main" src={dogs[1].image} alt="An Indian community street dog" loading="lazy" /><div className="sticky-note">“A more compassionate<br />city for every dog.” <span>♡</span></div><div className="handwritten">Kind communities<br />Brighter tomorrows <span>✿</span></div><img className="story-small story-small-one" src={dogs[2].image} alt="A street puppy in its neighbourhood" loading="lazy" /><img className="story-small story-small-two" src={features[3].image} alt="Street puppies in a neighbourhood" loading="lazy" /></div>
+          <div className="story-collage"><img className="story-main" src={dog.image || features[0].image} alt="An Indian community street dog" loading="lazy" /><div className="sticky-note">“A more compassionate<br />city for every dog.” <span>♡</span></div><div className="handwritten">Kind communities<br />Brighter tomorrows <span>✿</span></div><img className="story-small story-small-one" src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDRs5iE5etaVNtkd4RW81_G92d2lIEw1v_B3AWyUcTfQ&s=10' alt="A street puppy in its neighbourhood" loading="lazy" /><img className="story-small story-small-two" src={features[3].image} alt="Street puppies in a neighbourhood" loading="lazy" /></div>
         </section>
 
         <section className="final-cta">
@@ -226,12 +320,13 @@ function Home() {
           <div className="footer-brand"><a className="brand" href="#home"><span className="brand-mark"><Icon name="paw" /></span><span className="brand-copy"><strong>dog territory</strong><small>EVERY DOG. EVERY LIFE.</small></span></a><p>Every street dog has a story. <br />Let’s make it a story of care.</p><div className="socials"><a href="#about" aria-label="Facebook">f</a><a href="#about" aria-label="Instagram">◎</a><a href="#about" aria-label="X">𝕏</a><a href="#about" aria-label="YouTube">▶</a></div></div>
           <div className="footer-col"><h4>Platform</h4><a href="#map">Explore Map <span className="footer-dev-badge">In development</span></a><a href="/report">Report a Sighting</a><a href="#how-it-works">How It Works</a><a href="#impact">Our Impact</a></div>
           <div className="footer-col"><h4>Community</h4><a href="/signup">Create an Account</a><a href="/signin">Sign In</a><a href="#about">Community Guidelines</a><a href="#about">Volunteer</a></div>
-          <div className="footer-col"><h4>Legal</h4><a href="#about">Privacy Policy</a><a href="#about">Terms of Service</a><a href="#about">Cookie Policy</a><a href="#about">Contact Us</a></div>
+          <div className="footer-col"><h4>Legal</h4><a href="#about">Privacy Policy</a><a href="#about">Terms of Service</a><a href="#about">Contact Us</a></div>
           <div className="footer-stamp"><Icon name="paw" /><b>Safer streets.<br />Healthier dogs.<br />Stronger communities.</b></div>
         </div>
         <div className="footer-bottom"><span>© 2026 Dog Territory. All rights reserved.</span><span>Built with <b>♥</b> for a more compassionate world</span></div>
       </footer>
 
+      {profileOpen && <DogProfileModal dog={dog} fallbackImage={features[0].image} onClose={() => setProfileOpen(false)} />}
     </div>
   );
 }

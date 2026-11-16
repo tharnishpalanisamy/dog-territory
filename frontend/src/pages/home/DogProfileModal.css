@@ -1,0 +1,35 @@
+body.dog-profile-modal-open { overflow: hidden; }
+.dog-modal-backdrop { position: fixed; z-index: 1000; inset: 0; display: grid; place-items: center; padding: 24px; background: rgba(13,24,49,.58); backdrop-filter: blur(7px); animation: dog-modal-fade-in .2s ease both; }
+.dog-modal { display: grid; grid-template-columns: minmax(220px,.88fr) 1.12fr; width: min(760px,100%); max-height: min(680px,calc(100vh - 48px)); overflow: auto; border: 1px solid rgba(255,255,255,.7); border-radius: 25px; background: #fff; box-shadow: 0 28px 90px rgba(10,21,47,.3); animation: dog-modal-rise-in .25s ease both; }
+.dog-modal-photo { position: relative; min-height: 100%; background: #e9f0e9; }
+.dog-modal-photo::after { position: absolute; inset: 45% 0 0; content: ""; background: linear-gradient(transparent,rgba(12,24,42,.38)); pointer-events: none; }
+.dog-modal-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.dog-modal-photo-label { position: absolute; z-index: 1; bottom: 24px; left: 24px; color: white; font-size: 10px; font-weight: 700; letter-spacing: .16em; }
+.dog-modal-close { position: absolute; z-index: 2; top: 16px; right: 16px; display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid rgba(255,255,255,.7); border-radius: 50%; color: #14213d; background: rgba(255,255,255,.9); font-size: 25px; line-height: 1; cursor: pointer; }
+.dog-modal-content { padding: 36px 34px 30px; }
+.dog-modal-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.dog-modal-kicker { color: #12a395; font-size: 10px; font-weight: 700; letter-spacing: .14em; }
+.dog-modal-heading h2 { margin: 7px 0 0; color: #101d43; font-family: Manrope,sans-serif; font-size: 30px; line-height: 1.15; }
+.dog-modal-status { display: inline-flex; align-items: center; gap: 7px; max-width: 145px; margin-top: 3px; padding: 8px 11px; border-radius: 999px; color: #23734e; background: #eaf7ef; font-size: 11px; font-weight: 700; }
+.dog-modal-status span { width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: #32a66b; }
+.dog-modal-details { display: grid; gap: 10px; margin-top: 25px; }
+.dog-detail-card { display: flex; align-items: center; gap: 13px; padding: 14px; border: 1px solid #edf0f3; border-radius: 15px; background: #fbfcfd; }
+.dog-detail-icon { display: grid; width: 38px; height: 38px; flex: 0 0 auto; place-items: center; border-radius: 12px; color: #4f52f4; background: #efefff; font-size: 23px; }
+.dog-detail-paw { color: #e07c63; background: #fff1eb; }
+.dog-detail-card div { display: grid; gap: 4px; min-width: 0; }
+.dog-detail-card small { color: #8993a6; font-size: 9px; font-weight: 700; letter-spacing: .11em; }
+.dog-detail-card strong { overflow-wrap: anywhere; color: #26334f; font-size: 13px; font-weight: 600; }
+.dog-modal-tags { margin-top: 23px; }
+.dog-modal-tags h3 { margin: 0 0 10px; color: #182443; font-size: 14px; }
+.dog-modal-tag-list { display: flex; flex-wrap: wrap; gap: 7px; }
+.dog-modal-tag-list span { padding: 7px 11px; border-radius: 999px; color: #496052; background: #f0f6ee; font-size: 11px; font-weight: 600; }
+.dog-modal-tag-list p { margin: 0; color: #727e91; font-size: 12px; }
+.dog-modal-note { display: flex; gap: 10px; margin-top: 23px; padding: 13px; border-radius: 13px; color: #6d5b45; background: #fff8eb; }
+.dog-modal-note span { color: #d79740; }
+.dog-modal-note p { margin: 0; font-size: 11px; line-height: 1.55; }
+.dog-modal-done { width: 100%; margin-top: 20px; padding: 12px 18px; border: 0; border-radius: 12px; color: white; background: #4f52f4; font-size: 13px; font-weight: 700; cursor: pointer; transition: background .18s ease,transform .18s ease; }
+.dog-modal-done:hover { background: #3d40db; transform: translateY(-1px); }
+@keyframes dog-modal-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes dog-modal-rise-in { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (max-width: 620px) { .dog-modal-backdrop { padding: 14px; } .dog-modal { display: block; max-height: calc(100vh - 28px); border-radius: 20px; } .dog-modal-photo { min-height: 210px; height: 31vh; max-height: 270px; } .dog-modal-content { padding: 25px 22px 22px; } .dog-modal-heading h2 { font-size: 25px; } }
+@media (prefers-reduced-motion: reduce) { .dog-modal-backdrop,.dog-modal { animation: none; } }

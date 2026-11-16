@@ -24,8 +24,15 @@ origins = [
 app = FastAPI()
 app.state.limiter = limiter
 
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(
+    RateLimitExceeded,
+    _rate_limit_exceeded_handler,
+)
 
+# Register custom middleware first
+app.middleware("http")(log_requests)
+
+# Register CORS after custom middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -34,9 +41,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.middleware("http")(log_requests)
-
 app.include_router(router_v1)
-
 
 register_exception_handlers(app)

@@ -216,6 +216,12 @@ def register_exception_handlers(app: FastAPI) -> None:
         request: Request,
         exc: Exception,
     ) -> JSONResponse:
+        logger.error(
+            "Unhandled error while processing %s %s",
+            request.method,
+            request.url.path,
+            exc_info=(type(exc), exc, exc.__traceback__),
+        )
         return JSONResponse(
             status_code=500,
             content={"detail": "An internal server error occurred"},

@@ -311,7 +311,7 @@ button
 {
     position:absolute;
     top:9%;
-    left:54%;
+    left:74%;
     font:600 20px/1.05 Caveat,cursive;
     transform:rotate(-9deg);
     color:#152443
@@ -637,6 +637,51 @@ button
     background:#eeeefe;
     color:#5c5af4
 }
+.feature-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+/* Community Reports */
+.feature-icon.mint {
+  background: #e2f8f3;
+  color: #00a995;
+}
+
+/* Detailed Profiles */
+.feature-icon.coral {
+  background: #fff0f0;
+  color: #ff626b;
+}
+
+/* Health Records */
+.feature-icon.teal {
+  background: #e1f7f3;
+  color: #00a995;
+}
+
+/* Community Care */
+.feature-icon.purple {
+  background: #efedff;
+  color: #6554ff;
+}
+
+.feature-icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+.feature-card:hover .feature-icon {
+  transform: translateY(-3px);
+}
+
 .feature-card h3
 {
     font:800 15px Manrope,sans-serif;
@@ -671,12 +716,22 @@ button
     position:relative;
     isolation:isolate
 }
-.impact-photo
-{
-    position:absolute;
-    inset:0 58% 0 0;
-    z-index:-1;
-    background:linear-gradient(90deg,transparent 65%,#0c2927 100%),url('https://images.pexels.com/photos/30630829/pexels-photo-30630829.jpeg?auto=compress&cs=tinysrgb&w=1200') center/cover
+.impact-photo {
+    position: absolute;
+    inset: 1% 68% 0 0;
+    z-index: -1;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(12, 41, 39, 0) 55%,
+            #0c2927 100%
+        ),
+        url('https://images.pexels.com/photos/30630829/pexels-photo-30630829.jpeg?auto=compress&cs=tinysrgb&w=1200');
+
+    background-size: 100% 100%, cover;
+    background-position: center, 35% center;
+    background-repeat: no-repeat;
 }
 .impact-copy
 {
@@ -1787,3 +1842,7 @@ button
         font-size: 8px;
     }
 }
+
+.dog-profile-trigger { padding: 0; border: 0; color: var(--blue); background: none; font: inherit; font-weight: 700; cursor: pointer; }
+.dog-profile-trigger:hover { text-decoration: underline; }
+

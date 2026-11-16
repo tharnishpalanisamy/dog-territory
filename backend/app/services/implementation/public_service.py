@@ -31,3 +31,18 @@ class PublicService:
             "reports_count": reports_count,
             "resolved_count": resolved_count,
         }
+
+    async def get_dog(self):
+        dogs = await self.dog_repository.get_all(filters=None, limit=1, offset=0)
+        if not dogs:
+            return None
+
+        dog = dogs[0]
+
+        return {
+            "dog_code": dog.dog_code,
+            "area": dog.area_name,
+            "status": dog.vaccination_status,
+            "tags": ["street dog", "sample record"],
+            "image": dog.images[0].image_url if dog.images else None,
+        }
