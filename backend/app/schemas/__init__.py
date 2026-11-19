@@ -40,18 +40,19 @@ from .report import (
     ReportUpdate,
 )
 from .user import UserCreate, UserResponse
-from .volunteer import (
-    VolunteerApprovalUpdate,
-    VolunteerCreate,
-    VolunteerResponse,
-    VolunteerUpdate,
-)
 from .veterinarian import (
     VeterinarianApprovalUpdate,
     VeterinarianCreate,
     VeterinarianFilterParams,
     VeterinarianResponse,
     VeterinarianUpdate,
+)
+from .veterinary_record import VeterinaryRecordCreate, VeterinaryRecordUpdate
+from .volunteer import (
+    VolunteerApprovalUpdate,
+    VolunteerCreate,
+    VolunteerResponse,
+    VolunteerUpdate,
 )
 from .work_assignment import (
     AssignAssignment,
@@ -105,15 +106,17 @@ __all__ = [
     "UserCreate",
     "UserLogin",
     "UserResponse",
-    "VolunteerApprovalUpdate",
-    "VolunteerCreate",
-    "VolunteerResponse",
-    "VolunteerUpdate",
     "VeterinarianApprovalUpdate",
     "VeterinarianCreate",
     "VeterinarianFilterParams",
     "VeterinarianResponse",
     "VeterinarianUpdate",
+    "VeterinaryRecordCreate",
+    "VeterinaryRecordUpdate",
+    "VolunteerApprovalUpdate",
+    "VolunteerCreate",
+    "VolunteerResponse",
+    "VolunteerUpdate",
     "WorkAssignmentCreate",
     "WorkAssignmentDetailResponse",
     "WorkAssignmentFilterParams",

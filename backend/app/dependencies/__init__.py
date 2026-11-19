@@ -13,11 +13,15 @@ from .medical_assignment_rependecny import (
     get_medical_assignment_update_service,
 )
 from .reports_dependency import get_reports_service
-from .volunteers_dependency import get_volunteer_repository, get_volunteer_service
 from .veterinarian_dependency import (
     get_veterinarian_repository,
     get_veterinarian_service,
 )
+from .veterinary_record_dependency import (
+    get_veterinary_record_repository,
+    get_veterinary_record_service,
+)
+from .volunteers_dependency import get_volunteer_repository, get_volunteer_service
 from .work_assignment_dependency import (
     get_work_assignment_service,
     get_work_assignment_update_service,
@@ -34,10 +38,12 @@ __all__ = [
     "get_medical_assignment_update_repository",
     "get_medical_assignment_update_service",
     "get_reports_service",
-    "get_volunteer_repository",
-    "get_volunteer_service",
     "get_veterinarian_repository",
     "get_veterinarian_service",
+    "get_veterinary_record_repository",
+    "get_veterinary_record_service",
+    "get_volunteer_repository",
+    "get_volunteer_service",
     "get_work_assignment_service",
     "get_work_assignment_update_service",
     "require_roles",

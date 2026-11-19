@@ -5,6 +5,7 @@ from .sqlalchemy_dog_repository import DogRepository
 from .sqlalchemy_refresh_token_repository import RefreshTokenRepository
 from .sqlalchemy_reports_repository import ReportsRepository
 from .sqlalchemy_user_repository import UserRepository
+from .sqlalchemy_veterinary_record_repository import VeterinaryRecordRepository
 from .sqlalchemy_volunteer_repository import VolunteerRepository
 from .veterinarian_repository import VeterinarianRepository
 from .work_assignment_repository import WorkAssignmentRepository
@@ -18,8 +19,9 @@ __all__ = [
     "RefreshTokenRepository",
     "ReportsRepository",
     "UserRepository",
-    "VolunteerRepository",
     "VeterinarianRepository",
+    "VeterinaryRecordRepository",
+    "VolunteerRepository",
     "WorkAssignmentRepository",
     "WorkAssignmentUpdateRepository",
 ]

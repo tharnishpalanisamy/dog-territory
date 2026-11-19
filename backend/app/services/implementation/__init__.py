@@ -1,11 +1,13 @@
 from .auth_service import AuthService
+from .clinic_service import ClinicService
 from .dog_service import DogService
 from .medical_assignment_service import MedicalAssignmentService
 from .medical_assignment_update_service import MedicalAssignmentUpdateService
 from .refresh_token_service import RefreshTokenService
 from .reports_service import ReportsService
-from .volunteer_service import VolunteerService
 from .veterinarian_service import VeterinarianService
+from .veterinary_records_service import VeterinaryRecordService
+from .volunteer_service import VolunteerService
 from .work_assignment_service import WorkAssignmentService
 from .work_assignment_update_service import WorkAssignmentUpdateService
 
@@ -17,9 +19,9 @@ __all__ = [
     "MedicalAssignmentUpdateService",
     "RefreshTokenService",
     "ReportsService",
-    "VolunteerService",
     "VeterinarianService",
+    "VeterinaryRecordService",
+    "VolunteerService",
     "WorkAssignmentService",
     "WorkAssignmentUpdateService",
 ]
-from .clinic_service import ClinicService
