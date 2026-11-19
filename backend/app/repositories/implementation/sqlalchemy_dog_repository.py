@@ -2,6 +2,7 @@ from collections.abc import Sequence
 
 from sqlalchemy import delete, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.models import Dog
 from app.schemas import DogFilterParams
@@ -19,35 +20,37 @@ class DogRepository:
         return dog
 
     async def get_all(
-        self, filters: DogFilterParams, limit: int, offset: int
+        self, filters: DogFilterParams | None, limit: int, offset: int
     ) -> Sequence[Dog]:
-        query = select(Dog)
+        # Load the relationship through its mapped attribute. Passing the
+        # DogImage class here is not a valid SQLAlchemy loader path.
+        query = select(Dog).options(selectinload(Dog.images))
 
         conditions = []
-        if filters.status is not None:
+        if filters is not None and filters.status is not None:
             conditions.append(Dog.status == filters.status)
 
-        if filters.is_sterilized is not None:
+        if filters is not None and filters.is_sterilized is not None:
             conditions.append(Dog.is_sterilized == filters.is_sterilized)
 
-        if filters.vaccination_status is not None:
+        if filters is not None and filters.vaccination_status is not None:
             conditions.append(Dog.vaccination_status == filters.vaccination_status)
 
-        if filters.state is not None:
+        if filters is not None and filters.state is not None:
             conditions.append(Dog.state == filters.state)
 
-        if filters.district is not None:
+        if filters is not None and filters.district is not None:
             conditions.append(Dog.district == filters.district)
 
-        if filters.area_name is not None:
+        if filters is not None and filters.area_name is not None:
             conditions.append(Dog.area_name == filters.area_name)
-        if filters.pincode is not None:
+        if filters is not None and filters.pincode is not None:
             conditions.append(Dog.pincode == filters.pincode)
 
-        if filters.estimated_age_min is not None:
+        if filters is not None and filters.estimated_age_min is not None:
             conditions.append(Dog.estimated_age >= filters.estimated_age_min)
 
-        if filters.estimated_age_max is not None:
+        if filters is not None and filters.estimated_age_max is not None:
             conditions.append(Dog.estimated_age <= filters.estimated_age_max)
 
         if conditions:
@@ -105,3 +108,7 @@ class DogRepository:
         query = delete(Dog).where(Dog.id == id)
 
         return await self.db.execute(query)
+
+    async def get_dogs_count(self) -> int:
+        query = select(func.count()).select_from(Dog)
+        return await self.db.scalar(query)

@@ -50,3 +50,18 @@ Dog Territory — Rescue to Recovery
 9. Recovery and closure
    
    Dog is marked recovered when appropriate. Admin/volunteer can coordinate release, foster care or adoption.
+
+
+
+
+
+
+
+
+# Dog Territory homepage update
+
+Replace your existing homepage files with `Home.tsx` and `Home.css` in the same folder. The TSX keeps the existing `../../components/ui/Button` import and expects the CSS file to remain named `Home.css`.
+
+The map illustration has been removed. The existing Explore Map links now point to a visible “Interactive map is under development” notice. The hero keeps a compact dog-profile preview instead of the map.
+
+Photo sources: Pexels street-dog photographs by Shivam Maurya (Mumbai), Suhas Hanjar (Bengaluru), Nithin Ann Joe (Kanniyakumari), Soham Kundu (Indian street-dog portrait), Joydeb Biswas (Kolkata), and Anurag Jamwal (Jalandhar). The Pexels photo pages identify these as free-to-use images.

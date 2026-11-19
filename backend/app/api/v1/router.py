@@ -7,6 +7,7 @@ from app.api.v1.medical_assignment import (
     medical_assignment_router,
     medical_assignment_update_router,
 )
+from app.api.v1.public import public_router
 from app.api.v1.reports import reports_router
 from app.api.v1.veterinarian import veterinarian_router
 from app.api.v1.veterinary_record import veterinary_record_router
@@ -15,6 +16,7 @@ from fastapi import APIRouter
 
 router = APIRouter(prefix="/api/v1")
 
+router.include_router(public_router)
 router.include_router(auth_router)
 router.include_router(clinic_router)
 router.include_router(volunteer_router)

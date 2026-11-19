@@ -1,0 +1,16 @@
+.guidelines-hero { max-width:850px; padding:40px 0 48px; }
+.guidelines-hero h1 { margin:20px 0 16px; font-size:clamp(42px,5.5vw,66px); line-height:1.04; letter-spacing:-2.8px; }
+.guidelines-hero h1 em { color:#5555f4; font-family:Georgia,serif; font-weight:500; }
+.guidelines-hero > p { max-width:700px; color:#65718d; font-size:16px; line-height:1.8; }
+.guidelines-callout { display:flex; flex-direction:column; gap:7px; margin-top:30px; padding:20px 23px; border-left:3px solid #14aa9c; border-radius:0 12px 12px 0; background:#f5f5ff; }
+.guidelines-callout strong { font-size:14px; }
+.guidelines-callout span { color:#60728a; font-size:14px; }
+.guidelines-list { border-top:1px solid #e9edf4; }
+.guideline-item { display:grid; grid-template-columns:70px 1fr; gap:18px; padding:27px 5px; border-bottom:1px solid #e9edf4; }
+.guideline-item > span { color:#5555f4; font-size:13px; font-weight:800; letter-spacing:1px; }
+.guideline-item h2 { margin:0 0 8px; font-size:19px; }
+.guideline-item p { max-width:790px; margin:0; color:#66728d; font-size:14px; line-height:1.8; }
+.guidelines-report { display:flex; align-items:center; justify-content:space-between; gap:25px; margin-top:55px; padding:32px; border-radius:20px; background:#f5f8fb; }
+.guidelines-report h2 { max-width:600px; margin:13px 0 8px; font-size:27px; letter-spacing:-.7px; }
+.guidelines-report p { max-width:650px; margin:0; color:#687591; font-size:14px; line-height:1.7; }
+@media(max-width:600px) { .guideline-item { grid-template-columns:40px 1fr; gap:10px; } .guidelines-report { align-items:flex-start; flex-direction:column; padding:25px 20px; } }
