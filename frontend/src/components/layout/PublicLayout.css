@@ -1,28 +1,336 @@
-:root { --dt-ink:#14234b; --dt-muted:#53617f; --dt-teal:#14aa9c; --dt-purple:#5555f4; --dt-line:#e7ebf3; --dt-soft:#f6f8fc; }
-.public-shell { min-height:100vh; color:var(--dt-ink); background:#fff; font-family:'DM Sans',sans-serif; }
-.public-nav { min-height:82px; padding:14px clamp(22px,6vw,100px); display:flex; align-items:center; justify-content:space-between; gap:28px; border-bottom:1px solid var(--dt-line); background:rgba(255,255,255,.96); }
-.public-brand { display:inline-flex; align-items:center; gap:11px; color:var(--dt-ink); text-decoration:none; }
-.public-brand-mark { width:39px; height:39px; display:grid; place-items:center; border-radius:13px; background:#5555f4; color:#fff; box-shadow:0 7px 16px #5555f433; }
-.public-brand-mark svg { width:23px; height:23px; }
-.public-brand strong,.public-brand small { display:block; }
-.public-brand strong { font:800 16px Manrope,sans-serif; letter-spacing:-.5px; }
-.public-brand small { margin-top:2px; color:#74809b; font-size:7px; font-weight:800; letter-spacing:1.3px; }
-.public-nav nav,.public-nav-actions { display:flex; align-items:center; gap:25px; }
-.public-nav nav a,.public-signin { color:#465474; font-size:14px; text-decoration:none; }
-.public-nav nav a:hover,.public-signin:hover { color:var(--dt-purple); }
-.public-nav-actions { gap:18px; }
-.public-button { display:inline-flex; align-items:center; justify-content:center; gap:10px; min-height:48px; padding:0 21px; border:0; border-radius:10px; background:linear-gradient(115deg,#5854f7,#4b49e7); color:white; font-size:14px; font-weight:700; text-decoration:none; box-shadow:0 5px 12px #5452f52b; transition:transform .2s,box-shadow .2s; }
-.public-button:hover { transform:translateY(-2px); box-shadow:0 12px 24px rgba(81,70,229,.22); }
-.public-button-small { min-height:41px; padding:0 16px; font-size:13px; }
-.public-main { width:min(1160px,88%); margin:0 auto; padding:25px 0 90px; }
-.public-breadcrumb { display:flex; align-items:center; gap:10px; margin-bottom:28px; color:#8791a8; font-size:12px; text-transform:uppercase; letter-spacing:1px; }
-.public-breadcrumb a { color:#687693; text-decoration:none; }
-.public-footer { padding:55px clamp(22px,6vw,100px) 20px; background:#f8f9fc; border-top:1px solid var(--dt-line); }
-.public-footer-main { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:42px; max-width:1240px; margin:auto; }
-.public-footer-main h4 { margin:0 0 17px; font-size:14px; }
-.public-footer-main > div:not(:first-child) a { display:block; width:max-content; max-width:100%; margin:0 0 13px; color:#66728e; font-size:13px; text-decoration:none; }
-.public-footer-main a:hover { color:var(--dt-purple); }
-.public-footer-brand p { color:#687693; font-size:13px; line-height:1.8; }
-.public-footer-bottom { display:flex; justify-content:space-between; gap:15px; max-width:1240px; margin:38px auto 0; padding-top:18px; border-top:1px solid var(--dt-line); color:#8791a8; font-size:12px; }
-@media(max-width:850px) { .public-nav { flex-wrap:wrap; } .public-nav nav { order:3; width:100%; justify-content:center; flex-wrap:wrap; gap:15px 22px; } .public-footer-main { grid-template-columns:repeat(2,minmax(0,1fr)); } }
-@media(max-width:520px) { .public-nav-actions { gap:10px; } .public-nav-actions .public-signin { display:none; } .public-main { width:90%; padding-bottom:60px; } .public-footer-main { grid-template-columns:1fr 1fr; gap:28px 18px; } .public-footer-bottom { flex-direction:column; } }
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --dt-ink: #101d43;
+  --dt-muted: #526079;
+  --dt-teal: #12aa9c;
+  --dt-purple: #5555f4;
+  --dt-line: #e7eaf1;
+  --dt-soft: #f6f8fc;
+}
+
+/* ========================================
+   PUBLIC SHELL
+======================================== */
+
+.public-shell {
+  min-height: 100vh;
+  color: var(--dt-ink);
+  background: #fff;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.public-shell *,
+.public-shell *::before,
+.public-shell *::after {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   SHARED NAVBAR
+   Matches Home.css .topbar
+======================================== */
+
+.public-nav {
+  z-index: 100;
+}
+
+/* Brand */
+
+.public-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+
+  color: var(--dt-ink);
+  text-decoration: none;
+}
+
+.public-brand-mark {
+  width: 39px;
+  height: 39px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 11px;
+  background: #5555f4;
+  color: #fff;
+
+  box-shadow: 0 7px 16px #5555f433;
+}
+
+.public-brand-mark svg {
+  width: 23px;
+  height: 23px;
+}
+
+.public-brand-copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+}
+
+.public-brand-copy strong {
+  font: 800 16px Manrope, sans-serif;
+  letter-spacing: -0.5px;
+}
+
+.public-brand-copy small {
+  margin-top: 4px;
+  color: #75809a;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Navigation links */
+
+.public-nav-links {
+  color: #35415e;
+}
+
+.public-nav-links a {
+  transition: color 0.2s ease;
+}
+
+.public-nav-links a:hover,
+.public-nav-links a:focus-visible {
+  color: var(--dt-purple);
+}
+
+/* Active / hover underline */
+
+.public-nav-links a.active::after,
+.public-nav-links a:hover::after {
+  content: "";
+
+  height: 2px;
+  width: 38px;
+
+  position: absolute;
+  bottom: 17px;
+  left: 0;
+
+  background: var(--dt-purple);
+  border-radius: 5px;
+}
+
+.public-mobile-menu { color: var(--dt-ink); }
+
+/* ========================================
+   PAGE CONTENT
+======================================== */
+
+.public-main {
+  width: auto;
+  max-width: none;
+
+  margin: 0;
+  padding: 25px clamp(24px, 6.7vw, 104px) 90px;
+}
+
+.public-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 28px;
+
+  color: #8791a8;
+  font-size: 12px;
+  font-weight: 500;
+
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.public-breadcrumb a {
+  color: #687693;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.public-breadcrumb a:hover {
+  color: var(--dt-purple);
+}
+
+/* ========================================
+   SHARED FOOTER
+======================================== */
+
+.public-footer {
+  padding-top: 35px;
+  padding-bottom: 0;
+}
+
+.public-footer-main {
+  grid-template-columns: 1.5fr 1fr 1fr 1fr .9fr;
+  gap: 30px;
+  padding-bottom: 30px;
+}
+
+.public-footer-brand > p {
+  margin: 14px 0;
+}
+
+.public-footer-column {
+  font-size: 11px;
+}
+
+.public-footer-column h4 {
+  font-size: 12px;
+}
+
+.public-footer-column a {
+  width: auto;
+}
+
+.public-footer .footer-dev-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  background: #f0efff;
+  color: #5555f4;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.public-footer .footer-stamp {
+  padding: 15px;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.public-footer .footer-stamp-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+}
+
+.public-footer .footer-stamp-icon svg {
+  width: 32px;
+  height: 32px;
+  fill: currentColor;
+}
+
+.public-footer .footer-stamp b {
+  font: inherit;
+}
+
+.public-footer-bottom {
+  font-size: 10px;
+  margin: 0;
+  padding: 16px 0;
+}
+
+/* ========================================
+   TABLET
+======================================== */
+
+@media (max-width: 1100px) {
+  .public-nav {
+    gap: 15px;
+    padding-inline: 28px;
+  }
+
+  .public-nav-links {
+    gap: 15px;
+  }
+
+  .public-nav-links a {
+    font-size: 11px;
+  }
+
+  .public-nav-actions {
+    gap: 6px;
+  }
+
+  .public-footer-main {
+    gap: 30px;
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 800px) {
+  .public-nav {
+    /* Dimensions and responsive behavior come from Home.css .topbar. */
+  }
+
+  .public-mobile-menu {
+    /* Keep the shared home header menu placement. */
+  }
+
+  .public-nav-links {
+    /* Home.css controls collapse and open state. */
+  }
+
+  .public-nav-links a {
+    /* Home.css controls link spacing in the mobile menu. */
+  }
+
+  .public-nav-actions {
+    /* Inherit the exact home header action behavior. */
+  }
+
+  .public-main {
+    padding: 20px 25px 60px;
+  }
+
+  .public-footer {
+    padding-inline: 25px;
+  }
+
+  .public-footer-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 25px 18px;
+  }
+
+  .public-footer-brand {
+    grid-column: 1 / -1;
+  }
+
+  .public-footer .footer-stamp {
+    min-height: 125px;
+  }
+}
+
+/* ========================================
+   SMALL MOBILE
+======================================== */
+
+@media (max-width: 430px) {
+  .public-main {
+    padding-inline: 20px;
+  }
+
+  .public-footer {
+    padding-inline: 20px;
+  }
+
+  .public-footer-main {
+    grid-template-columns: 1fr 1fr;
+    gap: 25px 18px;
+  }
+
+  .public-footer-bottom {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .public-footer-bottom span:last-child {
+    text-align: left;
+  }
+}

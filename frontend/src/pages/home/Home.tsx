@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
 import Button from "../../components/ui/Button";
@@ -79,7 +79,7 @@ const features = [
     color: "purple",
     icon: <Icon name="users" />,
     image:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQAmJzk-ZKHsbOhzjSeFAH9Co7_937wgBr9bMXD5cVAhTgLAmjhF-uc1sA&s=10",
+      "https://img.magnific.com/free-photo/dog-farm_181624-369.jpg?semt=ais_hybrid&w=740&q=80",
     alt: "Dogs receiving care",
   },
 ];
@@ -171,12 +171,11 @@ function Home() {
   const [dog, setDog] = useState<DogPreview>({
     dog_code: "641025-1",
     area: "edayarpalayam",
-    status: "Vaccinatecccccccccd",
+    status: "Vaccinated",
     tags: ["street dog", "sample record"],
     image:
-      "https://images.pexels.com/photos/12631184/pexels-photo-12631184.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Indian_Street_Dog.jpg",
   });
-
   useEffect(() => {
     get_statistics()
       .then((data) => setStats(data))
@@ -331,7 +330,7 @@ function Home() {
                   type="button"
                   onClick={() => setProfileOpen(true)}
                 >
-                  View Profile ?
+                  View Profile
                 </button>
               </div>
             </div>
@@ -536,7 +535,7 @@ function Home() {
           <div className="story-collage">
             <img
               className="story-main"
-              src={dog.image || features[0].image}
+              src="https://img.magnific.com/free-photo/urban-city-homeless-dog-lonely_53876-31128.jpg?semt=ais_hybrid&w=740&q=80"
               alt="An Indian community street dog"
               loading="lazy"
             />
@@ -578,7 +577,7 @@ function Home() {
             </p>
           </div>
           <div className="cta-actions">
-            <Button href="/report">
+            <Button href="/signin">
               Report a Sighting <span>→</span>
             </Button>
             <Button variant="secondary" href="#how-it-works">

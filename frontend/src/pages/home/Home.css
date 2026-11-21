@@ -45,7 +45,6 @@ button
 }
 .site-shell
 {
-    overflow:hidden;
     background:#fff
 }
 .topbar
@@ -128,7 +127,7 @@ button
 {
     content:"";
     height:2px;
-    width:22px;
+    width:38px;
     position:absolute;
     bottom:17px;
     left:0;

@@ -75,12 +75,18 @@ export default function TermsOfService() {
           responsibly and follow these terms and the Community Guidelines. If
           you do not agree, do not use the service.
         </p>
-        {sections.map(([title, body]) => (
-          <section className="legal-section" key={title}>
-            <h2>{title}</h2>
-            <p>{body}</p>
-          </section>
-        ))}
+        {sections.map(([title, body]) => {
+          const [number, ...heading] = title.split(" ");
+          return (
+            <section className="legal-section" key={title}>
+              <span className="legal-section-number">{number}</span>
+              <div>
+                <h2>{heading.join(" ")}</h2>
+                <p>{body}</p>
+              </div>
+            </section>
+          );
+        })}
       </article>
     </PublicLayout>
   );

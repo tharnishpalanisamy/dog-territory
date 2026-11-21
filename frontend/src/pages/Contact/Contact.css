@@ -1,18 +1,18 @@
 .contact-heading { max-width:760px; padding:38px 0 40px; }
-.contact-heading h1 { margin:18px 0 13px; font-size:clamp(42px,5.4vw,64px); line-height:1.05; letter-spacing:-2.5px; }
-.contact-heading h1 em { color:#5555f4; font-family:Georgia,serif; font-weight:500; }
+.contact-heading h1 { margin:18px 0 13px; font:800 clamp(42px,5.4vw,64px)/1.05 Manrope,sans-serif; letter-spacing:-2.5px; }
+.contact-heading h1 em { color:#5555f4; font-family:inherit; font-style:normal; font-weight:inherit; }
 .contact-heading p { max-width:650px; color:#687591; font-size:16px; line-height:1.8; }
 .contact-layout { display:grid; grid-template-columns:.8fr 1.2fr; gap:28px; align-items:start; }
 .contact-aside { padding:30px; border-radius:20px; background:#172343; color:#fff; }
 .contact-aside-icon { display:grid; place-items:center; width:48px; height:48px; border-radius:15px; background:rgba(255,255,255,.12); color:#8d8cff; font-size:23px; }
-.contact-aside h2 { margin:22px 0 8px; font-size:25px; }
+.contact-aside h2 { margin:22px 0 8px; font:800 25px/1.2 Manrope,sans-serif; }
 .contact-aside > p { color:#d2d6e5; font-size:14px; line-height:1.7; }
 .contact-topic { display:flex; flex-direction:column; gap:5px; margin-top:23px; padding-top:18px; border-top:1px solid rgba(255,255,255,.14); }
 .contact-topic b { font-size:14px; }
 .contact-topic span { color:#d2d6e5; font-size:12px; line-height:1.6; }
 .contact-note { margin-top:26px; padding:14px; border-radius:11px; background:rgba(255,255,255,.09); color:#e0e3ef; font-size:11px; line-height:1.65; }
 .contact-form-wrap { padding:30px; border:1px solid #e8edf4; border-radius:20px; box-shadow:0 12px 35px rgba(20,35,75,.04); }
-.contact-form-wrap h2 { margin:0 0 6px; font-size:23px; }
+.contact-form-wrap h2 { margin:0 0 6px; font:800 23px/1.2 Manrope,sans-serif; }
 .contact-form-wrap > p { margin:0 0 23px; color:#7b86a0; font-size:12px; }
 .contact-form { display:grid; gap:17px; }
 .contact-form label { display:grid; gap:8px; color:#263557; font-size:13px; font-weight:700; }

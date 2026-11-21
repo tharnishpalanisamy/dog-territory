@@ -19,8 +19,25 @@ export default function PrivacyPolicy() {
       <article className="legal-document"><header className="legal-heading"><span className="page-eyebrow"><i /> YOUR INFORMATION MATTERS</span><h1>Privacy <em>Policy.</em></h1><p>How Dog Territory handles information used to support community street-dog welfare.</p><span className="legal-date">Draft for review · 17 November 2026</span></header>
         <div className="legal-important"><strong>Before publishing:</strong> This is a starter policy based on the features described for Dog Territory. Verify the deployed database, public visibility, hosting, analytics, integrations, retention periods and applicable legal requirements. Replace any statements that do not match actual practice and obtain appropriate legal review.</div>
         <p className="legal-intro">Dog Territory is a platform for documenting street dogs, receiving community reports and coordinating welfare-related activities. This draft explains the types of information the platform may handle and the safeguards and choices that should apply.</p>
-        {sections.map(([title, body]) => <section className="legal-section" key={title}><h2>{title}</h2><p>{body}</p></section>)}
-        <section className="legal-section"><h2>10. Contact</h2><p>For privacy questions or data requests, use the <a href="/contact">Contact Us</a> page. Add the organisation's legal name and a monitored privacy contact address here before publication.</p></section>
+        {sections.map(([title, body]) => {
+          const [number, ...heading] = title.split(" ");
+          return (
+            <section className="legal-section" key={title}>
+              <span className="legal-section-number">{number}</span>
+              <div>
+                <h2>{heading.join(" ")}</h2>
+                <p>{body}</p>
+              </div>
+            </section>
+          );
+        })}
+        <section className="legal-section">
+          <span className="legal-section-number">10.</span>
+          <div>
+            <h2>Contact</h2>
+            <p>For privacy questions or data requests, use the <a href="/contact">Contact Us</a> page. Add the organisation's legal name and a monitored privacy contact address here before publication.</p>
+          </div>
+        </section>
       </article>
     </PublicLayout>
   );
