@@ -5,6 +5,7 @@ from app.exceptions import InvalidCredentialsException
 from app.models import User
 from app.repositories.protocols import UserRepositoryProtocol
 from app.schemas import (
+    ForgotPasswordRequest,
     LoginResponse,
     RefreshTokenResponse,
     UserCreate,
@@ -77,6 +78,13 @@ class AuthService:
             refresh_token=new_token,
             token_type="bearer",
         )
+
+    async def request_password_reset(self, data: ForgotPasswordRequest): 
+        ...
+
+    async def verify_reset_otp(self, data): ...
+
+    async def reset_password(self, data): ...
 
     async def logout(self, token: str) -> None:
         await self.refresh_token_service.revoke_refresh_token(token)

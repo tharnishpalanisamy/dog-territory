@@ -7,6 +7,7 @@ from app.dependencies import (
 )
 from app.models import User
 from app.schemas import (
+    ForgotPasswordRequest,
     LoginResponse,
     RefreshTokenCreate,
     RefreshTokenResponse,
@@ -57,6 +58,30 @@ async def refresh_token(
     service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
 ) -> RefreshTokenResponse:
     return await service.refresh_token(token_data.refresh_token)
+
+
+@router.post("/forgot-password")
+async def forgot_password(
+    forgot_password: ForgotPasswordRequest,
+    service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
+):
+    return 1
+
+
+@router.post("/verify-reset-otp")
+async def verify_reset_otp(
+    reset_otp_request,
+    service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
+):
+    return 1
+
+
+@router.post("/reset-password")
+async def reset_password(
+    reset_password_request,
+    service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
+):
+    return 1
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)

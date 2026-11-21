@@ -7,6 +7,7 @@ import AdminOverview from "../pages/admin/OverviewPage";
 import VolunteerOverview from "../pages/volunteer/OverviewPage";
 import VeterinarianOverview from "../pages/veterinarian/OverviewPage";
 import UserOverview from "../pages/user/OverviewPage";
+import ForgotPassword from "../pages/Auth/ForgotPassword";
 
 import {
   DogsPage,
@@ -33,6 +34,7 @@ function AppRoutes() {
   return (
     <Routes>
       {/* ADMIN */}
+      
       <Route path="/admin" element={<AppLayout role="ADMIN" />}>
         <Route index element={<AdminOverview />} />
 

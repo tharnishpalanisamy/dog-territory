@@ -6,6 +6,7 @@ from .assignment_update import (
     ClinicAdmissionCreate,
 )
 from .auth import (
+    ForgotPasswordRequest,
     LoginResponse,
     RefreshTokenCreate,
     RefreshTokenResponse,
@@ -86,6 +87,7 @@ __all__ = [
     "DogResponse",
     "DogSummaryResponse",
     "DogUpdate",
+    "ForgotPasswordRequest",
     "LoginResponse",
     "MedicalAssignmentCreate",
     "MedicalAssignmentFilterParams",

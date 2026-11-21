@@ -25,7 +25,7 @@ export default function SignIn() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ 'email':email.toLowerCase(), password }),
       });
 
       const data = await response.json().catch(() => ({}));
@@ -122,7 +122,7 @@ export default function SignIn() {
             </Link>
           </div>
 
-          <Button className="w-full min-h-12 mt-1" type="submit">
+          <Button className="w-full min-h-12 mt-1 " type="submit">
             Sign In <span className="ml-2">→</span>
           </Button>
         </div>

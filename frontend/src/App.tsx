@@ -11,6 +11,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy/PrivacyPolicy";
 import Contact from "./pages/Contact/Contact"; 
 import CommunityGuidelines from "./pages/CommunityGuidelines/CommunityGuidelines";
 import "./dashboard.css";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
 
 export default function App() {
   return (
@@ -23,6 +24,10 @@ export default function App() {
       <Route path="/contact" element = {<Contact /> } />
       <Route path="/privacy-policy" element = {<PrivacyPolicy /> } />
       <Route path="/community-guidelines" element = {<CommunityGuidelines /> } />
+      <Route
+        path="/forgot-password"
+        element={<ForgotPassword />}
+      />
       <Route path="/*" element={<AppRoutes />} />
     </Routes>
   );

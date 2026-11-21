@@ -29,7 +29,7 @@ export default function SignUp() {
     }
 
     const user = {
-      email,
+      'email' : email.toLowerCase() ,
       username,
       password,
     };

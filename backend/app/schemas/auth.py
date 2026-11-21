@@ -28,3 +28,7 @@ class RefreshTokenResponse(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
