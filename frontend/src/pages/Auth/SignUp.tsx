@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import React from "react";
 
@@ -11,9 +10,7 @@ export default function SignUp() {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
-  async function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
@@ -26,7 +23,7 @@ export default function SignUp() {
     if (password !== confirmPassword) {
       showToast(
         "warning",
-        "Passwords do not match. Please check them and try again."
+        "Passwords do not match. Please check them and try again.",
       );
       return;
     }
@@ -38,16 +35,13 @@ export default function SignUp() {
     };
 
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/v1/auth/signup",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(user),
-        }
-      );
+      const response = await fetch("http://127.0.0.1:8000/api/v1/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
 
       const data = await response.json().catch(() => ({}));
 
@@ -57,23 +51,22 @@ export default function SignUp() {
         throw new Error(
           typeof detail === "string"
             ? detail
-            : "Sign up failed. Please try again."
+            : "Sign up failed. Please try again.",
         );
       }
 
       showToast(
         "success",
-        "Your account has been created. You can now sign in."
+        "Your account has been created. You can now sign in.",
       );
 
       navigate("/signin");
-
     } catch (error) {
       showToast(
         "error",
         error instanceof Error
           ? error.message
-          : "Unable to create your account. Please try again."
+          : "Unable to create your account. Please try again.",
       );
     }
   }
@@ -81,7 +74,6 @@ export default function SignUp() {
   return (
     <AuthLayout mode="signup">
       <form onSubmit={handleSubmit} className="w-full">
-
         <div className="flex items-center gap-2 mb-4">
           <span className="w-2 h-2 rounded-full bg-teal-500 shadow-[0_0_0_4px_rgba(20,184,166,0.12)]" />
           <span className="text-[10px] font-extrabold tracking-[1.5px] text-indigo-500">
@@ -98,7 +90,6 @@ export default function SignUp() {
         </p>
 
         <div className="flex flex-col gap-4">
-
           <Input
             label="Full name"
             name="fullName"
@@ -144,31 +135,25 @@ export default function SignUp() {
 
             <span>
               I agree to the{" "}
-              <Link to="/terms" className="text-indigo-600 font-bold">
+              <Link to="-and-conditions" className="auth-theme-link font-bold">
                 Terms of Service
-              </Link>
-              {" "}and{" "}
-              <Link to="/privacy" className="text-indigo-600 font-bold">
+              </Link>{" "}
+              and{" "}
+              <Link to="/privacy-policy" className="auth-theme-link font-bold">
                 Privacy Policy
-              </Link>.
+              </Link>
+              .
             </span>
           </label>
 
-          <Button
-            className="w-full min-h-12 mt-1"
-            type="submit"
-          >
+          <Button className="w-full min-h-12 mt-1" type="submit">
             Create Account <span className="ml-2">→</span>
           </Button>
-
         </div>
 
         <p className="mt-7 text-center text-xs text-slate-500">
           Already have an account?{" "}
-          <Link
-            to="/signin"
-            className="font-bold text-indigo-600 hover:text-indigo-800"
-          >
+          <Link to="/signin" className="auth-theme-link font-bold">
             Sign in
           </Link>
         </p>
@@ -176,7 +161,6 @@ export default function SignUp() {
         <p className="mt-5 text-center text-[10px] text-slate-400">
           Your details help us keep the Dog Territory community safe.
         </p>
-
       </form>
     </AuthLayout>
   );

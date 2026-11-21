@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import React from "react";
 
@@ -11,9 +10,7 @@ export default function SignIn() {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
-  async function handleSubmit(
-    event: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
@@ -23,16 +20,13 @@ export default function SignIn() {
     const remember = formData.get("remember") === "on";
 
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/v1/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const response = await fetch("http://127.0.0.1:8000/api/v1/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
       const data = await response.json().catch(() => ({}));
 
@@ -42,7 +36,7 @@ export default function SignIn() {
         throw new Error(
           typeof detail === "string"
             ? detail
-            : "Sign in failed. Check your details and try again."
+            : "Sign in failed. Check your details and try again.",
         );
       }
 
@@ -52,10 +46,7 @@ export default function SignIn() {
         localStorage.setItem("refresh_token", data.refresh_token);
       }
 
-      localStorage.setItem(
-        "token_type",
-        data.token_type ?? "bearer"
-      );
+      localStorage.setItem("token_type", data.token_type ?? "bearer");
 
       if (data.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
@@ -66,13 +57,12 @@ export default function SignIn() {
       showToast("success", "Signed in successfully. Welcome back!");
 
       navigate("/dashboard");
-
     } catch (error) {
       showToast(
         "error",
         error instanceof Error
           ? error.message
-          : "Unable to sign in. Please try again."
+          : "Unable to sign in. Please try again.",
       );
     }
   }
@@ -80,7 +70,6 @@ export default function SignIn() {
   return (
     <AuthLayout mode="signin">
       <form onSubmit={handleSubmit} className="w-full">
-
         <div className="flex items-center gap-2 mb-4">
           <span className="w-2 h-2 rounded-full bg-teal-500 shadow-[0_0_0_4px_rgba(20,184,166,0.12)]" />
           <span className="text-[10px] font-extrabold tracking-[1.5px] text-indigo-500">
@@ -97,7 +86,6 @@ export default function SignIn() {
         </p>
 
         <div className="flex flex-col gap-5">
-
           <Input
             label="Email address"
             name="email"
@@ -128,26 +116,22 @@ export default function SignIn() {
 
             <Link
               to="/forgot-password"
-              className="font-bold text-indigo-600 hover:text-indigo-800"
+              className="auth-theme-link font-bold"
             >
               Forgot password?
             </Link>
           </div>
 
-          <Button
-            className="w-full min-h-12 mt-1"
-            type="submit"
-          >
+          <Button className="w-full min-h-12 mt-1" type="submit">
             Sign In <span className="ml-2">→</span>
           </Button>
-
         </div>
 
         <p className="mt-8 text-center text-xs text-slate-500">
           Don't have an account?{" "}
           <Link
             to="/signup"
-            className="font-bold text-indigo-600 hover:text-indigo-800"
+            className="auth-theme-link font-bold"
           >
             Create one
           </Link>
@@ -155,11 +139,21 @@ export default function SignIn() {
 
         <p className="mt-5 text-center text-[10px] leading-5 text-slate-400">
           By continuing, you agree to our{" "}
-          <Link to="/terms" className="underline">Terms of Service</Link>
-          {" "}and{" "}
-          <Link to="/privacy" className="underline">Privacy Policy</Link>.
+          <Link
+            to="/terms-and-conditions"
+            className="auth-theme-link font-bold underline"
+          >
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link
+            to="/privacy-policy"
+            className="auth-theme-link font-bold underline"
+          >
+            Privacy Policy
+          </Link>
+          .
         </p>
-
       </form>
     </AuthLayout>
   );

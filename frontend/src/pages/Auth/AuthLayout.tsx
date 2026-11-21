@@ -1,5 +1,7 @@
 
 import { Link } from "react-router-dom";
+import { PawPrint } from "lucide-react";
+import "./Auth.css";
 
 type AuthLayoutProps = {
   children: React.ReactNode;
@@ -10,29 +12,29 @@ export default function AuthLayout({ children, mode }: AuthLayoutProps) {
   const isSignIn = mode === "signin";
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+    <div className="auth-shell min-h-screen flex flex-col bg-slate-50 text-slate-900">
       {/* Header */}
       <header className="h-[76px] px-6 md:px-12 lg:px-24 flex items-center justify-between bg-white border-b border-slate-200">
-        <Link to="/" className="flex items-center gap-3">
-          <span className="w-10 h-10 rounded-xl bg-indigo-600 text-white grid place-items-center text-2xl shadow-lg shadow-indigo-200">
-            🐾
+        <Link to="/" className="flex items-center gap-[10px] text-[#101d43] no-underline">
+          <span className="grid h-[39px] w-[39px] shrink-0 place-items-center rounded-[11px] bg-[#5555f4] text-white shadow-[0_7px_16px_#5555f433]">
+            <PawPrint size={23} fill="currentColor" strokeWidth={1.5} />
           </span>
 
-          <span className="flex flex-col">
-            <strong className="font-extrabold text-base tracking-tight">
+          <span className="flex flex-col leading-[1.05]">
+            <strong className="font-['Manrope'] font-extrabold text-base tracking-tight">
               dog territory
             </strong>
-            <small className="text-[9px] font-bold tracking-[1.5px] text-slate-400">
+            <small className="mt-1 text-[7px] font-bold tracking-[1px] text-[#75809a]">
               EVERY DOG. EVERY LIFE.
             </small>
           </span>
         </Link>
 
-        <div className="flex items-center gap-2 text-xs sm:text-sm text-slate-500">
+        <div className="auth-header-prompt flex items-center gap-2 text-xs sm:text-sm text-slate-500">
           {isSignIn ? "New to Dog Territory?" : "Already a member?"}
           <Link
             to={isSignIn ? "/signup" : "/signin"}
-            className="font-bold text-indigo-600 hover:text-indigo-800"
+            className="auth-theme-link font-bold"
           >
             {isSignIn ? "Create account" : "Sign in"}
           </Link>

@@ -1,0 +1,11 @@
+.auth-shell .auth-theme-link,
+.auth-shell .auth-header-prompt .auth-theme-link {
+  color: #5555f4 !important;
+  text-decoration-color: #5555f4;
+  transition: color 180ms ease;
+}
+
+.auth-shell .auth-theme-link:hover,
+.auth-shell .auth-theme-link:focus-visible {
+  color: #3535d9 !important;
+}
