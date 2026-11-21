@@ -158,6 +158,25 @@ function Icon({ name }: { name: string }) {
   );
 }
 
+function SocialIcon({ name }: { name: "facebook" | "instagram" | "x" | "youtube" }) {
+  const common = {
+    width: 16,
+    height: 16,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    "aria-hidden": true as const,
+  };
+
+  if (name === "facebook") return <svg {...common}><path d="M14 8h3V4h-3a5 5 0 0 0-5 5v3H6v4h3v4h4v-4h3l1-4h-4V9a1 1 0 0 1 1-1Z" /></svg>;
+  if (name === "instagram") return <svg {...common}><rect x="3.5" y="3.5" width="17" height="17" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.6" cy="6.7" r=".8" fill="currentColor" stroke="none" /></svg>;
+  if (name === "youtube") return <svg {...common}><rect x="3" y="5" width="18" height="14" rx="4" /><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none" /></svg>;
+  return <svg {...common}><path d="M5 4h4.2l9.8 16h-4.2L5 4Z" /><path d="m19 4-6.2 7.1M5 20l6.4-7.3" /></svg>;
+}
+
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -604,18 +623,10 @@ function Home() {
               Let’s make it a story of care.
             </p>
             <div className="socials">
-              <a href="#about" aria-label="Facebook">
-                f
-              </a>
-              <a href="#about" aria-label="Instagram">
-                ◎
-              </a>
-              <a href="#about" aria-label="X">
-                𝕏
-              </a>
-              <a href="#about" aria-label="YouTube">
-                ▶
-              </a>
+              <a href="#about" aria-label="Facebook"><SocialIcon name="facebook" /></a>
+              <a href="#about" aria-label="Instagram"><SocialIcon name="instagram" /></a>
+              <a href="#about" aria-label="X"><SocialIcon name="x" /></a>
+              <a href="#about" aria-label="YouTube"><SocialIcon name="youtube" /></a>
             </div>
           </div>
           <div className="footer-col">
