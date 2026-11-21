@@ -37,6 +37,8 @@ const guidelines = [
 export default function CommunityGuidelines() {
   return (
     <PublicLayout eyebrow="COMMUNITY GUIDELINES">
+      <div className="community-page-layout">
+      <div className="community-page-content">
       <section className="guidelines-hero">
         <span className="page-eyebrow">
           <i /> OUR COMMUNITY STANDARD
@@ -102,6 +104,12 @@ export default function CommunityGuidelines() {
           <b>!</b>
         </div>
       </section>
+      </div>
+      <aside className="legal-side-visual community-side-visual" aria-label="Street dogs in a caring community">
+        <div className="legal-side-photo" role="img" aria-label="Street dogs resting together in their neighbourhood" />
+        <div className="legal-side-caption"><span>COMMUNITY CARE</span><strong>Every neighbour can make a difference.</strong><p>Kindness, patience and shared responsibility help dogs feel safer on our streets.</p></div>
+      </aside>
+      </div>
     </PublicLayout>
   );
 }

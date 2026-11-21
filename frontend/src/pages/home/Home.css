@@ -729,7 +729,7 @@ button
         url('https://images.pexels.com/photos/30630829/pexels-photo-30630829.jpeg?auto=compress&cs=tinysrgb&w=1200');
 
     background-size: 100% 100%, cover;
-    background-position: center, 35% center;
+    background-position: center, 35% 28%;
     background-repeat: no-repeat;
 }
 .impact-copy
@@ -1371,7 +1371,7 @@ button
     {
         inset:0 0 55% 0;
         background-image:linear-gradient(0deg,#0c2927 0%,transparent 65%),url('https://images.pexels.com/photos/30630829/pexels-photo-30630829.jpeg?auto=compress&cs=tinysrgb&w=1200');
-        background-position:center 45%
+        background-position:center 32%
     }
     .impact-copy
     {

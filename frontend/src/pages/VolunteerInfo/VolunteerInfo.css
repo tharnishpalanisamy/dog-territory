@@ -76,10 +76,12 @@
 .volunteer-hero-image {
   min-height: 430px;
   border-radius: 25px;
-  background:
+  background-image:
     linear-gradient(0deg, rgba(8, 35, 32, 0.08), transparent),
-    url("https://images.pexels.com/photos/30630829/pexels-photo-30630829.jpeg?auto=compress&cs=tinysrgb&w=1200")
-      center/cover;
+    url("https://images.pexels.com/photos/30630829/pexels-photo-30630829.jpeg?auto=compress&cs=tinysrgb&w=1200");
+  background-size: cover;
+  background-position: center, 35% 28%;
+  background-repeat: no-repeat;
 }
 .page-section {
   padding: 65px 0 75px;
@@ -299,6 +301,7 @@
   }
   .volunteer-hero-image {
     min-height: 290px;
+    background-position: center, 35% 30%;
   }
   .opportunity-grid {
     grid-template-columns: 1fr;
@@ -472,6 +475,7 @@
 
   .volunteer-hero-image {
     min-height: 290px;
+    background-position: center, 35% 30%;
   }
 
   .opportunity-grid {
@@ -485,5 +489,40 @@
   }
 }
 
+.volunteer-secondary-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 
+  padding: 12px 5px;
 
+  color: #5555f4;
+
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+
+  transition: color 0.2s ease;
+}
+
+.volunteer-secondary-link span {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.volunteer-secondary-link:hover {
+  background: #e7e7eb;
+  border-radius: 10px;
+  padding: 12px 5px;
+  color: #3535d9;
+}
+
+.volunteer-secondary-link:hover span {
+  transform: translateY(3px);
+}
+
+.volunteer-primary-btn:focus-visible,
+.volunteer-secondary-link:focus-visible {
+  outline: 3px solid #aaa7ff;
+  outline-offset: 4px;
+}

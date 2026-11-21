@@ -40,11 +40,13 @@ export default function VolunteerInfo() {
             document, coordinate and improve the welfare of street dogs.
           </p>
           <div className="volunteer-hero-actions">
-            <a className="button button-primary" href="/signin">Become a volunteer <span aria-hidden="true">&gt;</span></a>
+            <a className="button button-primary" href="/signin">
+              Become a volunteer <span>→</span>
+            </a>
 
             <a className="volunteer-secondary-link" href="#opportunities">
               Explore opportunities
-              <span>v</span>
+              <span>↓</span>
             </a>
           </div>
           <div className="volunteer-trust">
@@ -137,7 +139,10 @@ export default function VolunteerInfo() {
             Create your account and tell us how you would like to support
             community dogs.
           </p>
-          <a className="button button-primary volunteer-cta-button" href="/signup">
+          <a
+            className="button button-primary volunteer-cta-button"
+            href="/signup"
+          >
             <span className="volunteer-cta-button-copy">
               <small>READY WHEN YOU ARE</small>
               Create your account
@@ -161,4 +166,3 @@ export default function VolunteerInfo() {
     </PublicLayout>
   );
 }
-

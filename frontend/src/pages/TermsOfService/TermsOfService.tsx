@@ -47,6 +47,7 @@ const sections = [
 export default function TermsOfService() {
   return (
     <PublicLayout eyebrow="TERMS OF SERVICE">
+      <div className="legal-page-layout">
       <article className="legal-document">
         <header className="legal-heading">
           <span className="page-eyebrow">
@@ -88,6 +89,11 @@ export default function TermsOfService() {
           );
         })}
       </article>
+      <aside className="legal-side-visual" aria-label="Community dogs deserve responsible care">
+        <div className="legal-side-photo" role="img" aria-label="Street dogs resting together in their neighbourhood" />
+        <div className="legal-side-caption"><span>RESPONSIBLE CARE</span><strong>Small actions build safer streets.</strong><p>Clear expectations help our community work together with care and respect.</p></div>
+      </aside>
+      </div>
     </PublicLayout>
   );
 }

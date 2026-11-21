@@ -16,6 +16,7 @@ const sections = [
 export default function PrivacyPolicy() {
   return (
     <PublicLayout eyebrow="PRIVACY POLICY">
+      <div className="legal-page-layout">
       <article className="legal-document"><header className="legal-heading"><span className="page-eyebrow"><i /> YOUR INFORMATION MATTERS</span><h1>Privacy <em>Policy.</em></h1><p>How Dog Territory handles information used to support community street-dog welfare.</p><span className="legal-date">Draft for review · 17 November 2026</span></header>
         <div className="legal-important"><strong>Before publishing:</strong> This is a starter policy based on the features described for Dog Territory. Verify the deployed database, public visibility, hosting, analytics, integrations, retention periods and applicable legal requirements. Replace any statements that do not match actual practice and obtain appropriate legal review.</div>
         <p className="legal-intro">Dog Territory is a platform for documenting street dogs, receiving community reports and coordinating welfare-related activities. This draft explains the types of information the platform may handle and the safeguards and choices that should apply.</p>
@@ -39,6 +40,11 @@ export default function PrivacyPolicy() {
           </div>
         </section>
       </article>
+      <aside className="legal-side-visual" aria-label="Community dogs deserve thoughtful care">
+        <div className="legal-side-photo" role="img" aria-label="Street dogs resting together in their neighbourhood" />
+        <div className="legal-side-caption"><span>CARE STARTS WITH TRUST</span><strong>Good care begins with understanding.</strong><p>We work to keep community information useful, respectful and focused on animal welfare.</p></div>
+      </aside>
+      </div>
     </PublicLayout>
   );
 }

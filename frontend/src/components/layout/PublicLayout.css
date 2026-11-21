@@ -1,5 +1,4 @@
-
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
 
 :root {
   --dt-ink: #101d43;
@@ -18,7 +17,7 @@
   min-height: 100vh;
   color: var(--dt-ink);
   background: #fff;
-  font-family: 'DM Sans', sans-serif;
+  font-family: "DM Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -77,7 +76,9 @@
 }
 
 .public-brand-copy strong {
-  font: 800 16px Manrope, sans-serif;
+  font:
+    800 16px Manrope,
+    sans-serif;
   letter-spacing: -0.5px;
 }
 
@@ -121,7 +122,9 @@
   border-radius: 5px;
 }
 
-.public-mobile-menu { color: var(--dt-ink); }
+.public-mobile-menu {
+  color: var(--dt-ink);
+}
 
 /* ========================================
    PAGE CONTENT
@@ -170,7 +173,7 @@
 }
 
 .public-footer-main {
-  grid-template-columns: 1.5fr 1fr 1fr 1fr .9fr;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 0.9fr;
   gap: 30px;
   padding-bottom: 30px;
 }
@@ -350,7 +353,11 @@
   border-radius: 12px;
   background: #f4f4ff;
   color: #5555f4;
-  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .public-footer .socials a:hover {

@@ -158,7 +158,11 @@ function Icon({ name }: { name: string }) {
   );
 }
 
-function SocialIcon({ name }: { name: "facebook" | "instagram" | "x" | "youtube" }) {
+function SocialIcon({
+  name,
+}: {
+  name: "facebook" | "instagram" | "x" | "youtube";
+}) {
   const common = {
     width: 16,
     height: 16,
@@ -171,10 +175,33 @@ function SocialIcon({ name }: { name: "facebook" | "instagram" | "x" | "youtube"
     "aria-hidden": true as const,
   };
 
-  if (name === "facebook") return <svg {...common}><path d="M14 8h3V4h-3a5 5 0 0 0-5 5v3H6v4h3v4h4v-4h3l1-4h-4V9a1 1 0 0 1 1-1Z" /></svg>;
-  if (name === "instagram") return <svg {...common}><rect x="3.5" y="3.5" width="17" height="17" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.6" cy="6.7" r=".8" fill="currentColor" stroke="none" /></svg>;
-  if (name === "youtube") return <svg {...common}><rect x="3" y="5" width="18" height="14" rx="4" /><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none" /></svg>;
-  return <svg {...common}><path d="M5 4h4.2l9.8 16h-4.2L5 4Z" /><path d="m19 4-6.2 7.1M5 20l6.4-7.3" /></svg>;
+  if (name === "facebook")
+    return (
+      <svg {...common}>
+        <path d="M14 8h3V4h-3a5 5 0 0 0-5 5v3H6v4h3v4h4v-4h3l1-4h-4V9a1 1 0 0 1 1-1Z" />
+      </svg>
+    );
+  if (name === "instagram")
+    return (
+      <svg {...common}>
+        <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.6" cy="6.7" r=".8" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  if (name === "youtube")
+    return (
+      <svg {...common}>
+        <rect x="3" y="5" width="18" height="14" rx="4" />
+        <path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none" />
+      </svg>
+    );
+  return (
+    <svg {...common}>
+      <path d="M5 4h4.2l9.8 16h-4.2L5 4Z" />
+      <path d="m19 4-6.2 7.1M5 20l6.4-7.3" />
+    </svg>
+  );
 }
 
 function Home() {
@@ -195,6 +222,7 @@ function Home() {
     image:
       "https://commons.wikimedia.org/wiki/Special:FilePath/Indian_Street_Dog.jpg",
   });
+  const [activeLink, setActiveLink] = useState("home");
   useEffect(() => {
     get_statistics()
       .then((data) => setStats(data))
@@ -236,23 +264,75 @@ function Home() {
         >
           ☰
         </button>
+
         <nav className={menuOpen ? "nav-links nav-open" : "nav-links"}>
-          <a className="active" href="#home" onClick={() => setMenuOpen(false)}>
+          <a
+            href="#home"
+            className={activeLink === "home" ? "active" : ""}
+            onClick={() => {
+              setActiveLink("home");
+              setMenuOpen(false);
+            }}
+          >
             Home
           </a>
-          <a href="#map-under-development" onClick={() => setMenuOpen(false)}>
+
+          <a
+            href="#map-under-development"
+            className={activeLink === "map" ? "active" : ""}
+            onClick={() => {
+              setActiveLink("map");
+              setMenuOpen(false);
+            }}
+          >
             Explore Map
           </a>
-          <a href="#how-it-works" onClick={() => setMenuOpen(false)}>
+
+          <a
+            href="#how-it-works"
+            className={activeLink === "how" ? "active" : ""}
+            onClick={() => {
+              setActiveLink("how");
+              setMenuOpen(false);
+            }}
+          >
             How It Works
           </a>
-          <a href="#impact" onClick={() => setMenuOpen(false)}>
+
+          <a
+            href="#impact"
+            className={activeLink === "impact" ? "active" : ""}
+            onClick={() => {
+              setActiveLink("impact");
+              setMenuOpen(false);
+            }}
+          >
             Our Impact
           </a>
-          <a href="#about" onClick={() => setMenuOpen(false)}>
+
+          <a
+            href="#about"
+            className={activeLink === "about" ? "active" : ""}
+            onClick={() => {
+              setActiveLink("about");
+              setMenuOpen(false);
+            }}
+          >
             About
           </a>
+
+          <a
+            href="/volunteer-info"
+            className={activeLink === "volunteer" ? "active" : ""}
+            onClick={() => {
+              setActiveLink("volunteer");
+              setMenuOpen(false);
+            }}
+          >
+            Volunteer
+          </a>
         </nav>
+
         <div className="header-actions">
           <Button
             variant="secondary"
@@ -504,7 +584,7 @@ function Home() {
               Every report, every profile, and every act of care helps build
               safer streets and healthier communities for street dogs.
             </p>
-            <Button href="/report">
+            <Button href="/signin">
               Be part of the change <span>→</span>
             </Button>
           </div>
@@ -623,10 +703,18 @@ function Home() {
               Let’s make it a story of care.
             </p>
             <div className="socials">
-              <a href="#about" aria-label="Facebook"><SocialIcon name="facebook" /></a>
-              <a href="#about" aria-label="Instagram"><SocialIcon name="instagram" /></a>
-              <a href="#about" aria-label="X"><SocialIcon name="x" /></a>
-              <a href="#about" aria-label="YouTube"><SocialIcon name="youtube" /></a>
+              <a href="#about" aria-label="Facebook">
+                <SocialIcon name="facebook" />
+              </a>
+              <a href="#about" aria-label="Instagram">
+                <SocialIcon name="instagram" />
+              </a>
+              <a href="#about" aria-label="X">
+                <SocialIcon name="x" />
+              </a>
+              <a href="#about" aria-label="YouTube">
+                <SocialIcon name="youtube" />
+              </a>
             </div>
           </div>
           <div className="footer-col">
@@ -635,7 +723,7 @@ function Home() {
               Explore Map{" "}
               <span className="footer-dev-badge">In development</span>
             </a>
-            <a href="/report">Report a Sighting</a>
+            <a href="/signin">Report a Sighting</a>
             <a href="#how-it-works">How It Works</a>
             <a href="#impact">Our Impact</a>
           </div>
