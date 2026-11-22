@@ -1,0 +1,13 @@
+from typing import Protocol
+
+from app.models import User
+
+
+class DashboardRepositoryProtocol(Protocol):
+    async def get_user_statistics(self, user: User) -> dict[str, int]: ...
+
+    async def get_volunteer_statistics(self, user: User): ...
+
+    async def get_veterinarian_statistics(self, user: User): ...
+
+    async def get_admin_statistics(self, user: User): ...

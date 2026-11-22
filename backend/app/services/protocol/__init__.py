@@ -1,5 +1,6 @@
 from .auth_service_protocol import AuthServiceProtocol
 from .clinic_service_protocol import ClinicServiceProtocol
+from .dashboard_service_protocol import DashboardServiceProtocol
 from .dog_service_protocol import DogServiceProtocol
 from .medical_assignment_service_protocol import MedicalAssignmentServiceProtocol
 from .medical_assignment_update_service_protocol import (
@@ -18,6 +19,7 @@ from .work_assignment_update_service_protocol import WorkAssignmentUpdateService
 __all__ = [
     "AuthServiceProtocol",
     "ClinicServiceProtocol",
+    "DashboardServiceProtocol",
     "DogServiceProtocol",
     "MedicalAssignmentServiceProtocol",
     "MedicalAssignmentUpdateServiceProtocol",

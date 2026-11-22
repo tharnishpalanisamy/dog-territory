@@ -1,5 +1,6 @@
 from .auth_service import AuthService
 from .clinic_service import ClinicService
+from .dashboard_service import DashboardService
 from .dog_service import DogService
 from .medical_assignment_service import MedicalAssignmentService
 from .medical_assignment_update_service import MedicalAssignmentUpdateService
@@ -16,6 +17,7 @@ from .work_assignment_update_service import WorkAssignmentUpdateService
 __all__ = [
     "AuthService",
     "ClinicService",
+    "DashboardService",
     "DogService",
     "MedicalAssignmentService",
     "MedicalAssignmentUpdateService",

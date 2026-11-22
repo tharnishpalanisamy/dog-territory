@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+import LocationOnboarding from "../ui/LocationOnboarding";
 
 type UserRole = "ADMIN" | "VOLUNTEER" | "VETERINARIAN" | "USER";
 
@@ -21,6 +22,7 @@ export default function AppLayout({
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
+      <LocationOnboarding />
 
       {/* Mobile overlay */}
       {menuOpen && (

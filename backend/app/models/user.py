@@ -36,6 +36,16 @@ class User(Base):
         default=UserRole.USER,
     )
 
+    # Location information (collected after registration)
+
+    state: Mapped[str | None] = mapped_column(String(100), nullable=True)
+
+    district: Mapped[str | None] = mapped_column(String(100), nullable=True)
+
+    area_name: Mapped[str | None] = mapped_column(String(150), nullable=True)
+
+    pincode: Mapped[str | None] = mapped_column(String(6), nullable=True, index=True)
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -49,6 +59,7 @@ class User(Base):
         foreign_keys="Veterinarian.user_id",
         uselist=False,
     )
+
     volunteer_profile: Mapped["Volunteer | None"] = relationship(
         back_populates="user",
         foreign_keys="Volunteer.user_id",

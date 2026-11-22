@@ -11,7 +11,11 @@ from app.services.implementation.auth_service import AuthService
 @pytest.mark.asyncio
 async def test_authenticate_returns_tokens_for_valid_credentials():
     user = SimpleNamespace(
-        id=7, email="a@example.com", username="A", password_hash="hash"
+        id=7,
+        email="a@example.com",
+        username="A",
+        password_hash="hash",
+        role="user",
     )
     repo = SimpleNamespace(get_by_email=AsyncMock(return_value=user))
     refresh = SimpleNamespace(issue_refresh_token=AsyncMock(return_value="refresh"))
@@ -32,6 +36,7 @@ async def test_authenticate_returns_tokens_for_valid_credentials():
     assert result.access_token == "access"
     assert result.refresh_token == "refresh"
     assert result.user.id == 7
+    assert result.user.role == "user"
 
 
 @pytest.mark.asyncio

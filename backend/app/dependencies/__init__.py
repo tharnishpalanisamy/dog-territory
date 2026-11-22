@@ -5,6 +5,7 @@ from .auth_dependency import (
     require_roles,
 )
 from .clinic_dependency import get_clinic_service
+from .dashboard_dependency import get_dashboard_repository, get_dashboard_service
 from .dog_dependency import get_dog_service
 from .medical_assignment_rependecny import (
     get_medical_assignment_repository,
@@ -12,6 +13,7 @@ from .medical_assignment_rependecny import (
     get_medical_assignment_update_repository,
     get_medical_assignment_update_service,
 )
+from .password_reset_dependency import get_password_reset_service
 from .public_dependency import get_public_service
 from .reports_dependency import get_reports_service
 from .veterinarian_dependency import (
@@ -33,11 +35,14 @@ __all__ = [
     "get_auth_service",
     "get_clinic_service",
     "get_current_user",
+    "get_dashboard_repository",
+    "get_dashboard_service",
     "get_dog_service",
     "get_medical_assignment_repository",
     "get_medical_assignment_service",
     "get_medical_assignment_update_repository",
     "get_medical_assignment_update_service",
+    "get_password_reset_service",
     "get_public_service",
     "get_reports_service",
     "get_veterinarian_repository",

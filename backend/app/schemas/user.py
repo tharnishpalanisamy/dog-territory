@@ -13,3 +13,4 @@ class UserResponse(BaseModel):
     id: int
     username: str = Field(max_length=100)
     email: EmailStr = Field(max_length=255)
+    role: str

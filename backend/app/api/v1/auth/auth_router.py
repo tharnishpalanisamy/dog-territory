@@ -4,6 +4,7 @@ from app.core import limiter
 from app.dependencies import (
     get_auth_service,
     get_current_user,
+    get_password_reset_service,
 )
 from app.models import User
 from app.schemas import (
@@ -15,7 +16,7 @@ from app.schemas import (
     UserLogin,
     UserResponse,
 )
-from app.services.protocol import AuthServiceProtocol
+from app.services.protocol import AuthServiceProtocol, PasswordResetServiceProtocol
 from fastapi import APIRouter, Depends, Request, Response, status
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -63,7 +64,9 @@ async def refresh_token(
 @router.post("/forgot-password", status_code=status.HTTP_202_ACCEPTED)
 async def forgot_password(
     forgot_password_request: ForgotPasswordRequest,
-    service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
+    service: Annotated[
+        PasswordResetServiceProtocol, Depends(get_password_reset_service)
+    ],
 ):
     return await service.request_password_reset(forgot_password_request)
 
@@ -71,7 +74,9 @@ async def forgot_password(
 @router.post("/verify-reset-otp")
 async def verify_reset_otp(
     reset_otp_request,
-    service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
+    service: Annotated[
+        PasswordResetServiceProtocol, Depends(get_password_reset_service)
+    ],
 ):
     return 1
 
@@ -79,7 +84,9 @@ async def verify_reset_otp(
 @router.post("/reset-password")
 async def reset_password(
     reset_password_request,
-    service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
+    service: Annotated[
+        PasswordResetServiceProtocol, Depends(get_password_reset_service)
+    ],
 ):
     return 1
 

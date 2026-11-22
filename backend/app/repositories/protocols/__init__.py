@@ -1,4 +1,5 @@
 from .clinic_repository_protocol import ClinicRepositoryProtocol
+from .dashboard_repository_protocol import DashboardRepositoryProtocol
 from .dog_repository_protocol import DogRepositoryProtocol
 from .medical_assignment_repository_protocol import MedicalAssignmentRepositoryProtocol
 from .medical_assignment_update_repository_protocol import (
@@ -18,6 +19,7 @@ from .work_assignment_update_repository_protocol import (
 
 __all__ = [
     "ClinicRepositoryProtocol",
+    "DashboardRepositoryProtocol",
     "DogRepositoryProtocol",
     "MedicalAssignmentRepositoryProtocol",
     "MedicalAssignmentUpdateRepositoryProtocol",

@@ -44,7 +44,18 @@ export default function SignIn() {
 
       showToast("success", "Signed in successfully. Welcome back!");
 
-      navigate("/dashboard");
+      const user = data.user;
+      const role = user.role;
+
+      if (role == "user") {
+        navigate("/user");
+      } else if (role == "volunteer") {
+        navigate("/volunteer");
+      } else if (role == "veterinarian") {
+        navigate("/veterinarian");
+      } else if (role == "admin") {
+        navigate("/admin");
+      }
     } catch (error) {
       const message = axios.isAxiosError(error)
         ? typeof error.response?.data?.detail === "string"

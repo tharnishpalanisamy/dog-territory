@@ -111,4 +111,6 @@ class DogRepository:
 
     async def get_dogs_count(self) -> int:
         query = select(func.count()).select_from(Dog)
-        return await self.db.scalar(query)
+        result = await self.db.scalar(query)
+
+        return result or 0
