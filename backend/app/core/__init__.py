@@ -16,7 +16,13 @@ from .enums import (
 )
 from .logging_config import setup_logging
 from .rate_limiter import limiter
-from .security import create_access_token, hash_password, verify_password
+from .security import (
+    create_access_token,
+    hash_otp,
+    hash_password,
+    verify_otp,
+    verify_password,
+)
 
 __all__ = [
     "AssignmentPriority",
@@ -34,8 +40,10 @@ __all__ = [
     "VolunteerApprovalStatus",
     "VolunteerAvailability",
     "create_access_token",
+    "hash_otp",
     "hash_password",
     "limiter",
     "setup_logging",
+    "verify_otp",
     "verify_password",
 ]

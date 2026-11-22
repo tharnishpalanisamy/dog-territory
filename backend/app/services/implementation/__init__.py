@@ -3,6 +3,7 @@ from .clinic_service import ClinicService
 from .dog_service import DogService
 from .medical_assignment_service import MedicalAssignmentService
 from .medical_assignment_update_service import MedicalAssignmentUpdateService
+from .password_reset_service import PasswordResetService
 from .public_service import PublicService
 from .refresh_token_service import RefreshTokenService
 from .reports_service import ReportsService
@@ -18,6 +19,7 @@ __all__ = [
     "DogService",
     "MedicalAssignmentService",
     "MedicalAssignmentUpdateService",
+    "PasswordResetService",
     "PublicService",
     "RefreshTokenService",
     "ReportsService",

@@ -5,6 +5,7 @@ from .medical_assignment_service_protocol import MedicalAssignmentServiceProtoco
 from .medical_assignment_update_service_protocol import (
     MedicalAssignmentUpdateServiceProtocol,
 )
+from .password_reset_service_protocol import PasswordResetServiceProtocol
 from .public_service_protocol import PublicServiceProtocol
 from .refresh_token_service_protocol import RefreshTokenServiceProtocol
 from .reports_service_protocol import ReportsServiceProtocol
@@ -20,6 +21,7 @@ __all__ = [
     "DogServiceProtocol",
     "MedicalAssignmentServiceProtocol",
     "MedicalAssignmentUpdateServiceProtocol",
+    "PasswordResetServiceProtocol",
     "PublicServiceProtocol",
     "RefreshTokenServiceProtocol",
     "ReportsServiceProtocol",

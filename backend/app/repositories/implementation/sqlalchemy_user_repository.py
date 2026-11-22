@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -31,3 +31,19 @@ class UserRepository:
         user = await self.db.scalar(statement)
 
         return user
+
+    async def update_password(
+        self,
+        id: int,
+        password: str,
+    ) -> User:
+        query = (
+            update(User)
+            .where(User.id == id)
+            .values(password_hash=password)
+            .returning(User)
+        )
+
+        result = await self.db.execute(query)
+        user = result.scalar_one()
+        return user 

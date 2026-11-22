@@ -5,6 +5,8 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import { useToast } from "../../components/ui/Toast";
 import AuthLayout from "./AuthLayout";
+import axios from "axios";
+import api from "../../lib/api";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -29,31 +31,13 @@ export default function SignUp() {
     }
 
     const user = {
-      'email' : email.toLowerCase() ,
+      email: email.toLowerCase(),
       username,
       password,
     };
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/v1/auth/signup", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
-
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        const detail = data.detail;
-
-        throw new Error(
-          typeof detail === "string"
-            ? detail
-            : "Sign up failed. Please try again.",
-        );
-      }
+      await api.post("/auth/signup", user);
 
       showToast(
         "success",
@@ -62,12 +46,15 @@ export default function SignUp() {
 
       navigate("/signin");
     } catch (error) {
-      showToast(
-        "error",
-        error instanceof Error
+      const message = axios.isAxiosError(error)
+        ? typeof error.response?.data?.detail === "string"
+          ? error.response.data.detail
+          : "Sign up failed. Please try again."
+        : error instanceof Error
           ? error.message
-          : "Unable to create your account. Please try again.",
-      );
+          : "Unable to create your account. Please try again.";
+
+      showToast("error", message);
     }
   }
 
@@ -135,7 +122,10 @@ export default function SignUp() {
 
             <span>
               I agree to the{" "}
-              <Link to="-and-conditions" className="auth-theme-link font-bold">
+              <Link
+                to="/terms-and-conditions"
+                className="auth-theme-link font-bold"
+              >
                 Terms of Service
               </Link>{" "}
               and{" "}

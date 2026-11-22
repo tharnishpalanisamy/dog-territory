@@ -1,10 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import React from "react";
-
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import { useToast } from "../../components/ui/Toast";
 import AuthLayout from "./AuthLayout";
+import api from "../../lib/api";
+import axios from "axios";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -20,25 +21,12 @@ export default function SignIn() {
     const remember = formData.get("remember") === "on";
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 'email':email.toLowerCase(), password }),
+      const response = await api.post("/auth/login", {
+        email: email.toLowerCase(),
+        password,
       });
 
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        const detail = data.detail;
-
-        throw new Error(
-          typeof detail === "string"
-            ? detail
-            : "Sign in failed. Check your details and try again.",
-        );
-      }
+      const data = response.data;
 
       localStorage.setItem("access_token", data.access_token);
 
@@ -58,20 +46,25 @@ export default function SignIn() {
 
       navigate("/dashboard");
     } catch (error) {
-      showToast(
-        "error",
-        error instanceof Error
+      const message = axios.isAxiosError(error)
+        ? typeof error.response?.data?.detail === "string"
+          ? error.response.data.detail
+          : "Sign in failed. Check your details and try again."
+        : error instanceof Error
           ? error.message
-          : "Unable to sign in. Please try again.",
-      );
+          : "Unable to sign in. Please try again.";
+
+      showToast("error", message);
     }
   }
+
+  // IMPORTANT: JSX belongs to the component, not handleSubmit.
 
   return (
     <AuthLayout mode="signin">
       <form onSubmit={handleSubmit} className="w-full">
         <div className="flex items-center gap-2 mb-4">
-          <span className="w-2 h-2 rounded-full bg-teal-500 shadow-[0_0_0_4px_rgba(20,184,166,0.12)]" />
+          <span className="w-2 h-2 rounded-full bg-teal-500" />
           <span className="text-[10px] font-extrabold tracking-[1.5px] text-indigo-500">
             WELCOME BACK
           </span>
@@ -114,25 +107,19 @@ export default function SignIn() {
               Remember me
             </label>
 
-            <Link
-              to="/forgot-password"
-              className="auth-theme-link font-bold"
-            >
+            <Link to="/forgot-password" className="auth-theme-link font-bold">
               Forgot password?
             </Link>
           </div>
 
-          <Button className="w-full min-h-12 mt-1 " type="submit">
+          <Button className="w-full min-h-12 mt-1" type="submit">
             Sign In <span className="ml-2">→</span>
           </Button>
         </div>
 
         <p className="mt-8 text-center text-xs text-slate-500">
           Don't have an account?{" "}
-          <Link
-            to="/signup"
-            className="auth-theme-link font-bold"
-          >
+          <Link to="/signup" className="auth-theme-link font-bold">
             Create one
           </Link>
         </p>

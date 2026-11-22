@@ -60,12 +60,12 @@ async def refresh_token(
     return await service.refresh_token(token_data.refresh_token)
 
 
-@router.post("/forgot-password")
+@router.post("/forgot-password", status_code=status.HTTP_202_ACCEPTED)
 async def forgot_password(
-    forgot_password: ForgotPasswordRequest,
+    forgot_password_request: ForgotPasswordRequest,
     service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
 ):
-    return 1
+    return await service.request_password_reset(forgot_password_request)
 
 
 @router.post("/verify-reset-otp")

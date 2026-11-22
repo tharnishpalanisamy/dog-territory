@@ -29,3 +29,11 @@ def create_access_token(user_id: int) -> str:
     return jwt.encode(
         payload=payload, key=setting.JWT_SECRET_KEY, algorithm=setting.JWT_ALGORITHM
     )
+
+
+def hash_otp(otp:str)->str:
+    return password_hash.hash(otp)
+
+
+def verify_otp(otp, hashed_otp):
+    return password_hash.verify(otp, hashed_otp)

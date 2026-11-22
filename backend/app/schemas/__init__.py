@@ -32,6 +32,13 @@ from .medical_assignment_update import (
     MedicalAssignmentUpdatePatch,
     MedicalAssignmentUpdateResponse,
 )
+from .password_reset import (
+    ForgotPasswordRequest,
+    MessageResponse,
+    ResetPasswordRequest,
+    VerifyResetOTPRequest,
+    VerifyResetOTPResponse,
+)
 from .report import (
     ReportCreate,
     ReportFilterParams,
@@ -96,6 +103,7 @@ __all__ = [
     "MedicalAssignmentUpdateCreate",
     "MedicalAssignmentUpdatePatch",
     "MedicalAssignmentUpdateResponse",
+    "MessageResponse",
     "RefreshTokenCreate",
     "RefreshTokenResponse",
     "ReportCreate",
@@ -104,10 +112,13 @@ __all__ = [
     "ReportStatusUpdate",
     "ReportSummaryResponse",
     "ReportUpdate",
+    "ResetPasswordRequest",
     "UpdateAssignmentStatus",
     "UserCreate",
     "UserLogin",
     "UserResponse",
+    "VerifyResetOTPRequest",
+    "VerifyResetOTPResponse",
     "VeterinarianApprovalUpdate",
     "VeterinarianCreate",
     "VeterinarianFilterParams",

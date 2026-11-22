@@ -11,7 +11,10 @@ from app.core.config import setting
 from app.database.connection import get_db
 from app.exceptions import NotAuthorizedException
 from app.models import User
-from app.repositories.implementation import RefreshTokenRepository, UserRepository
+from app.repositories.implementation import (
+    RefreshTokenRepository,
+    UserRepository,
+)
 from app.repositories.protocols import (
     RefreshTokenRepositoryProtocol,
     UserRepositoryProtocol,

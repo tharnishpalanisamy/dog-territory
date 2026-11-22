@@ -10,6 +10,7 @@ from app.database.base import Base
 
 if TYPE_CHECKING:
     from app.models.medical_assignment import MedicalAssignment
+    from app.models.password_reset import PasswordReset
     from app.models.veterinarian import Veterinarian
     from app.models.volunteer import Volunteer
 
@@ -63,3 +64,5 @@ class User(Base):
         back_populates="creator",
         foreign_keys="MedicalAssignment.created_by",
     )
+
+    password_resets: Mapped[list["PasswordReset"]] = relationship(back_populates="user")

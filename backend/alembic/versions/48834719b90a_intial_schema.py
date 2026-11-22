@@ -1,8 +1,8 @@
-"""initial schema
+"""intial schema
 
-Revision ID: b22a2a81da5b
+Revision ID: 48834719b90a
 Revises: 
-Create Date: 2026-11-21 18:47:46.773537
+Create Date: 2026-11-22 11:24:25.079679
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'b22a2a81da5b'
+revision: str = '48834719b90a'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -74,6 +74,22 @@ def upgrade() -> None:
     op.create_index(op.f('ix_dogs_dog_code'), 'dogs', ['dog_code'], unique=True)
     op.create_index(op.f('ix_dogs_dog_number'), 'dogs', ['dog_number'], unique=False)
     op.create_index(op.f('ix_dogs_pincode'), 'dogs', ['pincode'], unique=False)
+    op.create_table('password_resets',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('otp_hash', sa.String(length=255), nullable=False),
+    sa.Column('reset_token_hash', sa.String(length=255), nullable=True),
+    sa.Column('attempts', sa.Integer(), nullable=False),
+    sa.Column('expires_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('verified_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('reset_token_expires_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('consumed_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_index('ix_password_resets_user_created', 'password_resets', ['user_id', 'created_at'], unique=False)
+    op.create_index(op.f('ix_password_resets_user_id'), 'password_resets', ['user_id'], unique=False)
     op.create_table('refresh_tokens',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
@@ -312,6 +328,9 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_refresh_tokens_user_id'), table_name='refresh_tokens')
     op.drop_index(op.f('ix_refresh_tokens_token_hash'), table_name='refresh_tokens')
     op.drop_table('refresh_tokens')
+    op.drop_index(op.f('ix_password_resets_user_id'), table_name='password_resets')
+    op.drop_index('ix_password_resets_user_created', table_name='password_resets')
+    op.drop_table('password_resets')
     op.drop_index(op.f('ix_dogs_pincode'), table_name='dogs')
     op.drop_index(op.f('ix_dogs_dog_number'), table_name='dogs')
     op.drop_index(op.f('ix_dogs_dog_code'), table_name='dogs')

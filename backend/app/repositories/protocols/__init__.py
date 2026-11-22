@@ -4,6 +4,7 @@ from .medical_assignment_repository_protocol import MedicalAssignmentRepositoryP
 from .medical_assignment_update_repository_protocol import (
     MedicalAssignmentUpdateRepositoryProtocol,
 )
+from .password_reset_repository_protocol import PasswordResetRepositoryProtocol
 from .refresh_token_protocol import RefreshTokenRepositoryProtocol
 from .reports_repository_protocol import ReportsRepositoryProtocol
 from .user_repository_protocol import UserRepositoryProtocol
@@ -20,6 +21,7 @@ __all__ = [
     "DogRepositoryProtocol",
     "MedicalAssignmentRepositoryProtocol",
     "MedicalAssignmentUpdateRepositoryProtocol",
+    "PasswordResetRepositoryProtocol",
     "RefreshTokenRepositoryProtocol",
     "ReportsRepositoryProtocol",
     "UserRepositoryProtocol",

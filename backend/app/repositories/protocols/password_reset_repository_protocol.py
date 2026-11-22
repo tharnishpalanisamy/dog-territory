@@ -1,0 +1,19 @@
+from typing import Protocol
+
+from app.models import PasswordReset
+
+
+class PasswordResetRepositoryProtocol(Protocol):
+    async def create(self, password_reset: PasswordReset) -> None: ...
+
+    async def invalidate_previous(self, user_id: int) -> None: ...
+
+    async def get_latest_by_user(self, user_id: int) -> PasswordReset: ...
+
+    async def increment_attempts(self, reset_record_id) -> None: ...
+
+    async def get_by_reset_token_hash(
+        self, reset_token_hash
+    ) -> PasswordReset | None: ...
+
+    async def mark_consumed(self, reset_record_id) -> None: ...

@@ -9,3 +9,9 @@ class UserRepositoryProtocol(Protocol):
     async def get_by_id(self, user_id: int) -> User | None: ...
 
     async def get_by_email(self, email: str) -> User | None: ...
+
+    async def update_password(
+        self,
+        id:int,
+        password:str,
+    ) -> User: ...
