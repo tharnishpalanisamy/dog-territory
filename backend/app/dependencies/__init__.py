@@ -24,6 +24,7 @@ from .veterinary_record_dependency import (
     get_veterinary_record_repository,
     get_veterinary_record_service,
 )
+from .user_dependency import get_user_repository, get_user_service
 from .volunteers_dependency import get_volunteer_repository, get_volunteer_service
 from .work_assignment_dependency import (
     get_work_assignment_service,
@@ -49,6 +50,8 @@ __all__ = [
     "get_veterinarian_service",
     "get_veterinary_record_repository",
     "get_veterinary_record_service",
+    "get_user_repository",
+    "get_user_service",
     "get_volunteer_repository",
     "get_volunteer_service",
     "get_work_assignment_service",

@@ -46,4 +46,12 @@ class UserRepository:
 
         result = await self.db.execute(query)
         user = result.scalar_one()
-        return user 
+        return user
+
+    async def update(self, user: User, fields: dict[str, str]) -> User:
+        for field, value in fields.items():
+            setattr(user, field, value)
+
+        await self.db.flush()
+        await self.db.refresh(user)
+        return user

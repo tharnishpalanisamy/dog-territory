@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
@@ -19,6 +20,8 @@ export default function AppLayout({
   email,
 }: AppLayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const onProfilePage = location.pathname.endsWith("/profile");
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
@@ -51,8 +54,8 @@ export default function AppLayout({
 
         <div className="sticky top-0 z-30 shrink-0">
           <Navbar
-            title="Overview"
-            subtitle="Welcome to your dashboard"
+            title={onProfilePage ? "Profile" : "Overview"}
+            subtitle={onProfilePage ? "Your account information and community details" : "Welcome to your dashboard"}
             onMenuClick={() => setMenuOpen(true)}
           />
         </div>

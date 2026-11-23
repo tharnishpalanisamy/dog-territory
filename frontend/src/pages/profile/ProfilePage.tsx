@@ -1,6 +1,261 @@
-import { Avatar, PageHeader, StatusBadge } from "../../components/app/Shared";
-import { profile } from "../../data/mockData";
+import { useEffect, useState, type FormEvent } from "react";
+import axios from "axios";
+import { MapPin, Pencil, UserRound, X } from "lucide-react";
+import api from "../../lib/api";
+import { useToast } from "../../components/ui/Toast";
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
+
+interface UserLocation {
+  state: string;
+  district: string;
+  area_name: string;
+  pincode: string;
+}
+
+interface ProfileUser {
+  id: number;
+  username: string;
+  email: string;
+  role: string;
+  created_at?: string;
+  location?: UserLocation | null;
+  state?: string | null;
+  district?: string | null;
+  area_name?: string | null;
+  pincode?: string | null;
+}
+
+const userUpdatedEvent = "dog-territory:user-updated";
+
+function readUser(): ProfileUser | null {
+  try {
+    const raw = localStorage.getItem("user");
+    return raw ? (JSON.parse(raw) as ProfileUser) : null;
+  } catch {
+    return null;
+  }
+}
+
+function getLocation(user: ProfileUser): UserLocation | null {
+  if (user.location) return user.location;
+  if (user.state && user.district && user.area_name && user.pincode) {
+    return {
+      state: user.state,
+      district: user.district,
+      area_name: user.area_name,
+      pincode: user.pincode,
+    };
+  }
+  return null;
+}
+
+function roleLabel(role: string): string {
+  const labels: Record<string, string> = {
+    user: "Community Member",
+    volunteer: "Community Volunteer",
+    veterinarian: "Veterinarian",
+    admin: "Administrator",
+  };
+  return labels[role.toLowerCase()] ?? role;
+}
 
 export default function ProfilePage() {
-  return <><PageHeader eyebrow="YOUR ACCOUNT" title="Profile" description="Your account information and community details."/><div className="profile-page-grid"><section className="panel account-profile"><div className="account-profile-cover"><span>🐾</span></div><div className="account-profile-main"><Avatar name={profile.avatar} size="large"/><div><h2>{profile.username}</h2><p>{profile.email}</p></div><button className="button-secondary">✎ Edit profile</button></div><div className="account-bio"><small>COMMUNITY ROLE</small><div><strong>{profile.role}</strong><StatusBadge status="active"/></div><p>Part of the Dog Territory community since {profile.createdAt}.</p></div></section><section className="panel account-settings"><div className="panel-heading"><div><h2>Account details</h2><p>Basic information associated with your account</p></div><span className="profile-paw">♙</span></div><div className="account-detail-row"><div className="account-detail-icon">♙</div><div><small>USERNAME</small><strong>{profile.username}</strong></div><button aria-label="Edit username">✎</button></div><div className="account-detail-row"><div className="account-detail-icon">✉</div><div><small>EMAIL ADDRESS</small><strong>{profile.email}</strong></div><button aria-label="Edit email">✎</button></div><div className="account-detail-row"><div className="account-detail-icon">◷</div><div><small>ACCOUNT CREATED</small><strong>{profile.createdAt}</strong></div></div><div className="account-note">Profile fields shown here reflect the current account model.</div></section></div></>;
+  const [user, setUser] = useState<ProfileUser | null>(readUser);
+  const [editingLocation, setEditingLocation] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const { showToast } = useToast();
+  const location = user ? getLocation(user) : null;
+
+  useEffect(() => {
+    const syncUser = () => setUser(readUser());
+    window.addEventListener("storage", syncUser);
+    window.addEventListener(userUpdatedEvent, syncUser);
+    window.addEventListener("focus", syncUser);
+    return () => {
+      window.removeEventListener("storage", syncUser);
+      window.removeEventListener(userUpdatedEvent, syncUser);
+      window.removeEventListener("focus", syncUser);
+    };
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    async function loadProfile() {
+      const existingUser = readUser();
+      if (!existingUser) return;
+      try {
+        const response = await api.get<ProfileUser>("/users/me");
+        if (!active) return;
+        const latestUser = readUser();
+        if (!latestUser || latestUser.id !== existingUser.id) return;
+        const hydratedUser = { ...latestUser, ...response.data };
+        localStorage.setItem("user", JSON.stringify(hydratedUser));
+        setUser(hydratedUser);
+        window.dispatchEvent(new Event(userUpdatedEvent));
+      } catch {
+        // Keep the signed-in user's cached account visible if the profile request is unavailable.
+      }
+    }
+    void loadProfile();
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!editingLocation) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !saving) setEditingLocation(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    document.body.classList.add("location-onboarding-open");
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.classList.remove("location-onboarding-open");
+    };
+  }, [editingLocation, saving]);
+
+  async function saveLocation(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!user || saving) return;
+    const form = new FormData(event.currentTarget);
+    const updatedLocation: UserLocation = {
+      state: String(form.get("state") ?? "").trim(),
+      district: String(form.get("district") ?? "").trim(),
+      area_name: String(form.get("area_name") ?? "").trim(),
+      pincode: String(form.get("pincode") ?? "").trim(),
+    };
+    if (!updatedLocation.state || !updatedLocation.district || !updatedLocation.area_name) {
+      showToast("error", "Please complete all location fields.");
+      return;
+    }
+    if (!/^\d{6}$/.test(updatedLocation.pincode)) {
+      showToast("error", "PIN code must contain exactly six digits.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const response = await api.patch("/users/me/location", updatedLocation);
+      const data = response.data as { location?: UserLocation } | UserLocation;
+      const savedLocation = "location" in data && data.location ? data.location : data as UserLocation;
+      if (!savedLocation || typeof savedLocation !== "object" || !savedLocation.state) {
+        throw new Error("The server did not return the saved location. Please try again.");
+      }
+      const latestUser = readUser();
+      if (!latestUser || latestUser.id !== user.id) {
+        throw new Error("Your session changed. Please sign in again and retry.");
+      }
+      const updatedUser = { ...latestUser, location: savedLocation };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      window.dispatchEvent(new Event(userUpdatedEvent));
+      setEditingLocation(false);
+      showToast("success", "Your location has been saved.");
+    } catch (error) {
+      const message = axios.isAxiosError(error)
+        ? (typeof error.response?.data?.detail === "string" ? error.response.data.detail : "We couldn't save your location. Please try again.")
+        : error instanceof Error ? error.message : "We couldn't save your location. Please try again.";
+      showToast("error", message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const initials = user?.username.split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase() || "U";
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <p className="text-xs font-bold tracking-[1.5px] text-indigo-500">YOUR ACCOUNT</p>
+        <h1 className="mt-2 text-2xl font-extrabold tracking-tight text-slate-900">Profile</h1>
+        <p className="mt-1 text-sm text-slate-500">Your account information and community details.</p>
+      </div>
+
+      {!user ? (
+        <section className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
+          <UserRound className="mx-auto mb-3 text-slate-400" size={30} />
+          <h2 className="font-semibold text-slate-900">Profile information unavailable</h2>
+          <p className="mt-2 text-sm text-slate-500">Please sign in again to view your account details.</p>
+        </section>
+      ) : (
+        <>
+          <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div className="h-24 bg-gradient-to-r from-indigo-100 via-violet-50 to-teal-50" />
+            <div className="flex flex-wrap items-center gap-4 px-5 pb-5 sm:px-7">
+              <div className="-mt-8 grid h-16 w-16 place-items-center rounded-full border-4 border-white bg-indigo-100 text-xl font-bold text-indigo-700">{initials}</div>
+              <div className="min-w-0 flex-1 pt-3">
+                <h2 className="truncate text-lg font-bold text-slate-900">{user.username}</h2>
+                <p className="truncate text-sm text-slate-500">{user.email}</p>
+              </div>
+              <span className="mt-3 rounded-full bg-teal-50 px-3 py-1.5 text-xs font-semibold text-teal-700">{roleLabel(user.role)}</span>
+            </div>
+          </section>
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+              <div className="mb-5">
+                <h2 className="font-bold text-slate-900">Personal information</h2>
+                <p className="mt-1 text-sm text-slate-500">Details associated with your Dog Territory account.</p>
+              </div>
+              <dl className="divide-y divide-slate-100">
+                <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Full name</dt><dd className="text-right text-sm font-semibold text-slate-800">{user.username}</dd></div>
+                <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Email address</dt><dd className="break-all text-right text-sm font-semibold text-slate-800">{user.email}</dd></div>
+                <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Phone number</dt><dd className="text-right text-sm text-slate-400">Not provided</dd></div>
+                <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Role</dt><dd className="text-right text-sm font-semibold text-slate-800">{roleLabel(user.role)}</dd></div>
+                {user.created_at && <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Member since</dt><dd className="text-right text-sm font-semibold text-slate-800">{new Date(user.created_at).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</dd></div>}
+              </dl>
+              <p className="mt-3 border-t border-slate-100 pt-4 text-xs leading-5 text-slate-400">Personal information is managed through your account registration. Contact support if you need to change your name or email.</p>
+            </section>
+
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div><h2 className="font-bold text-slate-900">Location information</h2><p className="mt-1 text-sm text-slate-500">Your area helps connect you with nearby dogs and community care.</p></div>
+                <MapPin className="shrink-0 text-indigo-500" size={21} />
+              </div>
+              {location ? (
+                <dl className="grid grid-cols-2 gap-4 rounded-xl bg-slate-50 p-4">
+                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">State</dt><dd className="mt-1 break-words text-sm font-semibold text-slate-800">{location.state}</dd></div>
+                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">District</dt><dd className="mt-1 break-words text-sm font-semibold text-slate-800">{location.district}</dd></div>
+                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">Area name</dt><dd className="mt-1 break-words text-sm font-semibold text-slate-800">{location.area_name}</dd></div>
+                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">PIN code</dt><dd className="mt-1 text-sm font-semibold text-slate-800">{location.pincode}</dd></div>
+                </dl>
+              ) : (
+                <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-5 py-7 text-center">
+                  <MapPin className="mx-auto text-slate-400" size={26} />
+                  <p className="mt-3 text-sm font-semibold text-slate-800">You haven't added your location yet</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">Add your area to help us connect you with nearby community care.</p>
+                </div>
+              )}
+              <Button type="button" className="mt-4 w-full justify-center sm:w-auto" onClick={() => setEditingLocation(true)}>
+                {location ? <><Pencil size={15} /> Edit location</> : <><MapPin size={15} /> Add location</>}
+              </Button>
+            </section>
+          </div>
+        </>
+      )}
+
+      {editingLocation && user && (
+        <div className="location-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget && !saving) setEditingLocation(false); }}>
+          <section className="location-modal" role="dialog" aria-modal="true" aria-labelledby="profile-location-title" aria-describedby="profile-location-description">
+            <div className="location-modal-heading">
+              <span className="location-modal-icon" aria-hidden="true"><MapPin size={22} /></span>
+              <span className="location-modal-kicker">YOUR COMMUNITY</span>
+              <h2 id="profile-location-title">{location ? "Edit your location" : "Add your location"}</h2>
+              <p id="profile-location-description">Your area helps us connect you with nearby dogs and community care.</p>
+            </div>
+            <form className="location-modal-form" onSubmit={saveLocation}>
+              <Input label="State" name="state" autoComplete="address-level1" required maxLength={100} defaultValue={location?.state ?? ""} />
+              <Input label="District" name="district" autoComplete="address-level2" required maxLength={100} defaultValue={location?.district ?? ""} />
+              <Input label="Area name" name="area_name" autoComplete="address-line1" required maxLength={150} defaultValue={location?.area_name ?? ""} />
+              <Input label="PIN code" name="pincode" inputMode="numeric" autoComplete="postal-code" required maxLength={6} pattern="[0-9]{6}" title="Enter exactly six digits" hint="Enter your six digit postal PIN code." defaultValue={location?.pincode ?? ""} />
+              <div className="location-modal-actions">
+                <Button type="submit" className="location-save-button" disabled={saving}>{saving ? "Saving…" : "Save location"}</Button>
+                <Button type="button" variant="secondary" className="location-skip-button" onClick={() => setEditingLocation(false)} disabled={saving}><X size={14} /> Cancel</Button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
+    </div>
+  );
 }

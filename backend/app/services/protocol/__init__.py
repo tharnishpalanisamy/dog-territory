@@ -12,6 +12,7 @@ from .refresh_token_service_protocol import RefreshTokenServiceProtocol
 from .reports_service_protocol import ReportsServiceProtocol
 from .veterinarian_service_protocol import VeterinarianServiceProtocol
 from .veterinary_record_service_protocol import VeterinaryRecordServiceProtocol
+from .user_service_protocol import UserServiceProtocol
 from .volunteer_service_protocol import VolunteerServiceProtocol
 from .work_assignment_service_protocol import WorkAssignmentServiceProtocol
 from .work_assignment_update_service_protocol import WorkAssignmentUpdateServiceProtocol
@@ -29,6 +30,7 @@ __all__ = [
     "ReportsServiceProtocol",
     "VeterinarianServiceProtocol",
     "VeterinaryRecordServiceProtocol",
+    "UserServiceProtocol",
     "VolunteerServiceProtocol",
     "WorkAssignmentServiceProtocol",
     "WorkAssignmentUpdateServiceProtocol",

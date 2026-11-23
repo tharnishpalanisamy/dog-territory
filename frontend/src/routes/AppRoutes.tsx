@@ -7,7 +7,6 @@ import AdminOverview from "../pages/admin/OverviewPage";
 import VolunteerOverview from "../pages/volunteer/OverviewPage";
 import VeterinarianOverview from "../pages/veterinarian/OverviewPage";
 import UserOverview from "../pages/user/OverviewPage";
-import ForgotPassword from "../pages/Auth/ForgotPassword";
 
 import {
   DogsPage,
@@ -71,6 +70,7 @@ function AppRoutes() {
         element={<AppLayout role="VETERINARIAN" />}
         >
             <Route index element={<VeterinarianOverview />} />
+            <Route path="profile" element={<ProfilePage />} />
         </Route>
 
 
@@ -79,6 +79,7 @@ function AppRoutes() {
         element={<AppLayout role="USER" />}
         >
             <Route index element={<UserOverview />} />
+            <Route path="profile" element={<ProfilePage />} />
         </Route>
     </Routes>
 

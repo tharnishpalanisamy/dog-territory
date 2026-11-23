@@ -9,12 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core import UserRole
 from app.core.config import setting
 from app.database.connection import get_db
+from app.dependencies.user_dependency import get_user_repository
 from app.exceptions import NotAuthorizedException
 from app.models import User
-from app.repositories.implementation import (
-    RefreshTokenRepository,
-    UserRepository,
-)
+from app.repositories.implementation import RefreshTokenRepository
 from app.repositories.protocols import (
     RefreshTokenRepositoryProtocol,
     UserRepositoryProtocol,
@@ -37,12 +35,6 @@ def get_refresh_token_service(
     ],
 ) -> RefreshTokenServiceProtocol:
     return RefreshTokenService(db, repository)
-
-
-def get_user_repository(
-    db: Annotated[AsyncSession, Depends(get_db)],
-) -> UserRepositoryProtocol:
-    return UserRepository(db)
 
 
 def get_auth_service(

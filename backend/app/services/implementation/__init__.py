@@ -10,6 +10,7 @@ from .refresh_token_service import RefreshTokenService
 from .reports_service import ReportsService
 from .veterinarian_service import VeterinarianService
 from .veterinary_records_service import VeterinaryRecordService
+from .user_service import UserService
 from .volunteer_service import VolunteerService
 from .work_assignment_service import WorkAssignmentService
 from .work_assignment_update_service import WorkAssignmentUpdateService
@@ -27,6 +28,7 @@ __all__ = [
     "ReportsService",
     "VeterinarianService",
     "VeterinaryRecordService",
+    "UserService",
     "VolunteerService",
     "WorkAssignmentService",
     "WorkAssignmentUpdateService",

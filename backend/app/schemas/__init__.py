@@ -47,7 +47,13 @@ from .report import (
     ReportSummaryResponse,
     ReportUpdate,
 )
-from .user import UserCreate, UserResponse
+from .user import (
+    UserCreate,
+    UserLocationResponse,
+    UserLocationUpdate,
+    UserProfileResponse,
+    UserResponse,
+)
 from .veterinarian import (
     VeterinarianApprovalUpdate,
     VeterinarianCreate,
@@ -115,7 +121,10 @@ __all__ = [
     "ResetPasswordRequest",
     "UpdateAssignmentStatus",
     "UserCreate",
+    "UserLocationResponse",
+    "UserLocationUpdate",
     "UserLogin",
+    "UserProfileResponse",
     "UserResponse",
     "VerifyResetOTPRequest",
     "VerifyResetOTPResponse",

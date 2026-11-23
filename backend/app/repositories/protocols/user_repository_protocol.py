@@ -12,6 +12,8 @@ class UserRepositoryProtocol(Protocol):
 
     async def update_password(
         self,
-        id:int,
-        password:str,
+        id: int,
+        password: str,
     ) -> User: ...
+
+    async def update(self, user: User, fields: dict[str, str]) -> User: ...
