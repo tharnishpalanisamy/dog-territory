@@ -24,14 +24,14 @@ export default function AppLayout({
   const onProfilePage = location.pathname.endsWith("/profile");
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="app-workspace flex h-screen overflow-hidden bg-[#f7f8fc] text-[#101d43]">
       <LocationOnboarding />
 
       {/* Mobile overlay */}
       {menuOpen && (
         <button
           onClick={() => setMenuOpen(false)}
-          className="fixed inset-0 z-40 bg-slate-950/40 lg:hidden"
+          className="fixed inset-0 z-40 bg-[#101d43]/40 backdrop-blur-[2px] lg:hidden"
           aria-label="Close sidebar"
         />
       )}

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import DateTime, Enum, ForeignKey, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core import ReportStatus
+from app.core import DogReportType, ReportStatus
 from app.database.base import Base
 
 if TYPE_CHECKING:
@@ -18,7 +18,14 @@ class Report(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     reporter_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     dog_id: Mapped[int | None] = mapped_column(ForeignKey("dogs.id"), nullable=True)
-    report_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    report_type: Mapped[str] = mapped_column(
+        Enum(
+            DogReportType,
+            name="report_type",
+            values_callable=lambda enum_cls: [types.value for types in enum_cls],
+        ),
+        nullable=False,
+    )
     description: Mapped[str | None] = mapped_column(String(255), nullable=True)
     state: Mapped[str] = mapped_column(
         String(100),

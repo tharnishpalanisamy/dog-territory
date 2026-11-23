@@ -33,7 +33,6 @@ from .medical_assignment_update import (
     MedicalAssignmentUpdateResponse,
 )
 from .password_reset import (
-    ForgotPasswordRequest,
     MessageResponse,
     ResetPasswordRequest,
     VerifyResetOTPRequest,

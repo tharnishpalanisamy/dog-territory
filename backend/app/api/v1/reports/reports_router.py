@@ -1,7 +1,5 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, File, Form, Query, UploadFile, status
-
 from app.core import DogReportType, UserRole
 from app.dependencies import (
     get_current_user,
@@ -19,6 +17,7 @@ from app.schemas import (
     ReportUpdate,
 )
 from app.services.protocol import ReportsServiceProtocol, VolunteerServiceProtocol
+from fastapi import APIRouter, Depends, File, Form, Query, UploadFile, status
 
 router = APIRouter(prefix="/reports", tags=["Reports"])
 
@@ -74,8 +73,9 @@ async def get_all_reports(
 async def get_current_user_reports(
     user: Annotated[User, Depends(get_current_user)],
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
+    limit: int = Query(le=100, ge=1, default=20),
 ):
-    return await service.get_current_user_reports(user)
+    return await service.get_current_user_reports(user , limit)
 
 
 @router.get("/{report_id}", response_model=ReportSummaryResponse)
@@ -117,5 +117,6 @@ async def delete_report(
     report_id: int,
     user: Annotated[User, Depends(get_current_user)],
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
+    
 ):
     await service.delete_report(user, report_id)

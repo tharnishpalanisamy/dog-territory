@@ -35,6 +35,11 @@ let refreshPromise: Promise<string> | null = null;
 
 // Attach access token to every outgoing request.
 api.interceptors.request.use((config) => {
+  // Let the browser add the multipart boundary for FormData requests.
+  if (typeof FormData !== "undefined" && config.data instanceof FormData) {
+    config.headers.delete("Content-Type");
+  }
+
   const accessToken = localStorage.getItem("access_token");
 
   if (accessToken) {

@@ -58,7 +58,6 @@ const navigation: Record<UserRole, NavItem[]> = {
     { label: "Overview", path: "/user", icon: LayoutDashboard },
     { label: "Explore Dogs", path: "/user/dogs", icon: Dog },
     { label: "My Reports", path: "/user/reports", icon: FileText },
-    { label: "Report a Dog", path: "/report", icon: PlusCircle },
   ],
 };
 
@@ -89,12 +88,12 @@ export default function Sidebar({
         <aside className="flex h-screen w-[280px] shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white">
       {/* Brand */}
       <div className="flex h-24 items-center gap-3 px-7">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#5555f4] text-white shadow-lg shadow-indigo-600/20">
           <PawPrint size={25} />
         </div>
 
         <div>
-          <h1 className="text-xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-xl font-bold tracking-tight text-[#101d43]">
             dog territory
           </h1>
           <p className="mt-1 text-[10px] font-semibold tracking-[2px] text-slate-400">
@@ -105,7 +104,7 @@ export default function Sidebar({
 
       {/* Navigation */}
       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
-        <p className="mb-4 px-4 text-xs font-bold tracking-[1.5px] text-slate-400">
+        <p className="mb-4 px-4 text-[10px] font-extrabold tracking-[1.5px] text-[#8993a8]">
           WORKSPACE
         </p>
 
@@ -117,12 +116,12 @@ export default function Sidebar({
               <NavLink
                 key={item.path}
                 to={item.path}
-                end
+                end={item.path === "/user" || item.path === "/admin" || item.path === "/volunteer" || item.path === "/veterinarian"}
                 className={({ isActive }) =>
                   `flex items-center gap-4 rounded-xl px-4 py-3.5 text-sm font-medium transition-all ${
                     isActive
-                      ? "bg-indigo-50 text-indigo-600"
-                      : "text-slate-600 hover:bg-slate-50 hover:text-indigo-600"
+                      ? "bg-[#f0f0ff] text-[#5555f4]"
+                      : "text-[#526079] hover:bg-[#f7f8fc] hover:text-[#5555f4]"
                   }`
                 }
               >
@@ -135,15 +134,15 @@ export default function Sidebar({
           {/* Available to every role */}
           <NavLink
             to={`/${role.toLowerCase()}/rabies-awareness`}
-            className={({ isActive }) =>
+                className={({ isActive }) =>
               `flex items-center gap-4 rounded-xl px-4 py-3.5 text-sm font-medium transition-all ${
                 isActive
-                  ? "bg-indigo-50 text-indigo-600"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-indigo-600"
+                  ? "bg-[#e3f8f3] text-[#0b9488]"
+                  : "text-[#526079] hover:bg-[#f1faf8] hover:text-[#0b9488]"
               }`
             }
           >
-            <PlusCircle size={20} strokeWidth={1.8} />
+            <ShieldCheck size={20} strokeWidth={1.8} />
             <span>Rabies Awareness</span>
           </NavLink>
         </nav>
@@ -175,13 +174,13 @@ export default function Sidebar({
       <div className="border-t border-slate-100 p-5">
         <NavLink
           to={profilePath}
-          className={({ isActive }) =>
-            `flex items-center gap-3 rounded-xl p-2 transition hover:bg-slate-50 ${
-              isActive ? "bg-indigo-50" : ""
+            className={({ isActive }) =>
+              `flex items-center gap-3 rounded-xl p-2 transition hover:bg-slate-50 ${
+              isActive ? "bg-[#f0f0ff]" : ""
             }`
           }
         >
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-600">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#eeeefe] text-sm font-bold text-[#5555f4]">
             {initials || <UserRound size={19} />}
           </div>
 

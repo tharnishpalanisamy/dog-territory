@@ -9,10 +9,12 @@ class UserRole(str, enum.Enum):
 
 
 class DogReportType(str, enum.Enum):
-    AGGRESSIVE = "aggessive"
+    AGGRESSIVE = "aggressive"
     SICK = "sick"
     INJURED = "injured"
     UNCOLLARED = "uncollared"
+    DECEASED = "deceased"
+    OTHER = "other"
 
 
 class ReportStatus(str, enum.Enum):

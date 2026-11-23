@@ -6,7 +6,11 @@ from app.schemas import UserLocationUpdate
 
 
 class UserService:
-    def __init__(self, db: AsyncSession, repository: UserRepositoryProtocol):
+    def __init__(
+        self,
+        db: AsyncSession,
+        repository: UserRepositoryProtocol,
+    ):
         self.db = db
         self.repository = repository
 

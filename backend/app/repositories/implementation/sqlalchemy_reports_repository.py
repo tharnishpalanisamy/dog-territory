@@ -45,7 +45,9 @@ class ReportsRepository:
 
         return await self.db.scalar(query)
 
-    async def get_by_reporter_id(self, reporter_id) -> list[Report]:
+    async def get_by_reporter_id(
+        self, reporter_id: int, limit: int = 20
+    ) -> list[Report]:
         query = select(Report).where(Report.reporter_id == reporter_id)
 
         result = await self.db.scalars(query)

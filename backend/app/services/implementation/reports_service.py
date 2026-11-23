@@ -2,12 +2,18 @@ from fastapi import UploadFile
 
 from app.exceptions import DogNotFoundException, ReportNotFoundException
 from app.models import Report, User
+from app.repositories.protocols import DogRepositoryProtocol, ReportsRepositoryProtocol
 from app.schemas import ReportCreate, ReportUpdate
 from app.utilities import delete_image, save_image
 
 
 class ReportsService:
-    def __init__(self, db, repository, dog_repository):
+    def __init__(
+        self,
+        db,
+        repository: ReportsRepositoryProtocol,
+        dog_repository: DogRepositoryProtocol,
+    ):
         self.db = db
         self.report_repository = repository
         self.dog_repository = dog_repository
@@ -62,8 +68,8 @@ class ReportsService:
             raise ReportNotFoundException(f"Report with id {report_id} is not Found !")
         return result
 
-    async def get_current_user_reports(self, user: User) -> list[Report]:
-        result = await self.report_repository.get_by_reporter_id(user.id)
+    async def get_current_user_reports(self, user: User, limit: int) -> list[Report]:
+        result = await self.report_repository.get_by_reporter_id(user.id, limit)
         return result
 
     async def update_status_by_report_id(self, report_id, report_data):

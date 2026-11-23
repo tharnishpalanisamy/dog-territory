@@ -18,7 +18,7 @@ import {
 import {
   ReportsPage,
   ReportDetailsPage,
-  CreateReportPage,
+  CreateReportPage as AdminCreateReportPage,
 } from "../pages/reports/ReportsPages";
 
 import {
@@ -28,6 +28,7 @@ import {
 
 import ProfilePage from "../pages/profile/ProfilePage";
 import RabiesAwarenessPage from "../pages/awareness/RabiesAwarenessPage";
+import CreateReportPage, { UserReportsPage, UserReportDetailsPage } from "../pages/reports/CreateReportPage";
 
 function AppRoutes() {
   return (
@@ -43,7 +44,7 @@ function AppRoutes() {
         <Route path="dogs/:id/edit" element={<DogEditPage />} />
 
         <Route path="reports" element={<ReportsPage />} />
-        <Route path="reports/create" element={<CreateReportPage />} />
+        <Route path="reports/create" element={<AdminCreateReportPage />} />
         <Route path="reports/:id" element={<ReportDetailsPage />} />
 
         <Route path="volunteers" element={<VolunteersPage />} />
@@ -79,6 +80,9 @@ function AppRoutes() {
         element={<AppLayout role="USER" />}
         >
             <Route index element={<UserOverview />} />
+            <Route path="reports" element={<UserReportsPage />} />
+            <Route path="reports/create" element={<CreateReportPage />} />
+            <Route path="reports/:id" element={<UserReportDetailsPage />} />
             <Route path="profile" element={<ProfilePage />} />
         </Route>
     </Routes>
