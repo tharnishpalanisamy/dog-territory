@@ -29,12 +29,12 @@ async def create_report(
     report_type: Annotated[DogReportType, Form()],
     user: Annotated[User, Depends(get_current_user)],
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
-    description: str = Form(...),
+    description: str = Form(),
     state: str = Form(...),
     district: str = Form(...),
     area_name: str = Form(...),
     pincode: str = Form(...),
-    location: str = Form(...),
+    landmark: str = Form(...),
     dog_code: Annotated[str | None, Form()] = None,
     image: Annotated[UploadFile | None, File()] = None,
 ):
@@ -46,7 +46,7 @@ async def create_report(
         district=district,
         area_name=area_name,
         pincode=pincode,
-        location=location,
+        landmark=landmark,
         dog_code=dog_code,
     )
 
@@ -75,7 +75,7 @@ async def get_current_user_reports(
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
     limit: int = Query(le=100, ge=1, default=20),
 ):
-    return await service.get_current_user_reports(user , limit)
+    return await service.get_current_user_reports(user, limit)
 
 
 @router.get("/{report_id}", response_model=ReportSummaryResponse)
@@ -117,6 +117,5 @@ async def delete_report(
     report_id: int,
     user: Annotated[User, Depends(get_current_user)],
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
-    
 ):
     await service.delete_report(user, report_id)

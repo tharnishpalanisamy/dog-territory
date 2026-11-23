@@ -26,7 +26,7 @@ interface Report {
   report_type: string;
   description: string | null;
   pincode: string;
-  location: string;
+  landmark: string;
   image_filename: string | null;
   status: ReportStatus;
   created_at: string;
@@ -228,7 +228,7 @@ export default function MyRecentReports() {
                 <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-slate-400">
                   <span className="flex items-center gap-1">
                     <MapPin size={13} />
-                    {report.location || "Location unavailable"}
+                    {report.landmark || "Location unavailable"}
                   </span>
 
                   {report.pincode && (

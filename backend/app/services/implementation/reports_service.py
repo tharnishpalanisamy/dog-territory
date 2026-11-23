@@ -41,7 +41,7 @@ class ReportsService:
             district=data.district,
             area_name=data.area_name,
             pincode=data.pincode,
-            location=data.location,
+            landmark=data.landmark,
             image_filename=None if image is None else filename,
             image_path=None if image is None else file_path,
         )

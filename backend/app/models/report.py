@@ -38,7 +38,7 @@ class Report(Base):
     )
     pincode: Mapped[str] = mapped_column(String(10), nullable=False)
     area_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    location: Mapped[str] = mapped_column(Text, nullable=False)
+    landmark: Mapped[str] = mapped_column(Text, nullable=False)
     image_filename: Mapped[str | None] = mapped_column(String(255), nullable=True)
     image_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
 

@@ -12,7 +12,7 @@ class ReportCreate(BaseModel):
     district: str
     area_name: str
     pincode: str
-    location: str
+    landmark: str
     dog_code: str | None = None
 
 
@@ -23,7 +23,7 @@ class ReportUpdate(BaseModel):
     district: str | None = None
     area_name: str | None = None
     pincode: str | None = None
-    location: str | None = None
+    landmark: str | None = None
     dog_code: str | None = None
 
 
@@ -34,7 +34,7 @@ class ReportResponse(BaseModel):
     report_type: DogReportType
     description: str | None
     pincode: str
-    location: str
+    landmark: str
     image_filename: str | None
     status: ReportStatus
     created_at: datetime
@@ -48,7 +48,7 @@ class ReportSummaryResponse(BaseModel):
     report_type: DogReportType
     description: str | None
     pincode: str
-    location: str
+    landmark: str
     status: ReportStatus
     created_at: datetime
     model_config = ConfigDict(from_attributes=True)

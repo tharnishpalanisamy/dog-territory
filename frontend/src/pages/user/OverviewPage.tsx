@@ -26,7 +26,6 @@ async function fetch_statisitcs() {
   return response.data;
 }
 
-
 export default function OverviewPage() {
   const navigate = useNavigate();
 
@@ -46,10 +45,6 @@ export default function OverviewPage() {
     resolved: 0,
   });
 
-  const [recentReport , setRecentReports] = useState([
-
-  ])
-
   useEffect(() => {
     if (!user) {
       navigate("/signin", { replace: true });
@@ -62,7 +57,7 @@ export default function OverviewPage() {
     fetch_statisitcs()
       .then((res) => setStatistics(res))
       .catch((error) => console.log("Failed to fetch statistics", error));
-  });
+  }, []);
 
   return (
     <>
