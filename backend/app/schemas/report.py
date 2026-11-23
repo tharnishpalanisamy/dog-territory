@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field
+import re
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.core import DogReportType, ReportStatus
 
@@ -14,6 +16,17 @@ class ReportCreate(BaseModel):
     pincode: str
     landmark: str
     dog_code: str | None = None
+    phone_number: str | None = Field(default=None, max_length=20)
+
+    @field_validator("phone_number")
+    @classmethod
+    def validate_phone_number(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+        normalized = re.sub(r"[\s()-]", "", value)
+        if not re.fullmatch(r"(?:\+91)?[6-9]\d{9}", normalized):
+            raise ValueError("Enter a valid Indian phone number")
+        return normalized if normalized.startswith("+91") else f"+91{normalized}"
 
 
 class ReportUpdate(BaseModel):

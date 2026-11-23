@@ -1,8 +1,8 @@
-"""intial schema
+"""initial schema
 
-Revision ID: 48834719b90a
+Revision ID: ee2932233fb7
 Revises: 
-Create Date: 2026-11-22 11:24:25.079679
+Create Date: 2026-11-23 22:44:38.492698
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '48834719b90a'
+revision: str = 'ee2932233fb7'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -42,10 +42,15 @@ def upgrade() -> None:
     sa.Column('username', sa.String(length=100), nullable=False),
     sa.Column('password_hash', sa.String(length=255), nullable=False),
     sa.Column('role', sa.Enum('admin', 'volunteer', 'user', 'veterinarian', name='userrole'), nullable=False),
+    sa.Column('state', sa.String(length=100), nullable=True),
+    sa.Column('district', sa.String(length=100), nullable=True),
+    sa.Column('area_name', sa.String(length=150), nullable=True),
+    sa.Column('pincode', sa.String(length=6), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
     )
+    op.create_index(op.f('ix_users_pincode'), 'users', ['pincode'], unique=False)
     op.create_table('dogs',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('dog_code', sa.String(length=20), nullable=False),
@@ -164,13 +169,13 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('reporter_id', sa.Integer(), nullable=False),
     sa.Column('dog_id', sa.Integer(), nullable=True),
-    sa.Column('report_type', sa.String(length=50), nullable=False),
+    sa.Column('report_type', sa.Enum('aggressive', 'sick', 'injured', 'uncollared', 'deceased', 'other', name='report_type'), nullable=False),
     sa.Column('description', sa.String(length=255), nullable=True),
     sa.Column('state', sa.String(length=100), nullable=False),
     sa.Column('district', sa.String(length=100), nullable=False),
     sa.Column('pincode', sa.String(length=10), nullable=False),
     sa.Column('area_name', sa.String(length=100), nullable=False),
-    sa.Column('location', sa.Text(), nullable=False),
+    sa.Column('landmark', sa.Text(), nullable=False),
     sa.Column('image_filename', sa.String(length=255), nullable=True),
     sa.Column('image_path', sa.String(length=500), nullable=True),
     sa.Column('status', sa.Enum('pending', 'in_progress', 'resolved', 'rejected', name='report_status'), nullable=False),
@@ -335,6 +340,7 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_dogs_dog_number'), table_name='dogs')
     op.drop_index(op.f('ix_dogs_dog_code'), table_name='dogs')
     op.drop_table('dogs')
+    op.drop_index(op.f('ix_users_pincode'), table_name='users')
     op.drop_table('users')
     op.drop_index(op.f('ix_clinics_pincode'), table_name='clinics')
     op.drop_index(op.f('ix_clinics_id'), table_name='clinics')

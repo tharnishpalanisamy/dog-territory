@@ -43,6 +43,7 @@ interface ProfileUser {
   location?: UserLocation | null;
   state?: string | null;
   district?: string | null;
+  phone_number?: string | null;
 }
 interface ReportSummary {
   id: number;
@@ -68,7 +69,8 @@ type FieldName =
   | "pincode"
   | "landmark"
   | "dog_code"
-  | "image";
+  | "image"
+  | "phone_number";
 type FieldErrors = Partial<Record<FieldName, string>>;
 
 const reportTypes: {
@@ -136,6 +138,7 @@ export default function CreateReportPage() {
   const { showToast } = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
   const [profileLocation, setProfileLocation] = useState(savedLocation);
+  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
   const [reportType, setReportType] = useState<ReportType | "">("");
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
@@ -153,6 +156,7 @@ export default function CreateReportPage() {
           state: data.location?.state ?? data.state ?? "",
           district: data.location?.district ?? data.district ?? "",
         });
+        setPhoneNumber(data.phone_number ?? null);
       })
       .catch(() => {
         /* Use the cached profile location when offline. */
@@ -222,6 +226,12 @@ export default function CreateReportPage() {
     if (image && !ACCEPTED_TYPES.includes(image.type))
       next.image = "Choose a JPEG, PNG or WEBP image.";
     else if (!image && errors.image) next.image = errors.image;
+    if (!phoneNumber) {
+      const enteredPhone = String(data.get("phone_number") ?? "").trim();
+      const compactPhone = enteredPhone.replace(/[\s()-]/g, "");
+      if (enteredPhone && !/^(?:\+91)?[6-9]\d{9}$/.test(compactPhone))
+        next.phone_number = "Enter a valid 10 digit Indian mobile number.";
+    }
     setErrors(next);
     return { data, valid: Object.keys(next).length === 0 };
   }
@@ -245,6 +255,11 @@ export default function CreateReportPage() {
       body.append(field, String(data.get(field) ?? "").trim());
     const dogCode = String(data.get("dog_code") ?? "").trim();
     if (dogCode) body.append("dog_code", dogCode);
+    const enteredPhone = String(data.get("phone_number") ?? "").trim();
+    if (!phoneNumber && enteredPhone) {
+      const digits = enteredPhone.replace(/\D/g, "");
+      body.append("phone_number", `+91${digits.slice(-10)}`);
+    }
     if (image) body.append("image", image);
     setSubmitting(true);
     try {
@@ -493,6 +508,27 @@ export default function CreateReportPage() {
               and exact location above.
             </p> */}
           </section>
+          {!phoneNumber && (
+            <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+              <label className="block">
+                <span className="text-sm font-semibold text-slate-700">
+                  Phone number <span className="font-normal text-slate-400">(optional)</span>
+                </span>
+                <input
+                  name="phone_number"
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel-national"
+                  maxLength={16}
+                  placeholder="98765 43210"
+                  onChange={() => setErrors((current) => ({ ...current, phone_number: undefined }))}
+                  className="mt-2 w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50"
+                />
+                <p className="mt-1.5 text-xs text-slate-500">We’ll save this to your profile for future reports.</p>
+                {errors.phone_number && <p className="mt-1.5 text-sm text-rose-600" role="alert">{errors.phone_number}</p>}
+              </label>
+            </section>
+          )}
           <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
             <div className="mb-5 flex items-start gap-3">
               <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-indigo-50 text-sm font-bold text-indigo-600">

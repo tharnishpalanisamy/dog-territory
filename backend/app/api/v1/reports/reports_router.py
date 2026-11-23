@@ -36,6 +36,7 @@ async def create_report(
     pincode: str = Form(...),
     landmark: str = Form(...),
     dog_code: Annotated[str | None, Form()] = None,
+    phone_number: Annotated[str | None, Form()] = None,
     image: Annotated[UploadFile | None, File()] = None,
 ):
 
@@ -48,6 +49,7 @@ async def create_report(
         pincode=pincode,
         landmark=landmark,
         dog_code=dog_code,
+        phone_number=phone_number,
     )
 
     return await service.create_report(user, data, image)

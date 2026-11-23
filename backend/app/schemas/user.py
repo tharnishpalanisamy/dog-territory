@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+import re
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class UserCreate(BaseModel):
@@ -33,10 +35,50 @@ class UserLocationResponse(BaseModel):
 
 
 class UserProfileResponse(UserResponse):
+    phone_number: str | None = None
     created_at: datetime | None = None
     state: str | None = None
     district: str | None = None
     area_name: str | None = None
     pincode: str | None = None
+
+
+class UserPhoneNumberUpdate(BaseModel):
+    phone_number: str | None = Field(max_length=20)
+
+    @field_validator("phone_number")
+    @classmethod
+    def validate_phone_number(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+        normalized = re.sub(r"[\s()-]", "", value)
+        if not re.fullmatch(r"(?:\+91)?[6-9]\d{9}", normalized):
+            raise ValueError("Enter a valid Indian phone number")
+        return normalized if normalized.startswith("+91") else f"+91{normalized}"
+
+
+class UserProfileUpdate(BaseModel):
+    username: str | None = Field(default=None, min_length=1, max_length=100)
+    phone_number: str | None = Field(default=None, max_length=20)
+
+    @field_validator("username")
+    @classmethod
+    def validate_username(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+        normalized = value.strip()
+        if not normalized:
+            raise ValueError("Username cannot be blank")
+        return normalized
+
+    @field_validator("phone_number")
+    @classmethod
+    def validate_profile_phone_number(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+        normalized = re.sub(r"[\s()-]", "", value)
+        if not re.fullmatch(r"(?:\+91)?[6-9]\d{9}", normalized):
+            raise ValueError("Enter a valid Indian phone number")
+        return normalized if normalized.startswith("+91") else f"+91{normalized}"
 
 

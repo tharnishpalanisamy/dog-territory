@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, NavLink } from 'react-router-dom'
+import api from '../../lib/api'
 import './Profile.css'
 
 const profileNav = [
@@ -13,10 +14,34 @@ const profileNav = [
 export default function Profile() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [phoneError, setPhoneError] = useState('')
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  useState(() => {
+    api.get<{ phone_number: string | null }>('/users/me')
+      .then(({ data }) => setPhoneNumber(data.phone_number ?? ''))
+      .catch(() => undefined)
+  })
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setSaved(true)
+    const compactPhone = phoneNumber.replace(/[\s()-]/g, '')
+    if (compactPhone && !/^(?:\+91)?[6-9]\d{9}$/.test(compactPhone)) {
+      setPhoneError('Enter a valid 10 digit Indian mobile number.')
+      setSaved(false)
+      return
+    }
+    setPhoneError('')
+    try {
+      const digits = compactPhone.replace(/\D/g, '')
+      const normalized = compactPhone ? `+91${digits.slice(-10)}` : null
+      await api.patch('/users/me/phone', { phone_number: normalized })
+      setPhoneNumber(normalized ?? '')
+      setSaved(true)
+    } catch {
+      setSaved(false)
+      setPhoneError('Could not save your phone number. Please try again.')
+    }
   }
 
   return <div className="profile-app">
@@ -35,8 +60,8 @@ export default function Profile() {
         <div className="profile-layout">
           <form className="profile-card profile-form" onSubmit={handleSubmit}>
             <div className="profile-card-heading"><div><h2>Personal information</h2><p>Update your details so your community knows who you are.</p></div><span className="profile-lock">⌑ Private to you</span></div>
-            <div className="profile-form-grid"><label>Full name<input defaultValue="Tharnish" name="name" autoComplete="name"/></label><label>Email address<input defaultValue="tharnish@example.com" name="email" type="email" autoComplete="email"/></label><label>Phone number<input defaultValue="+91 98765 43210" name="phone" type="tel" autoComplete="tel"/></label><label>Neighborhood<input defaultValue="Indiranagar" name="neighborhood" autoComplete="address-level3"/></label><label className="profile-wide">About you<textarea name="bio" rows={4} defaultValue="I care about the dogs in my neighborhood and want to help make sure they get the support they need."/></label></div>
-            <div className="profile-form-footer"><span className={saved ? 'profile-saved' : ''}>{saved ? '✓ Changes saved locally' : 'Your information stays in your control.'}</span><button type="submit" className="profile-save">Save changes <span>→</span></button></div>
+            <div className="profile-form-grid"><label>Full name<input defaultValue="Tharnish" name="name" autoComplete="name"/></label><label>Email address<input defaultValue="tharnish@example.com" name="email" type="email" autoComplete="email"/></label><label>Phone number<input value={phoneNumber} onChange={(event) => { setPhoneNumber(event.target.value); setSaved(false); }} name="phone" type="tel" autoComplete="tel" placeholder="98765 43210"/>{phoneError && <small role="alert">{phoneError}</small>}</label><label>Neighborhood<input defaultValue="Indiranagar" name="neighborhood" autoComplete="address-level3"/></label><label className="profile-wide">About you<textarea name="bio" rows={4} defaultValue="I care about the dogs in my neighborhood and want to help make sure they get the support they need."/></label></div>
+            <div className="profile-form-footer"><span className={saved ? 'profile-saved' : ''}>{saved ? '✓ Changes saved' : 'Your information stays in your control.'}</span><button type="submit" className="profile-save">Save changes <span>→</span></button></div>
           </form>
           <aside className="profile-side-column">
             <section className="profile-card profile-community-card"><span className="profile-eyebrow">YOUR CONTRIBUTION</span><h2>Making a difference, one day at a time.</h2><div className="profile-contrib"><span className="contrib-icon">▤</span><span><b>12</b><small>Reports shared</small></span></div><div className="profile-contrib"><span className="contrib-icon teal">✓</span><span><b>8</b><small>Sightings verified</small></span></div><Link to="/reports">See my reports <span>→</span></Link></section>

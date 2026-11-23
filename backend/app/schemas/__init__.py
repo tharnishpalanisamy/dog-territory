@@ -50,6 +50,8 @@ from .user import (
     UserCreate,
     UserLocationResponse,
     UserLocationUpdate,
+    UserPhoneNumberUpdate,
+    UserProfileUpdate,
     UserProfileResponse,
     UserResponse,
 )
@@ -122,6 +124,8 @@ __all__ = [
     "UserCreate",
     "UserLocationResponse",
     "UserLocationUpdate",
+    "UserPhoneNumberUpdate",
+    "UserProfileUpdate",
     "UserLogin",
     "UserProfileResponse",
     "UserResponse",

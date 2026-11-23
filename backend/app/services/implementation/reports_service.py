@@ -20,6 +20,9 @@ class ReportsService:
 
     async def create_report(self, user: User, data: ReportCreate, image: UploadFile):
 
+        if user.phone_number is None and data.phone_number is not None:
+            user.phone_number = data.phone_number
+
         if data.dog_code is not None:
             dog = await self.dog_repository.get_by_dog_code(data.dog_code)
 

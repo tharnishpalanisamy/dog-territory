@@ -10,7 +10,7 @@ from app.services.implementation.reports_service import ReportsService
 
 @pytest.mark.asyncio
 async def test_create_report_links_known_dog_and_commits():
-    user = SimpleNamespace(id=2)
+    user = SimpleNamespace(id=2, phone_number=None)
     db = SimpleNamespace(commit=AsyncMock(), rollback=AsyncMock())
     report_repo = SimpleNamespace(create=AsyncMock(side_effect=lambda report: report))
     dog_repo = SimpleNamespace(
@@ -26,7 +26,7 @@ async def test_create_report_links_known_dog_and_commits():
             district="Bengaluru",
             area_name="Park",
             pincode="560001",
-            location="Park",
+            landmark="Park",
             dog_code="560001-1",
         ),
         None,
@@ -43,14 +43,14 @@ async def test_create_report_rejects_unknown_dog():
     service = ReportsService(db, SimpleNamespace(), dog_repo)
     with pytest.raises(DogNotFoundException):
         await service.create_report(
-            SimpleNamespace(id=2),
+            SimpleNamespace(id=2, phone_number=None),
             ReportCreate(
                 report_type="sick",
                 state="Karnataka",
                 district="Bengaluru",
                 area_name="Park",
                 pincode="560001",
-                location="Park",
+            landmark="Park",
                 dog_code="missing",
             ),
             None,

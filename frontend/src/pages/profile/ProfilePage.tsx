@@ -17,6 +17,7 @@ interface ProfileUser {
   id: number;
   username: string;
   email: string;
+  phone_number?: string | null;
   role: string;
   created_at?: string;
   location?: UserLocation | null;
@@ -63,6 +64,9 @@ function roleLabel(role: string): string {
 export default function ProfilePage() {
   const [user, setUser] = useState<ProfileUser | null>(readUser);
   const [editingLocation, setEditingLocation] = useState(false);
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileUsername, setProfileUsername] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
   const [saving, setSaving] = useState(false);
   const { showToast } = useToast();
   const location = user ? getLocation(user) : null;
@@ -161,6 +165,45 @@ export default function ProfilePage() {
     }
   }
 
+  async function saveProfile(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!user || saving) return;
+    const username = profileUsername.trim();
+    const compactPhone = profilePhone.replace(/[\s()-]/g, "");
+    if (!username) {
+      showToast("error", "Username cannot be blank.");
+      return;
+    }
+    if (compactPhone && !/^(?:\+91)?[6-9]\d{9}$/.test(compactPhone)) {
+      showToast("error", "Enter a valid 10 digit Indian mobile number.");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const digits = compactPhone.replace(/\D/g, "");
+      const phoneNumber = compactPhone ? `+91${digits.slice(-10)}` : null;
+      const response = await api.patch<ProfileUser>("/users/me", { username, phone_number: phoneNumber });
+      const latestUser = readUser();
+      if (!latestUser || latestUser.id !== user.id) {
+        throw new Error("Your session changed. Please sign in again and retry.");
+      }
+      const updatedUser = { ...latestUser, ...response.data };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      window.dispatchEvent(new Event(userUpdatedEvent));
+      setEditingProfile(false);
+      showToast("success", "Your profile has been saved.");
+    } catch (error) {
+      const message = axios.isAxiosError(error)
+        ? (typeof error.response?.data?.detail === "string" ? error.response.data.detail : "We couldn't save your profile. Please try again.")
+        : error instanceof Error ? error.message : "We couldn't save your profile. Please try again.";
+      showToast("error", message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   const initials = user?.username.split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase() || "U";
 
   return (
@@ -198,13 +241,13 @@ export default function ProfilePage() {
                 <p className="mt-1 text-sm text-slate-500">Details associated with your Dog Territory account.</p>
               </div>
               <dl className="divide-y divide-slate-100">
-                <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Full name</dt><dd className="text-right text-sm font-semibold text-slate-800">{user.username}</dd></div>
+                <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Username</dt><dd className="flex items-center gap-3 text-right text-sm font-semibold text-slate-800">{user.username}<button type="button" className="text-indigo-600 hover:text-indigo-800" onClick={() => { setProfileUsername(user.username); setProfilePhone(user.phone_number ?? ""); setEditingProfile(true); }}>Edit</button></dd></div>
                 <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Email address</dt><dd className="break-all text-right text-sm font-semibold text-slate-800">{user.email}</dd></div>
-                <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Phone number</dt><dd className="text-right text-sm text-slate-400">Not provided</dd></div>
+                <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Phone number</dt><dd className="flex items-center gap-3 text-right text-sm text-slate-800"><span className={user.phone_number ? "font-semibold" : "text-slate-400"}>{user.phone_number ?? "Not provided"}</span><button type="button" className="font-semibold text-indigo-600 hover:text-indigo-800" onClick={() => { setProfileUsername(user.username); setProfilePhone(user.phone_number ?? ""); setEditingProfile(true); }}>Edit</button></dd></div>
                 <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Role</dt><dd className="text-right text-sm font-semibold text-slate-800">{roleLabel(user.role)}</dd></div>
                 {user.created_at && <div className="flex items-start justify-between gap-4 py-3"><dt className="text-sm text-slate-500">Member since</dt><dd className="text-right text-sm font-semibold text-slate-800">{new Date(user.created_at).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}</dd></div>}
               </dl>
-              <p className="mt-3 border-t border-slate-100 pt-4 text-xs leading-5 text-slate-400">Personal information is managed through your account registration. Contact support if you need to change your name or email.</p>
+              <p className="mt-3 border-t border-slate-100 pt-4 text-xs leading-5 text-slate-400">You can update your username and phone number at any time.</p>
             </section>
 
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
@@ -251,6 +294,27 @@ export default function ProfilePage() {
               <div className="location-modal-actions">
                 <Button type="submit" className="location-save-button" disabled={saving}>{saving ? "Saving…" : "Save location"}</Button>
                 <Button type="button" variant="secondary" className="location-skip-button" onClick={() => setEditingLocation(false)} disabled={saving}><X size={14} /> Cancel</Button>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
+
+      {editingProfile && user && (
+        <div className="location-modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget && !saving) setEditingProfile(false); }}>
+          <section className="location-modal" role="dialog" aria-modal="true" aria-labelledby="profile-edit-title">
+            <div className="location-modal-heading">
+              <span className="location-modal-icon" aria-hidden="true"><Pencil size={20} /></span>
+              <span className="location-modal-kicker">YOUR ACCOUNT</span>
+              <h2 id="profile-edit-title">Edit your profile</h2>
+              <p>Update the username and phone number on your account.</p>
+            </div>
+            <form className="location-modal-form" onSubmit={saveProfile}>
+              <Input label="Username" name="username" required minLength={1} maxLength={100} value={profileUsername} onChange={(event) => setProfileUsername(event.target.value)} autoComplete="name" />
+              <Input label="Phone number" name="phone_number" type="tel" maxLength={20} value={profilePhone} onChange={(event) => setProfilePhone(event.target.value)} autoComplete="tel" placeholder="98765 43210" hint="Enter a valid 10 digit Indian mobile number. Leave blank to remove it." />
+              <div className="location-modal-actions">
+                <Button type="submit" className="location-save-button" disabled={saving}>{saving ? "Saving…" : "Save changes"}</Button>
+                <Button type="button" variant="secondary" className="location-skip-button" onClick={() => setEditingProfile(false)} disabled={saving}><X size={14} /> Cancel</Button>
               </div>
             </form>
           </section>

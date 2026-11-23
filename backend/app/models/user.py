@@ -26,6 +26,8 @@ class User(Base):
 
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
 
+    phone_number: Mapped[str | None] = mapped_column(String(20), nullable=True)
+
     role: Mapped[UserRole] = mapped_column(
         SQLAlchemyEnum(
             UserRole,

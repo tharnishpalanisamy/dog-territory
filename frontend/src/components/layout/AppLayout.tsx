@@ -50,7 +50,7 @@ export default function AppLayout({
       </div>
 
       {/* Main content - independent scrolling */}
-      <div className="flex h-screen min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
+      <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
 
         <div className="sticky top-0 z-30 shrink-0">
           <Navbar
