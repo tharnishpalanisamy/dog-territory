@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core import UserRole, VolunteerApprovalStatus
+from app.core import UserRole, VolunteerApprovalStatus, VolunteerAvailability
 
 # Use your project's existing custom exceptions here.
 from app.exceptions import (
@@ -101,6 +101,24 @@ class VolunteerService(VolunteerServiceProtocol):
         return await self.repository.get_all(
             limit=limit,
             offset=offset,
+        )
+
+    async def get_nearby(
+        self,
+        pincode: str | None,
+        limit: int,
+        offset: int,
+        availability: VolunteerAvailability | None = None,
+        search: str | None = None,
+    ) -> list[Volunteer]:
+        if not pincode:
+            return []
+        return await self.repository.get_nearby(
+            pincode=pincode,
+            limit=limit,
+            offset=offset,
+            availability=availability,
+            search=search,
         )
 
     async def get_by_id(self, volunteer_id: int) -> Volunteer:

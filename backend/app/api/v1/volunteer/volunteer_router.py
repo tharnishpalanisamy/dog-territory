@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from app.core import UserRole
+from app.core import UserRole, VolunteerAvailability
 from app.dependencies import (
     get_volunteer_service,
     require_roles,
@@ -9,6 +9,7 @@ from app.models import User
 from app.schemas import (
     VolunteerApprovalUpdate,
     VolunteerCreate,
+    VolunteerPublicResponse,
     VolunteerResponse,
     VolunteerUpdate,
 )
@@ -37,7 +38,7 @@ async def create_volunteer_profile(
 async def get_my_volunteer_profile(
     user: Annotated[
         User,
-        Depends(require_roles(UserRole.VOLUNTEER)),
+        Depends(require_roles(UserRole.VOLUNTEER, UserRole.USER)),
     ],
     service: Annotated[
         VolunteerServiceProtocol,
@@ -52,7 +53,7 @@ async def update_my_volunteer_profile(
     data: VolunteerUpdate,
     user: Annotated[
         User,
-        Depends(require_roles(UserRole.VOLUNTEER)),
+        Depends(require_roles(UserRole.VOLUNTEER, UserRole.USER)),
     ],
     service: Annotated[
         VolunteerServiceProtocol,
@@ -66,7 +67,7 @@ async def update_my_volunteer_profile(
 async def get_all_volunteers(
     user: Annotated[
         User,
-        Depends(require_roles(UserRole.ADMIN)),
+        Depends(require_roles(UserRole.ADMIN, UserRole.USER)),
     ],
     service: Annotated[
         VolunteerServiceProtocol,
@@ -78,12 +79,29 @@ async def get_all_volunteers(
     return await service.get_all(limit, offset)
 
 
+@router.get("/nearby", response_model=list[VolunteerPublicResponse])
+async def get_nearby_volunteers(
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.USER))],
+    service: Annotated[
+        VolunteerServiceProtocol,
+        Depends(get_volunteer_service),
+    ],
+    limit: int = Query(default=10, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    availability: VolunteerAvailability | None = Query(default=None),
+    search: str | None = Query(default=None, min_length=1),
+):
+    return await service.get_nearby(
+        user.pincode, limit, offset, availability, search
+    )
+
+
 @router.get("/{volunteer_id}", response_model=VolunteerResponse)
 async def get_volunteer(
     volunteer_id: int,
     user: Annotated[
         User,
-        Depends(require_roles(UserRole.ADMIN)),
+        Depends(require_roles(UserRole.ADMIN, UserRole.USER)),
     ],
     service: Annotated[
         VolunteerServiceProtocol,

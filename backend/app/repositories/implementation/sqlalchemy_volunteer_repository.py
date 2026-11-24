@@ -1,10 +1,10 @@
 from collections.abc import Sequence
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core import VolunteerApprovalStatus
-from app.models import Volunteer
+from app.core import VolunteerApprovalStatus, VolunteerAvailability
+from app.models import User, Volunteer
 
 
 class VolunteerRepository:
@@ -37,6 +37,38 @@ class VolunteerRepository:
 
         result = await self.db.scalars(query)
 
+        return result.all()
+
+    async def get_nearby(
+        self,
+        pincode: str,
+        limit: int,
+        offset: int,
+        availability: VolunteerAvailability | None = None,
+        search: str | None = None,
+    ) -> Sequence[Volunteer]:
+        query = (
+            select(Volunteer)
+            .join(User, Volunteer.user_id == User.id)
+            .where(
+                Volunteer.approval_status == VolunteerApprovalStatus.APPROVED,
+                or_(
+                    Volunteer.pincode == pincode,
+                    Volunteer.service_pincodes.any(pincode),
+                ),
+            )
+        )
+        if availability is not None:
+            query = query.where(Volunteer.availability == availability)
+        if search:
+            pattern = f"%{search.strip()}%"
+            query = query.where(
+                or_(User.username.ilike(pattern), Volunteer.area_name.ilike(pattern))
+            )
+
+        result = await self.db.scalars(
+            query.order_by(Volunteer.id.desc()).offset(offset).limit(limit)
+        )
         return result.all()
 
     async def update(

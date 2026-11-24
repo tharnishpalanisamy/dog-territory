@@ -64,3 +64,17 @@ class VolunteerResponse(BaseModel):
     availability: VolunteerAvailability
     service_pincodes: list[str]
     approval_status: VolunteerApprovalStatus
+
+
+class VolunteerPublicResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    user_id: int
+    state: str
+    district: str
+    area_name: str
+    pincode: str
+    availability: VolunteerAvailability
+    service_pincodes: list[str]
+    approval_status: VolunteerApprovalStatus

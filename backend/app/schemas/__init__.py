@@ -51,8 +51,8 @@ from .user import (
     UserLocationResponse,
     UserLocationUpdate,
     UserPhoneNumberUpdate,
-    UserProfileUpdate,
     UserProfileResponse,
+    UserProfileUpdate,
     UserResponse,
 )
 from .veterinarian import (
@@ -66,6 +66,7 @@ from .veterinary_record import VeterinaryRecordCreate, VeterinaryRecordUpdate
 from .volunteer import (
     VolunteerApprovalUpdate,
     VolunteerCreate,
+    VolunteerPublicResponse,
     VolunteerResponse,
     VolunteerUpdate,
 )
@@ -124,10 +125,10 @@ __all__ = [
     "UserCreate",
     "UserLocationResponse",
     "UserLocationUpdate",
-    "UserPhoneNumberUpdate",
-    "UserProfileUpdate",
     "UserLogin",
+    "UserPhoneNumberUpdate",
     "UserProfileResponse",
+    "UserProfileUpdate",
     "UserResponse",
     "VerifyResetOTPRequest",
     "VerifyResetOTPResponse",
@@ -140,6 +141,7 @@ __all__ = [
     "VeterinaryRecordUpdate",
     "VolunteerApprovalUpdate",
     "VolunteerCreate",
+    "VolunteerPublicResponse",
     "VolunteerResponse",
     "VolunteerUpdate",
     "WorkAssignmentCreate",

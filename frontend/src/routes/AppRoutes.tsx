@@ -33,6 +33,7 @@ import CreateReportPage, {
 } from "../pages/reports/CreateReportPage";
 import ExploreDogs from "../components/app/ExploreDogs";
 import DogDetail from "../components/app/DogDetail";
+import UserVolunteersPage from "../pages/user/UserVolunteersPage";
 
 function AppRoutes() {
   return (
@@ -86,7 +87,7 @@ function AppRoutes() {
 
         <Route path="dogs" element={<ExploreDogs />} />
         <Route path="dogs/:dog_id" element={<DogDetail />} />
-
+        <Route path="volunteers" element={<UserVolunteersPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
     </Routes>
