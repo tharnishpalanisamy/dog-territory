@@ -32,6 +32,15 @@ class VeterinarianServiceProtocol(Protocol):
 
     async def get_pending(self, page: int, limit: int) -> list[Veterinarian]: ...
 
+    async def get_nearby(
+        self,
+        pincode: str | None,
+        limit: int,
+        offset: int,
+        search: str | None = None,
+        specialization: str | None = None,
+    ) -> list[Veterinarian]: ...
+
     async def get_by_id(self, veterinarian_id: int) -> Veterinarian: ...
 
     async def update_approval(

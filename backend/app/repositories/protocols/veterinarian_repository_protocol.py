@@ -23,4 +23,13 @@ class VeterinarianRepositoryProtocol(Protocol):
         offset: int,
     ) -> list[Veterinarian]: ...
 
+    async def get_nearby(
+        self,
+        pincode: str,
+        limit: int,
+        offset: int,
+        search: str | None = None,
+        specialization: str | None = None,
+    ) -> list[Veterinarian]: ...
+
     async def update(self, veterinarian: Veterinarian, fields: dict) -> Veterinarian: ...

@@ -81,3 +81,14 @@ class VeterinarianResponse(BaseModel):
     reviewed_at: datetime | None
     rejection_reason: str | None
     created_at: datetime
+
+
+class VeterinarianPublicResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    clinic_id: int
+    full_name: str
+    qualification: str
+    specialization: str | None
+    years_of_experience: int | None

@@ -127,3 +127,92 @@ async def test_rejected_veterinarian_cannot_claim_medical_assignments(
     assert vet_user.role == UserRole.USER
     assert vet.approval_status == VeterinarianApprovalStatus.REJECTED
 
+
+async def test_nearby_veterinarians_filters_search_pagination_and_public_fields(
+    ordinary_user_client, db_session, db_user_factory, clinic_factory
+):
+    from app.core import VeterinarianApprovalStatus
+
+    user = await db_user_factory(
+        email="nearby-vet@example.com", username="nearby-vet"
+    )
+    matching = await clinic_factory(name="Paws Clinic", pincode="560001")
+    other = await clinic_factory(name="Other Clinic", pincode="560002")
+    inactive = await clinic_factory(name="Inactive Clinic", pincode="560001")
+    inactive.is_active = False
+    for index, (clinic, name, specialization, approval) in enumerate(
+        [
+            (matching, "Alice Vet", "Surgery", VeterinarianApprovalStatus.APPROVED),
+            (matching, "Bob Vet", "Dentistry", VeterinarianApprovalStatus.APPROVED),
+            (other, "Other Pincode", "Surgery", VeterinarianApprovalStatus.APPROVED),
+            (inactive, "Inactive Vet", "Surgery", VeterinarianApprovalStatus.APPROVED),
+            (matching, "Pending Vet", "Surgery", VeterinarianApprovalStatus.PENDING),
+            (matching, "Rejected Vet", "Surgery", VeterinarianApprovalStatus.REJECTED),
+            (matching, "Suspended Vet", "Surgery", VeterinarianApprovalStatus.SUSPENDED),
+        ]
+    ):
+        db_session.add(
+            Veterinarian(
+                user_id=user.id if index == 0 else (
+                    await db_user_factory(
+                        email=f"nearby-vet-{index}@example.com",
+                        username=f"nearby-vet-{index}",
+                    )
+                ).id,
+                clinic_id=clinic.id,
+                full_name=name,
+                phone="9876543210",
+                qualification="DVM",
+                license_number=f"NEARBY-LICENSE-{index}",
+                specialization=specialization,
+                approval_status=approval,
+            )
+        )
+    await db_session.commit()
+
+    response = await ordinary_user_client.get("/api/v1/veterinarians/nearby")
+    assert response.status_code == 200
+    records = response.json()
+    assert {record["full_name"] for record in records} == {"Alice Vet", "Bob Vet"}
+    assert all(
+        "phone" not in record and "license_number" not in record for record in records
+    )
+
+    by_clinic_name = await ordinary_user_client.get(
+        "/api/v1/veterinarians/nearby", params={"search": "pAwS"}
+    )
+    assert by_clinic_name.status_code == 200
+    assert len(by_clinic_name.json()) == 2
+
+    combined = await ordinary_user_client.get(
+        "/api/v1/veterinarians/nearby",
+        params={"search": "Alice", "specialization": "sUrGeRy"},
+    )
+    assert [item["full_name"] for item in combined.json()] == ["Alice Vet"]
+
+    page = await ordinary_user_client.get(
+        "/api/v1/veterinarians/nearby", params={"limit": 1, "offset": 1}
+    )
+    assert len(page.json()) == 1
+    assert page.json()[0]["full_name"] != records[0]["full_name"]
+
+    empty = await ordinary_user_client.get(
+        "/api/v1/veterinarians/nearby", params={"search": "no match"}
+    )
+    assert empty.status_code == 200
+    assert empty.json() == []
+
+
+async def test_nearby_veterinarians_requires_profile_pincode(
+    ordinary_user_client, db_session
+):
+    user = await db_session.scalar(select(User).where(User.email == "user@example.com"))
+    user.pincode = None
+    await db_session.commit()
+
+    response = await ordinary_user_client.get("/api/v1/veterinarians/nearby")
+    assert response.status_code == 400
+    assert response.json()["detail"] == (
+        "Add your pincode to your profile to discover nearby veterinarians."
+    )
+

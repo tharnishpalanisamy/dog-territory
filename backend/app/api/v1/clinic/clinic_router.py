@@ -30,7 +30,15 @@ async def create_clinic(
 
 @router.get("/", response_model=list[ClinicResponse])
 async def get_all_clinics(
-    user: Annotated[User, Depends(require_roles(UserRole.ADMIN))],
+    user: Annotated[
+        User,
+        Depends(
+            require_roles(
+                UserRole.ADMIN,
+                UserRole.USER,
+            )
+        ),
+    ],
     service: Annotated[ClinicServiceProtocol, Depends(get_clinic_service)],
     filters: Annotated[ClinicFilterParams, Depends()],
     limit: int = Query(default=20, ge=1, le=100),

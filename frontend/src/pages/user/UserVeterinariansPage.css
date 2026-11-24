@@ -1,0 +1,67 @@
+.app-workspace .veterinarians-action-button {
+  border: 1px solid #5555f4 !important;
+  background: #5555f4 !important;
+  color: #fff !important;
+  box-shadow: 0 7px 18px #5555f42b !important;
+}
+
+.app-workspace .veterinarians-action-button:hover:not(:disabled) {
+  border-color: #4544dd !important;
+  background: #4544dd !important;
+  color: #fff !important;
+  box-shadow: 0 10px 23px #5555f438 !important;
+  transform: translateY(-2px);
+}
+
+.app-workspace .veterinarians-secondary-button {
+  border: 1px solid #e5e9f1;
+  background: #fff;
+  color: #39465e;
+}
+
+.app-workspace .veterinarians-secondary-button:hover:not(:disabled) {
+  border-color: #d8dcf8;
+  background: #f6f7ff;
+  color: #5555f4;
+}
+
+.app-workspace .veterinarians-secondary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.app-workspace .veterinarians-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.app-workspace .veterinarians-status-pending {
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.app-workspace .veterinarians-status-approved {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.app-workspace .veterinarians-status-rejected {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.app-workspace .veterinarians-status-suspended {
+  border-color: #cbd5e1;
+  background: #f1f5f9;
+  color: #475569;
+}

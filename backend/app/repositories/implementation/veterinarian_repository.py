@@ -1,8 +1,9 @@
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import VeterinarianApprovalStatus
 from app.models import Veterinarian
+from app.models.clinic import Clinic
 
 
 class VeterinarianRepository:
@@ -50,6 +51,45 @@ class VeterinarianRepository:
             query.order_by(Veterinarian.created_at.desc(), Veterinarian.id.desc())
             .limit(limit)
             .offset(offset)
+        )
+        return list(result.all())
+
+    async def get_nearby(
+        self,
+        pincode: str,
+        limit: int,
+        offset: int,
+        search: str | None = None,
+        specialization: str | None = None,
+    ) -> list[Veterinarian]:
+        query = (
+            select(Veterinarian)
+            .join(Clinic, Veterinarian.clinic_id == Clinic.id)
+            .where(
+                Veterinarian.approval_status == VeterinarianApprovalStatus.APPROVED,
+                Clinic.is_active.is_(True),
+                Clinic.pincode == pincode,
+            )
+        )
+        if search and search.strip():
+            pattern = f"%{search.strip()}%"
+            query = query.where(
+                or_(
+                    Veterinarian.full_name.ilike(pattern),
+                    Veterinarian.qualification.ilike(pattern),
+                    Veterinarian.specialization.ilike(pattern),
+                    Clinic.name.ilike(pattern),
+                    Clinic.city.ilike(pattern),
+                )
+            )
+        if specialization and specialization.strip():
+            query = query.where(
+                Veterinarian.specialization.ilike(f"%{specialization.strip()}%")
+            )
+        result = await self.db.scalars(
+            query.order_by(Veterinarian.created_at.desc(), Veterinarian.id.desc())
+            .offset(offset)
+            .limit(limit)
         )
         return list(result.all())
 

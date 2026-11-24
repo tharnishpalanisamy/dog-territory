@@ -185,6 +185,23 @@ class VeterinarianService:
             VeterinarianApprovalStatus.PENDING, None, page, limit
         )
 
+    async def get_nearby(
+        self,
+        pincode: str | None,
+        limit: int,
+        offset: int,
+        search: str | None = None,
+        specialization: str | None = None,
+    ) -> list[Veterinarian]:
+        if not pincode or not pincode.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Add your pincode to your profile to discover nearby veterinarians.",
+            )
+        return await self.repository.get_nearby(
+            pincode.strip(), limit, offset, search, specialization
+        )
+
     async def get_by_id(self, veterinarian_id: int) -> Veterinarian:
         veterinarian = await self.repository.get_by_id(veterinarian_id)
         if veterinarian is None:

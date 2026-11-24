@@ -231,6 +231,7 @@ async def db_user_factory(db_session):
             username=username,
             password_hash=hash_password(password),
             role=role,
+            pincode="560001",
         )
         db_session.add(user)
         await db_session.flush()

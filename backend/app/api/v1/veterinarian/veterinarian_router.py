@@ -1,5 +1,9 @@
 from typing import Annotated, Any
 
+from fastapi import APIRouter, Depends, Query, Request, UploadFile, status
+from fastapi.exceptions import RequestValidationError
+from pydantic import BaseModel, ValidationError
+
 from app.core import UserRole
 from app.dependencies import get_veterinarian_service, require_roles
 from app.models import User
@@ -7,13 +11,11 @@ from app.schemas import (
     VeterinarianApprovalUpdate,
     VeterinarianCreate,
     VeterinarianFilterParams,
+    VeterinarianPublicResponse,
     VeterinarianResponse,
     VeterinarianUpdate,
 )
 from app.services.protocol import VeterinarianServiceProtocol
-from fastapi import APIRouter, Depends, Query, Request, UploadFile, status
-from fastapi.exceptions import RequestValidationError
-from pydantic import BaseModel, ValidationError
 
 router = APIRouter(prefix="/veterinarians", tags=["Veterinarians"])
 
@@ -126,6 +128,18 @@ async def get_veterinarian_applications(
         filters.approval_status, filters.clinic_id, page, limit
     )
 
+@router.get("/nearby", response_model=list[VeterinarianPublicResponse])
+async def get_nearby_veterinarians(
+    user: Annotated[User, Depends(require_roles(UserRole.ADMIN, UserRole.USER))],
+    service: Annotated[VeterinarianServiceProtocol, Depends(get_veterinarian_service)],
+    limit: int = Query(default=10, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    search: str | None = Query(default=None),
+    specialization: str | None = Query(default=None),
+):
+    return await service.get_nearby(
+        user.pincode, limit, offset, search, specialization
+    )
 
 @router.get("/{vet_id}", response_model=VeterinarianResponse)
 async def get_veterinarian_application(

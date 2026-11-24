@@ -59,6 +59,7 @@ from .veterinarian import (
     VeterinarianApprovalUpdate,
     VeterinarianCreate,
     VeterinarianFilterParams,
+    VeterinarianPublicResponse,
     VeterinarianResponse,
     VeterinarianUpdate,
 )
@@ -135,6 +136,7 @@ __all__ = [
     "VeterinarianApprovalUpdate",
     "VeterinarianCreate",
     "VeterinarianFilterParams",
+    "VeterinarianPublicResponse",
     "VeterinarianResponse",
     "VeterinarianUpdate",
     "VeterinaryRecordCreate",
