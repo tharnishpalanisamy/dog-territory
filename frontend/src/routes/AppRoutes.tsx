@@ -33,6 +33,11 @@ import CreateReportPage, { UserReportsPage, UserReportDetailsPage } from "../pag
 function AppRoutes() {
   return (
     <Routes>
+      {/* Shared community resource */}
+      <Route path="/rabies-awareness" element={<AppLayout role="USER" />}>
+        <Route index element={<RabiesAwarenessPage />} />
+      </Route>
+
       {/* ADMIN */}
       
       <Route path="/admin" element={<AppLayout role="ADMIN" />}>
@@ -51,7 +56,6 @@ function AppRoutes() {
         <Route path="volunteers/:id" element={<VolunteerDetailsPage />} />
 
         <Route path="profile" element={<ProfilePage />} />
-        <Route path="rabies-awareness" element={<RabiesAwarenessPage />} />
       </Route>
 
       {/* VOLUNTEER */}
@@ -62,7 +66,6 @@ function AppRoutes() {
         <Route path="reports" element={<ReportsPage />} />
 
         <Route path="profile" element={<ProfilePage />} />
-        <Route path="rabies-awareness" element={<RabiesAwarenessPage />} />
       </Route>
 
 

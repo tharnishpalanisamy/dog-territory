@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -96,17 +97,35 @@ class DogFilterParams(BaseModel):
         str_strip_whitespace=True,
     )
 
+    # Filters
     status: str | None = Field(default=None, min_length=1, max_length=20)
     is_sterilized: bool | None = None
     vaccination_status: str | None = Field(default=None, min_length=1, max_length=20)
 
+    # Location
     state: str | None = Field(default=None, min_length=1, max_length=50)
     district: str | None = Field(default=None, min_length=1, max_length=50)
     area_name: str | None = Field(default=None, min_length=1, max_length=100)
     pincode: str | None = Field(default=None, pattern=r"^[1-9][0-9]{5}$")
 
+    # Age range
     estimated_age_min: int | None = Field(default=None, ge=0, le=30)
     estimated_age_max: int | None = Field(default=None, ge=0, le=30)
+
+    # Sorting
+    sort_by: Literal[
+        "created_at",
+        "updated_at",
+        "estimated_age",
+        "dog_number",
+        "vaccination_date",
+    ] = "created_at"
+
+    order: Literal["asc", "desc"] = "desc"
+
+    # Pagination
+    offset: int = Field(default=0, ge=0)
+    limit: int = Field(default=20, ge=1, le=100)
 
     @model_validator(mode="after")
     def validate_age_range(self) -> "DogFilterParams":

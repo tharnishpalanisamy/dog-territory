@@ -1,4 +1,4 @@
-from sqlalchemy import func, select
+from sqlalchemy import func, literal, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core import ReportStatus
@@ -10,11 +10,17 @@ class DashboardRepository:
         self.db = db
 
     async def get_user_statistics(self, user: User):
-        query = select(
+
+        dogs_nearby_query = (
             select(func.count(Dog.id))
-            .where(Dog.pincode == "641025")
+            .where(Dog.pincode == user.pincode)
             .scalar_subquery()
-            .label("dogs_nearby"),
+            if user.pincode
+            else select(literal(None)).scalar_subquery()
+        )
+
+        query = select(
+            dogs_nearby_query.label("dogs_nearby"),
             select(func.count(Report.id))
             .where(Report.reporter_id == user.id)
             .scalar_subquery()
@@ -36,7 +42,7 @@ class DashboardRepository:
         )
 
         result = await self.db.execute(query)
-        return dict(result.mappings().one())
+        return result.mappings().one()
 
     async def get_volunteer_statistics(self, user: User): ...
 

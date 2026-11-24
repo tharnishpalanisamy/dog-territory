@@ -52,6 +52,16 @@ class AuthService:
                 email=user.email,
                 username=user.username,
                 role=user.role,
+                location=(
+                    {
+                        "state": user.state,
+                        "district": user.district,
+                        "area_name": user.area_name,
+                        "pincode": user.pincode,
+                    }
+                    if user.state and user.district and user.area_name and user.pincode
+                    else None
+                ),
             ),
         )
 

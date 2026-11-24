@@ -1,7 +1,5 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Response, status
-
 from app.core import UserRole
 from app.dependencies import get_dog_service, get_volunteer_service, require_roles
 from app.models import User
@@ -13,6 +11,7 @@ from app.schemas import (
     DogUpdate,
 )
 from app.services.protocol import DogServiceProtocol, VolunteerServiceProtocol
+from fastapi import APIRouter, Depends, Response, status
 
 router = APIRouter(prefix="/dogs", tags=["Dog"])
 
@@ -46,8 +45,7 @@ async def get_all_dogs(
         User,
         Depends(
             require_roles(
-                UserRole.ADMIN,
-                UserRole.VOLUNTEER,
+                UserRole.ADMIN, UserRole.VOLUNTEER, UserRole.USER, UserRole.VETERINARIAN
             )
         ),
     ],
@@ -56,15 +54,13 @@ async def get_all_dogs(
     volunteer_service: Annotated[
         VolunteerServiceProtocol, Depends(get_volunteer_service)
     ],
-    limit: int = Query(ge=1, le=100, default=20),
-    offset: int = Query(ge=0, default=0),
 ) -> list[DogSummaryResponse]:
     if user.role == UserRole.VOLUNTEER:
         await volunteer_service.require_approved_volunteer(user.id)
     return await service.get_all_dogs(
         filters=filters,
-        limit=limit,
-        offset=offset,
+        limit=filters.limit,
+        offset=filters.offset,
     )
 
 

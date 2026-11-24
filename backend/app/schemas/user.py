@@ -18,6 +18,7 @@ class UserResponse(BaseModel):
     username: str = Field(max_length=100)
     email: EmailStr = Field(max_length=255)
     role: str
+    location: "UserLocationResponse | None" = None
 
 
 class UserLocationUpdate(BaseModel):

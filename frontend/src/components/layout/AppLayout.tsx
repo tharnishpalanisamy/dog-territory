@@ -22,9 +22,10 @@ export default function AppLayout({
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const onProfilePage = location.pathname.endsWith("/profile");
+  const onRabiesAwarenessPage = location.pathname === "/rabies-awareness";
 
   return (
-    <div className="app-workspace flex h-screen overflow-hidden bg-[#f7f8fc] text-[#101d43]">
+    <div className={`app-workspace flex bg-[#f7f8fc] text-[#101d43] ${onRabiesAwarenessPage ? "rabies-workspace" : "h-screen overflow-hidden"}`}>
       <LocationOnboarding />
 
       {/* Mobile overlay */}
@@ -50,17 +51,17 @@ export default function AppLayout({
       </div>
 
       {/* Main content - independent scrolling */}
-      <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-y-auto">
+      <div className={`flex min-w-0 flex-1 flex-col ${onRabiesAwarenessPage ? "" : "h-full min-h-0 overflow-y-auto"}`}>
 
         <div className="sticky top-0 z-30 shrink-0">
           <Navbar
-            title={onProfilePage ? "Profile" : "Overview"}
-            subtitle={onProfilePage ? "Your account information and community details" : "Welcome to your dashboard"}
+            title={onRabiesAwarenessPage ? "Rabies Awareness" : onProfilePage ? "Profile" : "Overview"}
+            subtitle={onRabiesAwarenessPage ? "Community health and animal welfare" : onProfilePage ? "Your account information and community details" : "Welcome to your dashboard"}
             onMenuClick={() => setMenuOpen(true)}
           />
         </div>
 
-        <main className="min-h-0 flex-1 p-5 sm:p-8">
+        <main className={`p-5 sm:p-8 ${onRabiesAwarenessPage ? "" : "min-h-0 flex-1"}`}>
           <Outlet />
         </main>
 

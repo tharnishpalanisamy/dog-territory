@@ -29,7 +29,7 @@ async def create_report(
     report_type: Annotated[DogReportType, Form()],
     user: Annotated[User, Depends(get_current_user)],
     service: Annotated[ReportsServiceProtocol, Depends(get_reports_service)],
-    description: str = Form(),
+    description: str | None = Form(default=None),
     state: str = Form(...),
     district: str = Form(...),
     area_name: str = Form(...),

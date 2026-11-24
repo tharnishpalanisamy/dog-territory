@@ -133,7 +133,7 @@ export default function Sidebar({
 
           {/* Available to every role */}
           <NavLink
-            to={`/${role.toLowerCase()}/rabies-awareness`}
+            to="/rabies-awareness"
                 className={({ isActive }) =>
               `flex items-center gap-4 rounded-xl px-4 py-3.5 text-sm font-medium transition-all ${
                 isActive

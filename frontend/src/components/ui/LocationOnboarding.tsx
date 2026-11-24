@@ -19,9 +19,23 @@ interface User {
   email: string;
   role: string;
   location?: UserLocation | null;
+  state?: string | null;
+  district?: string | null;
+  area_name?: string | null;
+  pincode?: string | null;
 }
 
 const dismissalKey = (userId: number) => `location-onboarding-dismissed:${userId}`;
+
+function hasLocation(user: User): boolean {
+  const location = user.location ?? user;
+  return Boolean(
+    location.state?.trim() &&
+    location.district?.trim() &&
+    location.area_name?.trim() &&
+    location.pincode?.trim(),
+  );
+}
 
 function readUser(): User | null {
   try {
@@ -49,7 +63,7 @@ export default function LocationOnboarding() {
   }, []);
 
   useEffect(() => {
-    if (!user || user.role !== "user" || user.location) {
+    if (!user || user.role !== "user" || hasLocation(user)) {
       setOpen(false);
       return;
     }

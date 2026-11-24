@@ -16,6 +16,10 @@ async def test_authenticate_returns_tokens_for_valid_credentials():
         username="A",
         password_hash="hash",
         role="user",
+        state="Karnataka",
+        district="Bengaluru Urban",
+        area_name="Indiranagar",
+        pincode="560038",
     )
     repo = SimpleNamespace(get_by_email=AsyncMock(return_value=user))
     refresh = SimpleNamespace(issue_refresh_token=AsyncMock(return_value="refresh"))
@@ -37,6 +41,12 @@ async def test_authenticate_returns_tokens_for_valid_credentials():
     assert result.refresh_token == "refresh"
     assert result.user.id == 7
     assert result.user.role == "user"
+    assert result.user.location.model_dump() == {
+        "state": "Karnataka",
+        "district": "Bengaluru Urban",
+        "area_name": "Indiranagar",
+        "pincode": "560038",
+    }
 
 
 @pytest.mark.asyncio

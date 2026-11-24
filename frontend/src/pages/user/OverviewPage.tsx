@@ -18,8 +18,22 @@ type User = {
   username: string;
   email: string;
   role: string;
-  location: UserLocation;
+  location?: UserLocation | null;
+  state?: string | null;
+  district?: string | null;
+  area_name?: string | null;
+  pincode?: string | null;
 };
+
+function hasLocation(user: User): boolean {
+  const location = user.location ?? user;
+  return Boolean(
+    location.state?.trim() &&
+    location.district?.trim() &&
+    location.area_name?.trim() &&
+    location.pincode?.trim(),
+  );
+}
 
 async function fetch_statisitcs() {
   const response = await api.get("/users/statistics");
@@ -53,6 +67,8 @@ export default function OverviewPage() {
 
   if (!user) return null;
 
+  const locationProvided = hasLocation(user);
+
   useEffect(() => {
     fetch_statisitcs()
       .then((res) => setStatistics(res))
@@ -80,9 +96,13 @@ export default function OverviewPage() {
       <div className="stats-grid">
         <StatCard
           label="Dogs nearby"
-          value={String(statistics.dogs_nearby)}
+          value={locationProvided ? String(statistics.dogs_nearby) : "—"}
           icon="🐕"
-          footnote="In your community"
+          footnote={
+            locationProvided
+              ? "In your community"
+              : "Add your pincode to discover dogs"
+          }
         />
 
         <StatCard

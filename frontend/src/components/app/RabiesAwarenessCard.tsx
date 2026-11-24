@@ -32,7 +32,7 @@ export default function RabiesAwarenessCard() {
         </div>
 
         <Link
-          to="/user/rabies-awareness"
+          to="/rabies-awareness"
           className="learn-more-link inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700"
         >
           <HeartPulse size={17} />

@@ -56,7 +56,10 @@ class DogRepository:
         if conditions:
             query = query.where(*conditions)
 
+        sort_column = getattr(Dog, filters.sort_by) if filters is not None else Dog.created_at
+        sort_order = filters.order if filters is not None else "asc"
         query = query.order_by(
+            sort_column.asc() if sort_order == "asc" else sort_column.desc(),
             Dog.id.asc(),
         )
         query = query.limit(limit).offset(offset)
