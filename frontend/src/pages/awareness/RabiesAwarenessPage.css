@@ -2,3 +2,57 @@
 @media(max-width:1100px){.rabies-cards-five{grid-template-columns:repeat(3,minmax(0,1fr))}.rabies-info-card{min-height:132px}.helpline-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.rabies-hero-copy{padding-inline:22px}.bite-critical{grid-template-columns:22px 1fr}.bite-critical>a{grid-column:2}}
 @media(max-width:760px){.rabies-page>.page-heading{align-items:center}.rabies-page .page-heading h1{font-size:24px}.rabies-page .page-heading-action .button-primary{width:auto;font-size:9px;padding:0 9px}.awareness-nav{margin-right:-17px;padding-right:17px}.rabies-hero{grid-template-columns:1fr;margin-bottom:33px}.rabies-hero-copy{padding:23px 20px 19px}.rabies-hero h1{font-size:35px}.rabies-hero-visual{min-height:240px;grid-row:1}.rabies-hero-copy{grid-row:2}.rabies-section{padding-bottom:34px}.rabies-cards-five{grid-template-columns:repeat(2,minmax(0,1fr))}.rabies-info-card{min-height:126px}.signs-section{padding:17px;margin-bottom:33px}.signs-layout{grid-template-columns:1fr}.signs-dog{min-height:200px}.vaccine-feature{grid-template-columns:1fr}.vaccine-points{grid-template-columns:1fr 1fr}.street-section{padding:17px;margin-bottom:33px}.street-heading{align-items:flex-start;flex-direction:column;gap:0}.street-highlight{margin:0 0 13px}.street-flow{grid-template-columns:repeat(2,1fr)}.street-flow article:last-child{grid-column:1/-1}.street-reasons{align-items:flex-start;flex-direction:column;gap:6px}.bite-section{grid-template-columns:1fr;padding:17px;margin-bottom:33px}.bite-intro{padding-right:0}.bite-intro h2{font-size:23px}.bite-callout{max-width:280px;margin:11px 0}.bite-critical{grid-column:1;grid-template-columns:22px 1fr}.bite-critical>a{grid-column:2}.myth-row{grid-template-columns:1fr 20px 1.1fr;gap:6px;padding:10px}.helpline-section{padding:17px;margin-bottom:33px}.rabies-community{grid-template-columns:1fr;gap:13px;padding:17px;margin-bottom:33px}.community-actions>a{min-height:53px}.rabies-page-footer{flex-wrap:wrap}.rabies-page-footer span:nth-child(2){flex-basis:100%;order:3}}
 @media(max-width:480px){.rabies-page>.page-heading{align-items:flex-start}.rabies-page .page-heading-action .button-primary{font-size:0;width:34px;height:34px;padding:0;min-height:34px;overflow:hidden}.rabies-page .page-heading-action .button-primary span{font-size:14px}.rabies-hero h1{font-size:31px}.rabies-hero-facts{gap:7px}.rabies-hero-facts strong{font-size:10px}.rabies-hero-facts span{font-size:6px}.rabies-hero-facts>div:last-child span{max-width:85px}.rabies-cards-five{grid-template-columns:1fr 1fr;gap:7px}.rabies-info-card{padding:10px;min-height:145px}.rabies-section-title h2{font-size:22px}.signs-section{padding:13px}.signs-grid{grid-template-columns:1fr}.signs-grid>div{min-height:42px}.vaccine-feature{padding:13px}.vaccine-points{grid-template-columns:1fr}.street-flow{grid-template-columns:1fr 1fr}.street-flow article{min-height:105px}.street-flow article:last-child{grid-column:1/-1}.street-reasons a{white-space:normal}.bite-critical{align-items:start}.myth-row{grid-template-columns:1fr 16px 1fr;gap:5px}.myth-label p,.fact-label p{font-size:7px}.helpline-grid{grid-template-columns:1fr}.helpline-card>p{height:auto;min-height:27px}.community-actions{grid-template-columns:1fr}.faq-item{padding-inline:11px}.faq-item h3 button{font-size:8px}.rabies-page-footer{line-height:1.5}}
+
+/* Keep supporting copy readable across the long-form awareness guide. */
+.rabies-page{font-size:16px}
+.awareness-nav>span{font-size:11px}
+.awareness-nav a{font-size:13px;padding:9px 12px}
+.rabies-pill,.emergency-label{font-size:11px}
+.rabies-hero-copy>p{font-size:16px}
+.rabies-btn{font-size:14px;min-height:44px}
+.rabies-hero-facts strong{font-size:16px}
+.rabies-hero-facts span{font-size:12px}
+.hero-image-note strong{font-size:12px}
+.hero-image-note small{font-size:11px}
+.rabies-section-title>span,.mini-kicker{font-size:11px}
+.rabies-section-title p{font-size:15px}
+.rabies-info-card{padding:17px 15px;min-height:190px}
+.rabies-info-card h3{font-size:15px}
+.rabies-info-card p{font-size:14px;line-height:1.6}
+.rabies-source-note{font-size:12px}
+.signs-dog strong{font-size:14px}
+.signs-dog small{font-size:12px}
+.signs-grid>div{min-height:64px;padding:10px}
+.signs-grid b{font-size:11px;width:27px;height:27px}
+.signs-grid span,.rabies-warning p{font-size:14px}
+.vaccine-feature-copy p,.schedule-note{font-size:14px}
+.vaccine-points>div>b,.vaccine-points strong{font-size:13px}
+.vaccine-points small{font-size:12px}
+.street-highlight strong{font-size:12px}
+.street-highlight small,.street-flow article>span{font-size:11px}
+.street-flow article{min-height:150px;padding:15px}
+.street-flow h3{font-size:14px}
+.street-flow p,.street-reasons p,.street-reasons a{font-size:13px}
+.street-reasons>span{font-size:11px}
+.bite-intro>p{font-size:14px}
+.bite-callout small,.bite-callout p{font-size:11px}
+.bite-steps h3{font-size:16px}
+.bite-step>span{font-size:12px;width:24px;height:24px}
+.bite-step p,.bite-critical p{font-size:14px;line-height:1.6}
+.bite-critical>a{font-size:12px;white-space:normal}
+.myth-label>span,.fact-label>span{font-size:11px}
+.myth-label p,.fact-label p{font-size:14px}
+.helpline-card h3{font-size:15px}
+.helpline-card>p{height:auto;min-height:54px;font-size:13px}
+.verified-tag,.local-tag{font-size:9px}
+.contact-row,.contact-row strong{font-size:12px}
+.helpline-call{height:38px;font-size:13px}
+.helpline-source{font-size:12px}
+.rabies-community>div:first-child>p{font-size:14px}
+.community-actions strong{font-size:13px}
+.community-actions small{font-size:12px}
+.faq-item h3 button{font-size:14px;min-height:54px}
+.faq-item>p,.faq-help{font-size:14px;line-height:1.65}
+.rabies-page-footer{font-size:11px}
+@media(max-width:760px){.rabies-page .page-heading h1{font-size:28px}.rabies-page .page-heading p{font-size:15px}.rabies-hero-copy>p{font-size:16px}.rabies-hero-facts span{font-size:11px}.rabies-info-card{min-height:175px}.street-flow article{min-height:140px}}
+@media(max-width:480px){.rabies-page .page-heading h1{font-size:26px}.rabies-page .page-heading p{font-size:14px}.rabies-hero h1{font-size:36px}.rabies-hero-facts strong{font-size:14px}.rabies-hero-facts span{font-size:10px}.rabies-info-card{padding:12px;min-height:190px}.rabies-info-card h3{font-size:14px}.rabies-info-card p{font-size:13px}.rabies-section-title h2{font-size:25px}.signs-grid span,.rabies-warning p,.vaccine-feature-copy p,.vaccine-points small,.schedule-note,.street-flow p,.street-reasons p,.bite-step p,.bite-critical p,.myth-label p,.fact-label p,.faq-item>p,.faq-help{font-size:14px}.street-flow h3,.helpline-card h3{font-size:15px}.street-flow article{min-height:150px}.helpline-card>p{font-size:14px}.community-actions strong{font-size:14px}.community-actions small{font-size:13px}.faq-item h3 button{font-size:15px}.rabies-page-footer{font-size:12px}}
