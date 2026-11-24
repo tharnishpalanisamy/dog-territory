@@ -45,6 +45,14 @@ interface ProfileUser {
   district?: string | null;
   phone_number?: string | null;
 }
+interface DogDetails {
+  id: number;
+  dog_code: string;
+  state: string | null;
+  district: string | null;
+  area_name: string | null;
+  pincode: string | null;
+}
 interface ReportSummary {
   id: number;
   report_type: ReportType;
@@ -135,11 +143,43 @@ function savedLocation(): { state: string; district: string } {
 
 export default function CreateReportPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { showToast } = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
   const [profileLocation, setProfileLocation] = useState(savedLocation);
+  const [dogDetails, setDogDetails] = useState<DogDetails | null>(null);
+  const [dogArea, setDogArea] = useState("");
+  const [dogPincode, setDogPincode] = useState("");
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
-  const [reportType, setReportType] = useState<ReportType | "">("");
+  const requestedDogId = new URLSearchParams(location.search).get("dog_id") ?? "";
+  useEffect(() => {
+    if (!/^\d+$/.test(requestedDogId)) return;
+    let active = true;
+    api
+      .get<DogDetails>(`/dogs/${requestedDogId}`)
+      .then(({ data }) => {
+        if (!active) return;
+        setDogDetails(data);
+        setProfileLocation((current) => ({
+          state: data.state || current.state,
+          district: data.district || current.district,
+        }));
+        setDogArea(data.area_name || "");
+        setDogPincode(data.pincode || "");
+      })
+      .catch(() => {
+        /* Keep the report form available if dog details cannot be loaded. */
+      });
+    return () => {
+      active = false;
+    };
+  }, [requestedDogId]);
+  const [reportType, setReportType] = useState<ReportType | "">(() => {
+    const requestedType = new URLSearchParams(location.search).get("report_type");
+    return reportTypes.some(({ value }) => value === requestedType)
+      ? (requestedType as ReportType)
+      : "";
+  });
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
   const [dragging, setDragging] = useState(false);
@@ -240,7 +280,10 @@ export default function CreateReportPage() {
     event.preventDefault();
     if (submitting) return;
     const { data, valid } = validate(event.currentTarget);
-    if (!valid) return;
+    if (!valid) {
+      showToast("error", "Please complete the required report information before submitting.");
+      return;
+    }
     const body = new FormData();
     body.append("report_type", reportType);
     const description = String(data.get("description") ?? "").trim();
@@ -291,7 +334,7 @@ export default function CreateReportPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 pb-10">
+    <div className="mx-auto max-w-5xl space-y-6">
       <Link
         to="/user/reports"
         className="inline-flex items-center gap-1 text-sm font-semibold text-slate-500 transition hover:text-indigo-600"
@@ -375,6 +418,7 @@ export default function CreateReportPage() {
                   name="dog_code"
                   maxLength={50}
                   placeholder="e.g. 600001-101"
+                  defaultValue={dogDetails?.dog_code ?? ""}
                   className="mt-2 w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50"
                 />
               </label>
@@ -466,6 +510,8 @@ export default function CreateReportPage() {
                   name="area_name"
                   required
                   maxLength={100}
+                  value={dogArea}
+                  onChange={(event) => setDogArea(event.target.value)}
                   placeholder="Neighborhood or area"
                   className="mt-2 w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50"
                 />
@@ -481,6 +527,8 @@ export default function CreateReportPage() {
                   inputMode="numeric"
                   autoComplete="off"
                   maxLength={6}
+                  value={dogPincode}
+                  onChange={(event) => setDogPincode(event.target.value)}
                   placeholder="Six digit PIN code"
                   className="mt-2 w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50"
                 />

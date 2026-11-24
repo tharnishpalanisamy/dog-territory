@@ -56,7 +56,9 @@ class DogRepository:
         if conditions:
             query = query.where(*conditions)
 
-        sort_column = getattr(Dog, filters.sort_by) if filters is not None else Dog.created_at
+        sort_column = (
+            getattr(Dog, filters.sort_by) if filters is not None else Dog.created_at
+        )
         sort_order = filters.order if filters is not None else "asc"
         query = query.order_by(
             sort_column.asc() if sort_order == "asc" else sort_column.desc(),
@@ -68,10 +70,12 @@ class DogRepository:
 
         return result.all()
 
-    async def get_by_id(self, id) -> Dog | None:
-        query = select(Dog).where(Dog.id == id)
+    async def get_by_id(self, dog_id: int) -> Dog | None:
+        query = select(Dog).options(selectinload(Dog.images)).where(Dog.id == dog_id)
 
-        return await self.db.scalar(query)
+        result = await self.db.execute(query)
+
+        return result.scalar_one_or_none()
 
     async def get_by_dog_code(self, dog_code: str) -> Dog | None:
         query = select(Dog).where(Dog.dog_code == dog_code)

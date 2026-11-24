@@ -62,31 +62,41 @@ class DogSummaryResponse(BaseModel):
     color: str | None
     status: str
     vaccination_status: str
+    is_sterilized: bool | None
+    area_name: str
+    image_url: str | None = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class DogImageResponse(BaseModel):
+    id: int
+    image_url: str | None
+    is_primary: bool
 
     model_config = ConfigDict(from_attributes=True)
 
 
 class DogDetailResponse(BaseModel):
+    # Keep all your existing fields
     id: int
     dog_code: str
     estimated_age: int | None
     color: str | None
     description: str | None
-
     is_sterilized: bool | None
     status: str
-
     vaccination_status: str
     vaccination_date: datetime | None
     next_booster_due_date: datetime | None
-
-    state: str
-    district: str
-    area_name: str
-    pincode: str
-
+    state: str | None
+    district: str | None
+    area_name: str | None
+    pincode: str | None
     created_at: datetime
-    updated_at: datetime | None
+    updated_at: datetime
+
+    images: list[DogImageResponse] = []
 
     model_config = ConfigDict(from_attributes=True)
 

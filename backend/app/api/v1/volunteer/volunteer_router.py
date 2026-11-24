@@ -1,7 +1,5 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
-
 from app.core import UserRole
 from app.dependencies import (
     get_volunteer_service,
@@ -15,6 +13,7 @@ from app.schemas import (
     VolunteerUpdate,
 )
 from app.services.protocol import VolunteerServiceProtocol
+from fastapi import APIRouter, Depends, Query, status
 
 router = APIRouter(prefix="/volunteers", tags=["Volunteers"])
 

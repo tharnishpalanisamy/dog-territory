@@ -1,4 +1,3 @@
-
 import { NavLink } from "react-router-dom";
 import {
   PawPrint,
@@ -9,7 +8,6 @@ import {
   ClipboardList,
   Stethoscope,
   ShieldCheck,
-  PlusCircle,
   UserRound,
   ChevronRight,
 } from "lucide-react";
@@ -50,14 +48,24 @@ const navigation: Record<UserRole, NavItem[]> = {
     { label: "Overview", path: "/veterinarian", icon: LayoutDashboard },
     { label: "Assigned Dogs", path: "/veterinarian/dogs", icon: Dog },
     { label: "Medical Records", path: "/veterinarian/records", icon: FileText },
-    { label: "Treatments", path: "/veterinarian/treatments", icon: Stethoscope },
-    { label: "Vaccinations", path: "/veterinarian/vaccinations", icon: ShieldCheck },
+    {
+      label: "Treatments",
+      path: "/veterinarian/treatments",
+      icon: Stethoscope,
+    },
+    {
+      label: "Vaccinations",
+      path: "/veterinarian/vaccinations",
+      icon: ShieldCheck,
+    },
   ],
 
   USER: [
     { label: "Overview", path: "/user", icon: LayoutDashboard },
     { label: "Explore Dogs", path: "/user/dogs", icon: Dog },
     { label: "My Reports", path: "/user/reports", icon: FileText },
+    { label: "Volunteers", path: "/user/volunteers", icon: Users },
+    { label: "Veterinarians", path: "/user/veterinarians", icon: Stethoscope },
   ],
 };
 
@@ -68,11 +76,7 @@ const roleLabels: Record<UserRole, string> = {
   USER: "Community Member",
 };
 
-export default function Sidebar({
-  role,
-  name = "User",
-  email,
-}: SidebarProps) {
+export default function Sidebar({ role, name = "User", email }: SidebarProps) {
   const items = navigation[role];
 
   const initials = name
@@ -84,8 +88,11 @@ export default function Sidebar({
 
   const profilePath = `/${role.toLowerCase()}/profile`;
 
+  const isDashboard = (path: string) =>
+    ["/user", "/admin", "/volunteer", "/veterinarian"].includes(path);
+
   return (
-        <aside className="flex h-screen w-[280px] shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white">
+    <aside className="flex h-screen w-[280px] shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white">
       {/* Brand */}
       <div className="flex h-24 items-center gap-3 px-7">
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#5555f4] text-white shadow-lg shadow-indigo-600/20">
@@ -116,7 +123,7 @@ export default function Sidebar({
               <NavLink
                 key={item.path}
                 to={item.path}
-                end={item.path === "/user" || item.path === "/admin" || item.path === "/volunteer" || item.path === "/veterinarian"}
+                end={isDashboard(item.path)}
                 className={({ isActive }) =>
                   `flex items-center gap-4 rounded-xl px-4 py-3.5 text-sm font-medium transition-all ${
                     isActive
@@ -134,7 +141,7 @@ export default function Sidebar({
           {/* Available to every role */}
           <NavLink
             to="/rabies-awareness"
-                className={({ isActive }) =>
+            className={({ isActive }) =>
               `flex items-center gap-4 rounded-xl px-4 py-3.5 text-sm font-medium transition-all ${
                 isActive
                   ? "bg-[#e3f8f3] text-[#0b9488]"
@@ -148,34 +155,12 @@ export default function Sidebar({
         </nav>
       </div>
 
-      {/* {role === "USER" && (
-        <div className="mx-5 mb-5 rounded-2xl border border-indigo-100 bg-indigo-50/70 p-5">
-          <Sparkles size={19} className="mb-4 text-indigo-600" />
-
-          <h3 className="text-sm font-semibold text-slate-900">
-            Every small act matters.
-          </h3>
-
-          <p className="mt-2 text-xs leading-5 text-slate-500">
-            Your care helps build safer streets for every dog.
-          </p>
-
-          <NavLink
-            to="/report"
-            className="mt-4 inline-flex items-center gap-2 text-xs font-bold text-indigo-600 hover:text-indigo-800"
-          >
-            Share a sighting
-            <ChevronRight size={15} />
-          </NavLink>
-        </div>
-      )} */}
-
       {/* Profile */}
       <div className="border-t border-slate-100 p-5">
         <NavLink
           to={profilePath}
-            className={({ isActive }) =>
-              `flex items-center gap-3 rounded-xl p-2 transition hover:bg-slate-50 ${
+          className={({ isActive }) =>
+            `flex items-center gap-3 rounded-xl p-2 transition hover:bg-slate-50 ${
               isActive ? "bg-[#f0f0ff]" : ""
             }`
           }

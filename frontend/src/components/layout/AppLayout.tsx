@@ -25,7 +25,7 @@ export default function AppLayout({
   const onRabiesAwarenessPage = location.pathname === "/rabies-awareness";
 
   return (
-    <div className={`app-workspace flex bg-[#f7f8fc] text-[#101d43] ${onRabiesAwarenessPage ? "rabies-workspace" : "h-screen overflow-hidden"}`}>
+    <div className={`app-workspace flex min-h-screen bg-[#f7f8fc] text-[#101d43] ${onRabiesAwarenessPage ? "rabies-workspace" : ""}`}>
       <LocationOnboarding />
 
       {/* Mobile overlay */}
@@ -51,7 +51,7 @@ export default function AppLayout({
       </div>
 
       {/* Main content - independent scrolling */}
-      <div className={`flex min-w-0 flex-1 flex-col ${onRabiesAwarenessPage ? "" : "h-full min-h-0 overflow-y-auto"}`}>
+      <div className="flex min-w-0 flex-1 flex-col">
 
         <div className="sticky top-0 z-30 shrink-0">
           <Navbar
@@ -61,7 +61,7 @@ export default function AppLayout({
           />
         </div>
 
-        <main className={`p-5 sm:p-8 ${onRabiesAwarenessPage ? "" : "min-h-0 flex-1"}`}>
+        <main className="p-5 sm:p-8">
           <Outlet />
         </main>
 

@@ -1,4 +1,3 @@
-
 import { Routes, Route } from "react-router-dom";
 
 import AppLayout from "../components/layout/AppLayout";
@@ -28,7 +27,12 @@ import {
 
 import ProfilePage from "../pages/profile/ProfilePage";
 import RabiesAwarenessPage from "../pages/awareness/RabiesAwarenessPage";
-import CreateReportPage, { UserReportsPage, UserReportDetailsPage } from "../pages/reports/CreateReportPage";
+import CreateReportPage, {
+  UserReportsPage,
+  UserReportDetailsPage,
+} from "../pages/reports/CreateReportPage";
+import ExploreDogs from "../components/app/ExploreDogs";
+import DogDetail from "../components/app/DogDetail";
 
 function AppRoutes() {
   return (
@@ -39,7 +43,7 @@ function AppRoutes() {
       </Route>
 
       {/* ADMIN */}
-      
+
       <Route path="/admin" element={<AppLayout role="ADMIN" />}>
         <Route index element={<AdminOverview />} />
 
@@ -68,30 +72,24 @@ function AppRoutes() {
         <Route path="profile" element={<ProfilePage />} />
       </Route>
 
+      <Route path="/veterinarian" element={<AppLayout role="VETERINARIAN" />}>
+        <Route index element={<VeterinarianOverview />} />
+        <Route path="profile" element={<ProfilePage />} />
+      </Route>
 
-       <Route
-        path="/veterinarian"
-        element={<AppLayout role="VETERINARIAN" />}
-        >
-            <Route index element={<VeterinarianOverview />} />
-            <Route path="profile" element={<ProfilePage />} />
-        </Route>
+      <Route path="/user" element={<AppLayout role="USER" />}>
+        <Route index element={<UserOverview />} />
 
+        <Route path="reports" element={<UserReportsPage />} />
+        <Route path="reports/create" element={<CreateReportPage />} />
+        <Route path="reports/:id" element={<UserReportDetailsPage />} />
 
-        <Route
-        path="/user"
-        element={<AppLayout role="USER" />}
-        >
-            <Route index element={<UserOverview />} />
-            <Route path="reports" element={<UserReportsPage />} />
-            <Route path="reports/create" element={<CreateReportPage />} />
-            <Route path="reports/:id" element={<UserReportDetailsPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-        </Route>
+        <Route path="dogs" element={<ExploreDogs />} />
+        <Route path="dogs/:dog_id" element={<DogDetail />} />
+
+        <Route path="profile" element={<ProfilePage />} />
+      </Route>
     </Routes>
-
-
-    
   );
 }
 
