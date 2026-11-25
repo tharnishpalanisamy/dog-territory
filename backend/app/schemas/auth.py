@@ -15,6 +15,12 @@ class LoginResponse(BaseModel):
     user: UserResponse
 
 
+class LoginUserResponse(BaseModel):
+    access_token: str
+    token_type: str
+    user: UserResponse
+
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
@@ -28,6 +34,10 @@ class RefreshTokenResponse(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str
+
+
+class UserRefreshTokenResponse(BaseModel):
+    access_token: str
 
 
 class ForgotPasswordRequest(BaseModel):

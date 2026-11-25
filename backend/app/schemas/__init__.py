@@ -8,9 +8,12 @@ from .assignment_update import (
 from .auth import (
     ForgotPasswordRequest,
     LoginResponse,
+    LoginUserResponse,
     RefreshTokenCreate,
     RefreshTokenResponse,
     UserLogin,
+    UserRefreshTokenResponse,
+    UserResponse,
 )
 from .clinic import ClinicCreate, ClinicFilterParams, ClinicResponse, ClinicUpdate
 from .dog import (
@@ -105,6 +108,7 @@ __all__ = [
     "DogUpdate",
     "ForgotPasswordRequest",
     "LoginResponse",
+    "LoginUserResponse",
     "MedicalAssignmentCreate",
     "MedicalAssignmentFilterParams",
     "MedicalAssignmentReassign",
@@ -130,6 +134,7 @@ __all__ = [
     "UserPhoneNumberUpdate",
     "UserProfileResponse",
     "UserProfileUpdate",
+    "UserRefreshTokenResponse",
     "UserResponse",
     "VerifyResetOTPRequest",
     "VerifyResetOTPResponse",

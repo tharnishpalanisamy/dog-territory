@@ -1,6 +1,5 @@
 
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import { PageHeader, StatCard } from "../../components/app/shared/Shared";
 import PendingVolunteerApplications from
   "../../components/app/admin/PendingVolunteerApplications";
@@ -10,12 +9,6 @@ import RecentActivity, {
   type AssignmentActivity,
 } from "../../components/app/shared/RecentActivity";
 
-
-type User = {
-  id: number;
-  username: string;
-  email: string;
-};
 
 const recentActivities: AssignmentActivity[] = [
   {
@@ -45,23 +38,7 @@ const recentActivities: AssignmentActivity[] = [
 ];
 
 export default function OverviewPage() {
-  const navigate = useNavigate();
-
-  const [user] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem("user");
-
-    try {
-      return storedUser ? JSON.parse(storedUser) : null;
-    } catch {
-      return null;
-    }
-  });
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/dashboard", { replace: true });
-    }
-  }, [user, navigate]);
+  const { user } = useAuth();
 
   if (!user) return null;
 

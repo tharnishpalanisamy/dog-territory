@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import api from "../../lib/api";
+import { useAuth } from "../../hooks/useAuth";
 import "./UserVolunteersPage.css";
 
 // --------------------------------------------------
@@ -67,41 +68,7 @@ interface VolunteerForm {
   service_pincodes: string;
 }
 
-interface StoredUser {
-  phone_number?: string | null;
-  location?: {
-    state?: string | null;
-    district?: string | null;
-    area_name?: string | null;
-    pincode?: string | number | null;
-  } | null;
-}
-
 type Tab = "discover" | "application";
-
-function getInitialVolunteerForm(): VolunteerForm {
-  const form = { ...initialForm };
-
-  try {
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) return form;
-
-    const user = JSON.parse(storedUser) as StoredUser;
-    const location = user.location ?? {};
-
-    return {
-      ...form,
-      phone_number: user.phone_number ?? "",
-      state: location.state ?? "",
-      district: location.district ?? "",
-      area_name: location.area_name ?? "",
-      pincode: location.pincode != null ? String(location.pincode) : "",
-    };
-  } catch {
-    // If local storage is missing or malformed, keep the form blank.
-    return form;
-  }
-}
 
 // --------------------------------------------------
 // Constants
@@ -171,6 +138,7 @@ function StatusBadge({ status }: { status: ApprovalStatus }) {
 // --------------------------------------------------
 
 export default function UserVolunteersPage() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>("discover");
 
   const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
@@ -193,7 +161,14 @@ export default function UserVolunteersPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(false);
 
-  const [form, setForm] = useState<VolunteerForm>(getInitialVolunteerForm);
+  const [form, setForm] = useState<VolunteerForm>(() => ({
+    ...initialForm,
+    phone_number: (user as typeof user & { phone_number?: string | null } | null)?.phone_number ?? "",
+    state: user?.location?.state ?? "",
+    district: user?.location?.district ?? "",
+    area_name: user?.location?.area_name ?? "",
+    pincode: user?.location?.pincode ?? "",
+  }));
 
   // --------------------------------------------------
   // Fetch Volunteers

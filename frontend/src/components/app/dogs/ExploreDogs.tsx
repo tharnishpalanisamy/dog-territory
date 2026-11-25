@@ -16,16 +16,7 @@ import {
 
 import api from "../../../lib/api";
 import Button from "../../ui/Button";
-
-interface StoredUser {
-  id: number;
-  location?: {
-    pincode?: string;
-    area_name?: string;
-    district?: string;
-    state?: string;
-  };
-}
+import { useAuth } from "../../../hooks/useAuth";
 
 interface DogItem {
   id: number;
@@ -45,15 +36,6 @@ interface DogFilters {
 }
 
 const PAGE_SIZE = 12;
-
-function getStoredUser(): StoredUser | null {
-  try {
-    const rawUser = localStorage.getItem("user");
-    return rawUser ? (JSON.parse(rawUser) as StoredUser) : null;
-  } catch {
-    return null;
-  }
-}
 
 function getVaccinationLabel(status: string) {
   const normalized = status?.toLowerCase();
@@ -119,9 +101,9 @@ function StatusPill({
 
 export default function ExploreDogs() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
-  const [pincode, setPincode] = useState(() => getStoredUser()?.location?.pincode);
-  const [locationVersion, setLocationVersion] = useState(0);
+  const pincode = user?.location?.pincode ?? undefined;
   const [dogs, setDogs] = useState<DogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -180,21 +162,8 @@ export default function ExploreDogs() {
   }, [pincode, page, filters]);
 
   useEffect(() => {
-    const syncLocation = () => {
-      setPincode(getStoredUser()?.location?.pincode);
-      setLocationVersion((version) => version + 1);
-    };
-    window.addEventListener("focus", syncLocation);
-    window.addEventListener("dog-territory:user-updated", syncLocation);
-    return () => {
-      window.removeEventListener("focus", syncLocation);
-      window.removeEventListener("dog-territory:user-updated", syncLocation);
-    };
-  }, []);
-
-  useEffect(() => {
     fetchDogs();
-  }, [fetchDogs, locationVersion]);
+  }, [fetchDogs]);
 
   const visibleDogs = useMemo(() => {
     const query = search.trim().toLowerCase();

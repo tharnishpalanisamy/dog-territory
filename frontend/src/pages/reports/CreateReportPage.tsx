@@ -2,6 +2,7 @@ import {
   useEffect,
   useRef,
   useState,
+  type FormEvent as ReactFormEvent,
   type ChangeEvent,
   type DragEvent,
   type FormEvent,
@@ -16,6 +17,8 @@ import {
   ChevronLeft,
   CircleHelp,
   Dog,
+  Pencil,
+  Trash2,
   MapPin,
   PawPrint,
   Plus,
@@ -25,6 +28,7 @@ import {
 } from "lucide-react";
 import api from "../../lib/api";
 import { useToast } from "../../components/ui/Toast";
+import { useAuth } from "../../hooks/useAuth";
 
 type ReportType =
   | "aggressive"
@@ -33,14 +37,8 @@ type ReportType =
   | "uncollared"
   | "deceased"
   | "other";
-interface UserLocation {
-  state?: string | null;
-  district?: string | null;
-  area_name?: string | null;
-  pincode?: string | null;
-}
 interface ProfileUser {
-  location?: UserLocation | null;
+  location?: { state?: string | null; district?: string | null } | null;
   state?: string | null;
   district?: string | null;
   phone_number?: string | null;
@@ -67,6 +65,7 @@ interface UserReport extends ReportSummary {
   district?: string;
   area_name?: string;
   image_filename?: string | null;
+  landmark?: string;
 }
 type FieldName =
   | "report_type"
@@ -127,26 +126,16 @@ const reportTypes: {
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-function savedLocation(): { state: string; district: string } {
-  try {
-    const raw = localStorage.getItem("user");
-    if (!raw) return { state: "", district: "" };
-    const user = JSON.parse(raw) as ProfileUser;
-    return {
-      state: user.location?.state ?? user.state ?? "",
-      district: user.location?.district ?? user.district ?? "",
-    };
-  } catch {
-    return { state: "", district: "" };
-  }
-}
-
 export default function CreateReportPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { showToast } = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
-  const [profileLocation, setProfileLocation] = useState(savedLocation);
+  const { user } = useAuth();
+  const [profileLocation, setProfileLocation] = useState({
+    state: user?.location?.state ?? "",
+    district: user?.location?.district ?? "",
+  });
   const [dogDetails, setDogDetails] = useState<DogDetails | null>(null);
   const [dogArea, setDogArea] = useState("");
   const [dogPincode, setDogPincode] = useState("");
@@ -806,6 +795,15 @@ export function UserReportDetailsPage() {
   );
   const [loading, setLoading] = useState(!report);
   const [notFound, setNotFound] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [editType, setEditType] = useState<ReportType>("other");
+  const [editDescription, setEditDescription] = useState("");
+  const [editPincode, setEditPincode] = useState("");
+  const [editLandmark, setEditLandmark] = useState("");
+  const { showToast } = useToast();
+  const navigate = useNavigate();
   useEffect(() => {
     if (!id || report?.id === Number(id)) return;
     api
@@ -813,11 +811,73 @@ export function UserReportDetailsPage() {
       .then(({ data }) => {
         const found = data.find((item) => item.id === Number(id)) ?? null;
         setReport(found);
+        if (found) {
+          setEditType(found.report_type);
+          setEditDescription(found.description ?? "");
+          setEditPincode(found.pincode ?? "");
+          setEditLandmark(found.landmark ?? "");
+        }
         setNotFound(!found);
       })
       .catch(() => setNotFound(true))
       .finally(() => setLoading(false));
   }, [id, report?.id]);
+
+  function startEditing() {
+    if (!report) return;
+    setEditType(report.report_type);
+    setEditDescription(report.description ?? "");
+    setEditPincode(report.pincode ?? "");
+    setEditLandmark(report.landmark ?? "");
+    setEditing(true);
+  }
+
+  async function saveEdits(event: ReactFormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!report || saving) return;
+    const pincode = editPincode.trim();
+    if (!/^\d{6}$/.test(pincode)) {
+      showToast("error", "Enter a valid six digit PIN code.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await api.patch(`/reports/${report.id}`, {
+        report_type: editType,
+        description: editDescription.trim() || null,
+        pincode,
+        landmark: editLandmark.trim(),
+      });
+      setReport({ ...report, report_type: editType, description: editDescription.trim() || null, pincode, landmark: editLandmark.trim() });
+      setEditing(false);
+      showToast("success", "Your report has been updated.");
+    } catch (error) {
+      const detail = axios.isAxiosError(error) && typeof error.response?.data?.detail === "string"
+        ? error.response.data.detail
+        : "We couldn't update your report. Please try again.";
+      showToast("error", detail);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function deleteReport() {
+    if (!report || deleting) return;
+    if (!window.confirm("Delete this report? This action cannot be undone.")) return;
+    setDeleting(true);
+    try {
+      await api.delete(`/reports/${report.id}`);
+      showToast("success", "Your report has been deleted.");
+      navigate("/user/reports");
+    } catch (error) {
+      const detail = axios.isAxiosError(error) && typeof error.response?.data?.detail === "string"
+        ? error.response.data.detail
+        : "We couldn't delete your report. Please try again.";
+      showToast("error", detail);
+    } finally {
+      setDeleting(false);
+    }
+  }
   return (
     <div className="mx-auto max-w-3xl space-y-5">
       <Link
@@ -859,14 +919,26 @@ export function UserReportDetailsPage() {
             </p>
           </header>
           <section className="space-y-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-            <div>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center gap-4">
               <span className="text-xs font-bold uppercase tracking-wide text-slate-400">
                 Status
               </span>
               <p className="mt-1 inline-block rounded-full bg-indigo-50 px-3 py-1 text-sm font-semibold capitalize text-indigo-700">
                 {report.status.replaceAll("_", " ")}
               </p>
+              </div>
+              {!editing && <div className="flex gap-2">
+                <button type="button" onClick={startEditing} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-indigo-200 hover:text-indigo-700"><Pencil size={15}/> Edit</button>
+                <button type="button" onClick={deleteReport} disabled={deleting} className="inline-flex items-center gap-2 rounded-lg border border-rose-200 px-3 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50 disabled:opacity-60"><Trash2 size={15}/> {deleting ? "Deleting…" : "Delete"}</button>
+              </div>}
             </div>
+            {editing ? <form onSubmit={saveEdits} className="space-y-4 border-t border-slate-100 pt-5">
+              <label className="block text-sm font-bold text-slate-700">Report type<select value={editType} onChange={(event) => setEditType(event.target.value as ReportType)} className="mt-2 w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm font-normal">{reportTypes.map(({value,label}) => <option key={value} value={value}>{label}</option>)}</select></label>
+              <label className="block text-sm font-bold text-slate-700">Description<textarea value={editDescription} onChange={(event) => setEditDescription(event.target.value)} maxLength={255} rows={4} className="mt-2 w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm font-normal"/></label>
+              <div className="grid gap-4 sm:grid-cols-2"><label className="block text-sm font-bold text-slate-700">PIN code<input value={editPincode} onChange={(event) => setEditPincode(event.target.value)} inputMode="numeric" maxLength={6} className="mt-2 w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm font-normal"/></label><label className="block text-sm font-bold text-slate-700">Landmark<input value={editLandmark} onChange={(event) => setEditLandmark(event.target.value)} maxLength={255} className="mt-2 w-full rounded-xl border border-slate-200 px-3.5 py-3 text-sm font-normal"/></label></div>
+              <div className="flex justify-end gap-2"><button type="button" onClick={() => setEditing(false)} className="rounded-lg px-4 py-2 text-sm font-semibold text-slate-600">Cancel</button><button type="submit" disabled={saving} className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60">{saving ? "Saving…" : "Save changes"}</button></div>
+            </form> : <>
             <div>
               <h2 className="text-sm font-bold text-slate-700">Description</h2>
               <p className="mt-1 text-sm text-slate-600">
@@ -890,6 +962,7 @@ export function UserReportDetailsPage() {
                   .join(", ")}
               </p>
             </div>
+            </>}
           </section>
         </>
       )}

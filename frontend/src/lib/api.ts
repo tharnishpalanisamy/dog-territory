@@ -2,12 +2,13 @@
 import axios, {
   type InternalAxiosRequestConfig,
 } from "axios";
-
+import { tokenStore } from "./tokenStore";
 // const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 const BASE_URL = 'http://127.0.0.1:8000/api/v1'
 
 const api = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -17,6 +18,7 @@ const api = axios.create({
 // trigger the same response interceptor.
 const refreshClient = axios.create({
   baseURL: BASE_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -28,10 +30,9 @@ interface RetryableRequest extends InternalAxiosRequestConfig {
 
 interface TokenResponse {
   access_token: string;
-  refresh_token: string;
 }
 
-let refreshPromise: Promise<string> | null = null;
+let refreshPromise: Promise<string> | null = null; 
 
 // Attach access token to every outgoing request.
 api.interceptors.request.use((config) => {
@@ -40,7 +41,7 @@ api.interceptors.request.use((config) => {
     config.headers.delete("Content-Type");
   }
 
-  const accessToken = localStorage.getItem("access_token");
+  const accessToken = tokenStore.get() 
 
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
@@ -54,7 +55,7 @@ api.interceptors.response.use(
   (response) => response,
 
   async (error) => {
-    const originalRequest = error.config as RetryableRequest;
+    const originalRequest = error.config as RetryableRequest | undefined;
 
     if (
       error.response?.status !== 401 ||
@@ -64,36 +65,34 @@ api.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    const url = originalRequest.url ?? "";
+
+    const excludedEndpoints = [
+      "/auth/login",
+      "/auth/signup",
+      "/auth/refresh",
+      "/auth/logout",
+    ];
+
+    if (excludedEndpoints.some((endpoint) => url.includes(endpoint))) {
+      return Promise.reject(error) 
+    }
+
     originalRequest._retry = true;
 
     try {
       // If another request is already refreshing,
       // wait for that same refresh operation.
       if (!refreshPromise) {
-        refreshPromise = (async () => {
-          const refreshToken =
-            localStorage.getItem("refresh_token");
-
-          if (!refreshToken) {
-            throw new Error("No refresh token available");
+        refreshPromise = refreshClient.post<TokenResponse>('/auth/refresh').then(
+          (response) => {
+            const newAccessToken = response.data.access_token ; 
+            tokenStore.set(newAccessToken ) 
+            return newAccessToken
           }
-
-          const response = await refreshClient.post<TokenResponse>(
-            "/auth/refresh",
-            { refresh_token: refreshToken }
-          );
-
-          const { access_token, refresh_token } = response.data;
-
-          // Store BOTH tokens because rotation invalidates
-          // the previous refresh token.
-          localStorage.setItem("access_token", access_token);
-          localStorage.setItem("refresh_token", refresh_token);
-
-          return access_token;
-        })().finally(() => {
-          refreshPromise = null;
-        });
+        ).finally(()=>{
+          refreshPromise = null 
+        })
       }
 
       const newAccessToken = await refreshPromise;
@@ -103,18 +102,13 @@ api.interceptors.response.use(
 
       // Retry the original failed request.
       return api(originalRequest);
-
     } catch (refreshError) {
-      // Only clear the session when refresh is rejected.
-      if (
-        axios.isAxiosError(refreshError) &&
-        [401, 403].includes(refreshError.response?.status ?? 0)
-      ) {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
+      // Only clear the session when refresh is rejected. 
+      tokenStore.clear() 
 
-        window.location.href = "/signin";
-      }
+      window.dispatchEvent(
+        new Event("auth:session-expired")
+      );
 
       return Promise.reject(refreshError);
     }

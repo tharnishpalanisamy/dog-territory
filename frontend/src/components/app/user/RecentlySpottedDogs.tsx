@@ -3,15 +3,7 @@ import { Link } from "react-router-dom";
 import { Dog, MapPin, ArrowRight, Loader2, AlertCircle } from "lucide-react";
 
 import api from "../../../lib/api";
-
-type UserLocation = {
-  pincode?: string | null;
-};
-
-type StoredUser = {
-  location?: UserLocation | null;
-  pincode?: string | null;
-};
+import { useAuth } from "../../../hooks/useAuth";
 
 type SpottedDog = {
   id: number;
@@ -25,27 +17,13 @@ type SpottedDog = {
   is_sterilized: boolean | null;
 };
 
-function getUserPincode(): string | null {
-  try {
-    const user = JSON.parse(
-      localStorage.getItem("user") ?? "null",
-    ) as StoredUser | null;
-
-    if (!user) return null;
-
-    const location = user.location ?? user;
-    return location.pincode?.trim() || null;
-  } catch {
-    return null;
-  }
-}
-
 export default function RecentlySpottedDogs() {
+  const { user } = useAuth();
   const [dogs, setDogs] = useState<SpottedDog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const pincode = getUserPincode();
+  const pincode = user?.location?.pincode?.trim() || null;
 
   useEffect(() => {
     let cancelled = false;

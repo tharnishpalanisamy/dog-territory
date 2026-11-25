@@ -6,6 +6,7 @@ import api from "../../lib/api";
 import { useToast } from "../../components/ui/Toast";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
+import { useAuth } from "../../hooks/useAuth";
 
 interface UserLocation {
   state: string;
@@ -39,17 +40,6 @@ function normalizeUser(user: ProfileUser): ProfileUser {
   };
 }
 
-const userUpdatedEvent = "dog-territory:user-updated";
-
-function readUser(): ProfileUser | null {
-  try {
-    const raw = localStorage.getItem("user");
-    return raw ? normalizeUser(JSON.parse(raw) as ProfileUser) : null;
-  } catch {
-    return null;
-  }
-}
-
 function getLocation(user: ProfileUser): UserLocation | null {
   if (user.location) return user.location;
   if (user.pincode) {
@@ -74,7 +64,8 @@ function roleLabel(role: string): string {
 }
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<ProfileUser | null>(readUser);
+  const { user: authUser, updateUser } = useAuth();
+  const user = authUser as (ProfileUser | null);
   const [profileLoading, setProfileLoading] = useState(true);
   const [profileError, setProfileError] = useState(false);
   const navigate = useNavigate();
@@ -87,21 +78,9 @@ export default function ProfilePage() {
   const location = user ? getLocation(user) : null;
 
   useEffect(() => {
-    const syncUser = () => setUser(readUser());
-    window.addEventListener("storage", syncUser);
-    window.addEventListener(userUpdatedEvent, syncUser);
-    window.addEventListener("focus", syncUser);
-    return () => {
-      window.removeEventListener("storage", syncUser);
-      window.removeEventListener(userUpdatedEvent, syncUser);
-      window.removeEventListener("focus", syncUser);
-    };
-  }, []);
-
-  useEffect(() => {
     let active = true;
     async function loadProfile() {
-      const existingUser = readUser();
+      const existingUser = authUser as ProfileUser | null;
       if (!existingUser) {
         if (active) setProfileLoading(false);
         return;
@@ -109,13 +88,11 @@ export default function ProfilePage() {
       try {
         const response = await api.get<ProfileUser>("/users/me");
         if (!active) return;
-        const latestUser = readUser();
+        const latestUser = authUser as ProfileUser | null;
         if (!latestUser || latestUser.id !== existingUser.id) return;
         const hydratedUser = normalizeUser({ ...latestUser, ...response.data });
-        localStorage.setItem("user", JSON.stringify(hydratedUser));
-        setUser(hydratedUser);
+        updateUser(hydratedUser);
         setProfileError(false);
-        window.dispatchEvent(new Event(userUpdatedEvent));
       } catch {
         if (active) setProfileError(true);
       } finally {
@@ -124,7 +101,7 @@ export default function ProfilePage() {
     }
     void loadProfile();
     return () => { active = false; };
-  }, []);
+  }, [authUser, updateUser]);
 
   useEffect(() => {
     if (!editingLocation) return;
@@ -165,14 +142,8 @@ export default function ProfilePage() {
       if (!savedLocation || typeof savedLocation !== "object" || !savedLocation.pincode) {
         throw new Error("The server did not return the saved location. Please try again.");
       }
-      const latestUser = readUser();
-      if (!latestUser || latestUser.id !== user.id) {
-        throw new Error("Your session changed. Please sign in again and retry.");
-      }
-      const updatedUser = normalizeUser({ ...latestUser, location: savedLocation });
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setUser(updatedUser);
-      window.dispatchEvent(new Event(userUpdatedEvent));
+      const updatedUser = normalizeUser({ ...user, location: savedLocation });
+      updateUser(updatedUser);
       setEditingLocation(false);
       showToast("success", "Your location has been saved.");
     } catch (error) {
@@ -204,14 +175,8 @@ export default function ProfilePage() {
       const digits = compactPhone.replace(/\D/g, "");
       const phoneNumber = compactPhone ? `+91${digits.slice(-10)}` : null;
       const response = await api.patch<ProfileUser>("/users/me", { username, phone_number: phoneNumber });
-      const latestUser = readUser();
-      if (!latestUser || latestUser.id !== user.id) {
-        throw new Error("Your session changed. Please sign in again and retry.");
-      }
-      const updatedUser = normalizeUser({ ...latestUser, ...response.data });
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setUser(updatedUser);
-      window.dispatchEvent(new Event(userUpdatedEvent));
+      const updatedUser = normalizeUser({ ...user, ...response.data });
+      updateUser(updatedUser);
       setEditingProfile(false);
       showToast("success", "Your profile has been saved.");
     } catch (error) {

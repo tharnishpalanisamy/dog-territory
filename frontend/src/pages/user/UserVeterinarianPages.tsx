@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 
 import api from "../../lib/api";
+import { useAuth } from "../../hooks/useAuth";
 import "./UserVeterinariansPage.css";
 
 // --------------------------------------------------
@@ -90,17 +91,6 @@ const initialForm: VeterinarianForm = {
   specialization: "",
   years_of_experience: "",
 };
-
-function getProfilePhone(): string {
-  try {
-    const rawUser = localStorage.getItem("user");
-    if (!rawUser) return "";
-    const user = JSON.parse(rawUser) as { phone_number?: string | null };
-    return user.phone_number ?? "";
-  } catch {
-    return "";
-  }
-}
 
 // --------------------------------------------------
 // Helpers
@@ -167,6 +157,7 @@ function getInitials(name: string): string {
 // --------------------------------------------------
 
 export default function UserVeterinariansPage() {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>("discover");
 
   const [veterinarians, setVeterinarians] = useState<Veterinarian[]>([]);
@@ -310,7 +301,7 @@ export default function UserVeterinariansPage() {
   }
 
   function openNewApplicationForm() {
-    setForm({ ...initialForm, phone: getProfilePhone() });
+    setForm({ ...initialForm, phone: (user as typeof user & { phone_number?: string | null } | null)?.phone_number ?? "" });
     setLicenseDocument(null);
     setIsEditing(false);
     setShowApplicationForm(true);

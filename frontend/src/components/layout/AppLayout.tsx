@@ -1,7 +1,7 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import api from "../../lib/api";
+import { useAuth } from "../../hooks/useAuth";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import LocationOnboarding from "../ui/LocationOnboarding";
@@ -21,37 +21,14 @@ export default function AppLayout({
 }: AppLayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const [hasSession, setHasSession] = useState(() => Boolean(
-    localStorage.getItem("access_token") || localStorage.getItem("refresh_token"),
-  ));
+  const { isAuthenticated, isLoading } = useAuth();
   const onProfilePage = location.pathname.endsWith("/profile");
   const onRabiesAwarenessPage = location.pathname === "/rabies-awareness";
 
-  useEffect(() => {
-    if (hasSession) return;
-    const refreshToken = localStorage.getItem("refresh_token");
-    if (!refreshToken) return;
-
-    let active = true;
-    api.post("/auth/refresh", { refresh_token: refreshToken })
-      .then(({ data }) => {
-        if (!active || !data.access_token) return;
-        localStorage.setItem("access_token", data.access_token);
-        if (data.refresh_token) localStorage.setItem("refresh_token", data.refresh_token);
-        setHasSession(true);
-      })
-      .catch(() => {
-        if (!active) return;
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-      });
-    return () => { active = false; };
-  }, [hasSession]);
-
-  if (!hasSession) {
-    if (localStorage.getItem("refresh_token")) {
-      return <div className="p-8 text-center text-sm text-slate-500" role="status">Restoring your session…</div>;
-    }
+  if (isLoading) {
+    return <div className="p-8 text-center text-sm text-slate-500" role="status">Restoring your session…</div>;
+  }
+  if (!isAuthenticated) {
     return <Navigate to="/signin" replace state={{ from: location.pathname }} />;
   }
 

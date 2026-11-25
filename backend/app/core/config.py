@@ -22,6 +22,15 @@ class Settings(BaseSettings):
 
     REFRESH_TOKEN_EXPIRE_DAYS: int
 
+    # refresh token cookie settings
+    REFRESH_COOKIE_NAME: str = "refresh_token"
+
+    REFRESH_COOKIE_PATH: str = "/api/v1/auth"
+
+    COOKIE_SECURE: bool = False
+
+    COOKIE_SAMESITE: str = "lax"
+
     def __init__(self) -> None:
         super().__init__()
 

@@ -1,33 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { PageHeader, StatCard } from "../../components/app/shared/Shared";
 import { ArrowRight, Plus } from "lucide-react";
 import MyRecentReports from "../../components/app/user/MyRecentReports";
 import RecentlySpottedDogs from "../../components/app/user/RecentlySpottedDogs";
 import RabiesAwarenessCard from "../../components/app/user/RabiesAwarenessCard";
 import api from "../../lib/api";
+import { useAuth } from "../../hooks/useAuth";
 
-type UserLocation = {
-  state: string;
-  district: string;
-  area_name: string;
-  pincode: string;
-};
-type User = {
-  id: number;
-  username: string;
-  email: string;
-  role: string;
-  location?: UserLocation | null;
-  state?: string | null;
-  district?: string | null;
-  area_name?: string | null;
-  pincode?: string | null;
-};
-
-function hasLocation(user: User): boolean {
-  const location = user.location ?? user;
-  return Boolean(location.pincode?.trim());
+function hasLocation(user: { location?: { pincode?: string | null } | null }): boolean {
+  return Boolean(user.location?.pincode?.trim());
 }
 
 async function fetch_statisitcs() {
@@ -36,16 +18,7 @@ async function fetch_statisitcs() {
 }
 
 export default function OverviewPage() {
-  const navigate = useNavigate();
-
-  const [user] = useState<User | null>(() => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      return storedUser ? JSON.parse(storedUser) : null;
-    } catch {
-      return null;
-    }
-  });
+  const { user } = useAuth();
 
   const [statistics, setStatistics] = useState({
     dogs_nearby: 0,
@@ -53,12 +26,6 @@ export default function OverviewPage() {
     under_review: 0,
     resolved: 0,
   });
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/signin", { replace: true });
-    }
-  }, [user, navigate]);
 
   useEffect(() => {
     if (!user) return;

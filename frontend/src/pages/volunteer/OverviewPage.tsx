@@ -1,18 +1,9 @@
-
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import { PageHeader, StatCard } from "../../components/app/shared/Shared";
 import AvailableTasks from "../../components/app/volunteer/AvailableTasks";
 import MyAssignments from "../../components/app/volunteer/MyAssignments";
 import RecentActivity from "../../components/app/shared/RecentActivity";
-import type{ AssignmentActivity } from "../../components/app/shared/RecentActivity";
-
-type User = {
-  id: number;
-  username: string;
-  email: string;
-};
-
+import type { AssignmentActivity } from "../../components/app/shared/RecentActivity";
 const volunteerActivities: AssignmentActivity[] = [
   {
     id: 1,
@@ -32,26 +23,8 @@ const volunteerActivities: AssignmentActivity[] = [
   },
 ];
 
-
-
 export default function OverviewPage() {
-  const navigate = useNavigate();
-
-  const [user] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem("user");
-
-    try {
-      return storedUser ? JSON.parse(storedUser) : null;
-    } catch {
-      return null;
-    }
-  });
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/dashboard", { replace: true });
-    }
-  }, [user, navigate]);
+  const { user } = useAuth();
 
   if (!user) return null;
 
@@ -59,13 +32,10 @@ export default function OverviewPage() {
     <>
       <PageHeader
         eyebrow="VOLUNTEER WORKSPACE"
-        title={`Welcome back, ${user.username}`}
+        title={`Welcome back, ${user?.username ?? "Volunteer"}`}
         description="Your time and care make a difference. Here's your fieldwork overview."
         action={
-          <a
-            href="/volunteer/tasks"
-            className="button-primary"
-          >
+          <a href="/volunteer/tasks" className="button-primary">
             Explore tasks →
           </a>
         }
@@ -102,18 +72,18 @@ export default function OverviewPage() {
       </div>
       <div className="mt-6">
         <AvailableTasks />
-    </div>
-    <div className="mt-6">
+      </div>
+      <div className="mt-6">
         <MyAssignments />
-    </div>
+      </div>
 
-    <div className="mt-6">
-  <RecentActivity
-        activities={volunteerActivities}
-        title="My recent updates"
-        subtitle="Latest updates on your assignments."
-    />
-    </div>
+      <div className="mt-6">
+        <RecentActivity
+          activities={volunteerActivities}
+          title="My recent updates"
+          subtitle="Latest updates on your assignments."
+        />
+      </div>
     </>
   );
 }

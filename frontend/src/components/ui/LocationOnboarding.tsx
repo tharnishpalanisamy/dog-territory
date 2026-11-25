@@ -5,6 +5,7 @@ import { useToast } from "./Toast";
 import Button from "./Button";
 import Input from "./Input";
 import "./LocationOnboarding.css";
+import { useAuth } from "../../hooks/useAuth";
 
 interface UserLocation {
   state: string;
@@ -25,14 +26,6 @@ interface User {
   pincode?: string | null;
 }
 
-function normalizeUser(user: User): User {
-  if (user.location || !user.state || !user.district || !user.area_name || !user.pincode) {
-    return user;
-  }
-  const { state, district, area_name, pincode, ...profile } = user;
-  return { ...profile, location: { state, district, area_name, pincode } };
-}
-
 const dismissalKey = (userId: number) => `location-onboarding-dismissed:${userId}`;
 
 function hasLocation(user: User): boolean {
@@ -40,33 +33,15 @@ function hasLocation(user: User): boolean {
   return Boolean(location.pincode?.trim());
 }
 
-function readUser(): User | null {
-  try {
-    const stored = localStorage.getItem("user");
-    return stored ? normalizeUser(JSON.parse(stored) as User) : null;
-  } catch {
-    return null;
-  }
-}
-
 export default function LocationOnboarding() {
-  const [user, setUser] = useState<User | null>(readUser);
+  const { user: authUser, updateUser } = useAuth();
+  const user = authUser as User | null;
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const { showToast } = useToast();
 
   useEffect(() => {
-    const syncUser = () => setUser(readUser());
-    window.addEventListener("storage", syncUser);
-    window.addEventListener("focus", syncUser);
-    return () => {
-      window.removeEventListener("storage", syncUser);
-      window.removeEventListener("focus", syncUser);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!user || user.role !== "user" || hasLocation(user)) {
+    if (!user || user.role.toLowerCase() !== "user" || hasLocation(user)) {
       setOpen(false);
       return;
     }
@@ -100,13 +75,7 @@ export default function LocationOnboarding() {
         throw new Error("The server did not return the saved location. Please try again.");
       }
 
-      const latestUser = readUser();
-      if (!latestUser || latestUser.id !== user?.id) {
-        throw new Error("Your session changed. Please sign in again and retry.");
-      }
-      const updatedUser = normalizeUser({ ...latestUser, location: returnedLocation as UserLocation });
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      setUser(updatedUser);
+      updateUser({ location: returnedLocation as UserLocation });
       setOpen(false);
       showToast("success", "Your location has been saved.");
     } catch (error) {

@@ -4,12 +4,13 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import { useToast } from "../../components/ui/Toast";
 import AuthLayout from "./AuthLayout";
-import api from "../../lib/api";
 import axios from "axios";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function SignIn() {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { login } = useAuth();
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -18,51 +19,20 @@ export default function SignIn() {
 
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const remember = formData.get("remember") === "on";
     const returnTo = ((window.history.state?.usr?.from as string | undefined) ?? "");
 
     try {
-      const response = await api.post("/auth/login", {
-        email: email.toLowerCase(),
-        password,
-      });
-
-      const data = response.data;
-
-      localStorage.setItem("access_token", data.access_token);
-
-      if (data.refresh_token) {
-        localStorage.setItem("refresh_token", data.refresh_token);
-      }
-
-      localStorage.setItem("token_type", data.token_type ?? "bearer");
-
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
-      }
-
-      localStorage.setItem("remember", JSON.stringify(remember));
+      const authenticatedUser = await login({ email, password });
 
       showToast("success", "Signed in successfully. Welcome back!");
 
-      const roleBase = data.user?.role?.toLowerCase() === "user" ? "/user" : data.user?.role?.toLowerCase() === "admin" ? "/admin" : data.user?.role?.toLowerCase() === "volunteer" ? "/volunteer" : data.user?.role?.toLowerCase() === "veterinarian" ? "/veterinarian" : "";
+      const roleBase = authenticatedUser?.role?.toLowerCase() === "user" ? "/user" : authenticatedUser?.role?.toLowerCase() === "admin" ? "/admin" : authenticatedUser?.role?.toLowerCase() === "volunteer" ? "/volunteer" : authenticatedUser?.role?.toLowerCase() === "veterinarian" ? "/veterinarian" : "";
       if (roleBase && (returnTo === roleBase || returnTo.startsWith(`${roleBase}/`))) {
         navigate(returnTo, { replace: true });
         return;
       }
 
-      const user = data.user;
-      const role = user.role;
-
-      if (role == "user") {
-        navigate("/user");
-      } else if (role == "volunteer") {
-        navigate("/volunteer");
-      } else if (role == "veterinarian") {
-        navigate("/veterinarian");
-      } else if (role == "admin") {
-        navigate("/admin");
-      }
+      if (roleBase) navigate(roleBase, { replace: true });
     } catch (error) {
       const message = axios.isAxiosError(error)
         ? typeof error.response?.data?.detail === "string"

@@ -9,15 +9,16 @@ from app.dependencies import (
 from app.models import User
 from app.schemas import (
     ForgotPasswordRequest,
-    LoginResponse,
-    RefreshTokenCreate,
+    LoginUserResponse,
     RefreshTokenResponse,
     UserCreate,
     UserLogin,
     UserResponse,
+    UserRefreshTokenResponse,
 )
 from app.services.protocol import AuthServiceProtocol, PasswordResetServiceProtocol
-from fastapi import APIRouter, Depends, Request, Response, status
+from app.utilities import clear_refresh_cookie, set_refresh_cookie
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -29,15 +30,21 @@ async def get_user(
     return user
 
 
-@router.post("/login", response_model=LoginResponse, status_code=status.HTTP_200_OK)
+@router.post("/login", response_model=LoginUserResponse, status_code=status.HTTP_200_OK)
 @limiter.limit("5/minute")
 async def login_user(
     request: Request,
+    response: Response,
     login_data: UserLogin,
     service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
-) -> LoginResponse:
-    auth_services = service
-    return await auth_services.authenticate_user(login_data)
+) -> LoginUserResponse:
+    result = await service.authenticate_user(login_data)
+    set_refresh_cookie(response, result.refresh_token)
+    return {
+        "access_token": result.access_token,
+        "token_type": result.token_type,
+        "user": result.user,
+    }
 
 
 @router.post(
@@ -47,18 +54,30 @@ async def signup_user(
     signup_data: UserCreate,
     service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
 ) -> User:
-    auth_services = service
-    return await auth_services.signup_user(signup_data)
+
+    return await service.signup_user(signup_data)
 
 
 @router.post(
-    "/refresh", response_model=RefreshTokenResponse, status_code=status.HTTP_201_CREATED
+    "/refresh",
+    response_model=UserRefreshTokenResponse,
+    status_code=status.HTTP_201_CREATED,
 )
 async def refresh_token(
-    token_data: RefreshTokenCreate,
+    response: Response,
     service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
-) -> RefreshTokenResponse:
-    return await service.refresh_token(token_data.refresh_token)
+    refresh_token: str | None = Cookie(default=None, alias="refresh_token"),
+) -> UserRefreshTokenResponse:
+    if not refresh_token:
+        raise HTTPException(
+            status_code=401,
+            detail="Refresh token missing",
+        )
+    result = await service.refresh_token(refresh_token)
+    set_refresh_cookie(response, result.refresh_token)
+    return {
+        "access_token": result.access_token,
+    }
 
 
 @router.post("/forgot-password", status_code=status.HTTP_202_ACCEPTED)
@@ -93,8 +112,12 @@ async def reset_password(
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
 async def logout(
-    token_data: RefreshTokenCreate,
+    response: Response,
     service: Annotated[AuthServiceProtocol, Depends(get_auth_service)],
+    refresh_token: str | None = Cookie(default=None, alias="refresh_token"),
 ) -> Response:
-    await service.logout(token_data.refresh_token)
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    if refresh_token:
+        await service.logout(refresh_token)
+    clear_refresh_cookie(response)
+    return {"message": "Successfully logged out"}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Menu,
   Bell,
@@ -7,7 +8,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-import { logout } from "../../utils/auth";
+import { useAuth } from "../../hooks/useAuth";
 
 interface NavbarProps {
   title: string;
@@ -23,6 +24,8 @@ export default function Navbar({
   notificationCount = 0,
 }: NavbarProps) {
   const [profileOpen, setProfileOpen] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-slate-200 bg-white px-5 sm:px-8">
@@ -94,7 +97,7 @@ export default function Navbar({
                 <button
                   onClick={() => {
                     setProfileOpen(false);
-                    window.location.href = "/user/profile";
+                    navigate("/user/profile");
                   }}
                   className="flex w-full items-center gap-3 px-4 py-3 text-sm text-slate-700 transition hover:bg-slate-50"
                 >
@@ -105,7 +108,7 @@ export default function Navbar({
                 <div className="my-1 border-t border-slate-100" />
 
                 <button
-                  onClick={logout}
+                  onClick={() => { void logout(); navigate("/signin", { replace: true }); }}
                   className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 transition hover:bg-red-50"
                 >
                   <LogOut size={17} />

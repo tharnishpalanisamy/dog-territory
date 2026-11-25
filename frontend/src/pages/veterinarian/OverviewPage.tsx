@@ -1,35 +1,12 @@
 
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 import { PageHeader, StatCard } from "../../components/app/shared/Shared";
 import DogsToExamine from "../../components/app/veterinarian/DogsToExamine";
 import UpcomingCare from '../../components/app/veterinarian/UpcomingCare'
 import RecentMedicalRecords from "../../components/app/veterinarian/RecentMedicalRecords";
 
-type User = {
-  id: number;
-  username: string;
-  email: string;
-};
-
 export default function OverviewPage() {
-  const navigate = useNavigate();
-
-  const [user] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem("user");
-
-    try {
-      return storedUser ? JSON.parse(storedUser) : null;
-    } catch {
-      return null;
-    }
-  });
-
-  useEffect(() => {
-    if (!user) {
-      navigate("/dashboard", { replace: true });
-    }
-  }, [user, navigate]);
+  const { user } = useAuth();
 
   if (!user) return null;
 
@@ -37,7 +14,7 @@ export default function OverviewPage() {
     <>
       <PageHeader
         eyebrow="VETERINARY WORKSPACE"
-        title={`Welcome back, ${user.username}`}
+        title={`Welcome back, ${user?.username ?? "Veterinarian"}`}
         description="Monitor your patients and manage their healthcare."
       />
 
