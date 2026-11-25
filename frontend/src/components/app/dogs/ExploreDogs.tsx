@@ -4,7 +4,6 @@ import {
   AlertCircle,
   ArrowLeft,
   ArrowRight,
-  CheckCircle2,
   Dog,
   Heart,
   MapPin,
@@ -15,8 +14,8 @@ import {
   X,
 } from "lucide-react";
 
-import api from "../../lib/api";
-import Button from "../ui/Button";
+import api from "../../../lib/api";
+import Button from "../../ui/Button";
 
 interface StoredUser {
   id: number;
@@ -121,9 +120,8 @@ function StatusPill({
 export default function ExploreDogs() {
   const navigate = useNavigate();
 
-  const user = useMemo(() => getStoredUser(), []);
-  const pincode = user?.location?.pincode;
-
+  const [pincode, setPincode] = useState(() => getStoredUser()?.location?.pincode);
+  const [locationVersion, setLocationVersion] = useState(0);
   const [dogs, setDogs] = useState<DogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -182,8 +180,21 @@ export default function ExploreDogs() {
   }, [pincode, page, filters]);
 
   useEffect(() => {
+    const syncLocation = () => {
+      setPincode(getStoredUser()?.location?.pincode);
+      setLocationVersion((version) => version + 1);
+    };
+    window.addEventListener("focus", syncLocation);
+    window.addEventListener("dog-territory:user-updated", syncLocation);
+    return () => {
+      window.removeEventListener("focus", syncLocation);
+      window.removeEventListener("dog-territory:user-updated", syncLocation);
+    };
+  }, []);
+
+  useEffect(() => {
     fetchDogs();
-  }, [fetchDogs]);
+  }, [fetchDogs, locationVersion]);
 
   const visibleDogs = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -208,11 +219,11 @@ export default function ExploreDogs() {
   };
 
   const reportDog = (dog: DogItem, type: "concern" | "sighting") => {
-    if (type === "concern") {
-      navigate(`/user/reports/create?dog_id=${dog.id}`);
-      return;
-    }
-    navigate(`/reports/create?dog_id=${dog.id}&type=${type}`);
+    navigate(
+      type === "concern"
+        ? `/user/reports/create?dog_id=${dog.id}`
+        : `/user/reports/create?dog_id=${dog.id}&report_type=uncollared`,
+    );
   };
 
   const hasFilters =

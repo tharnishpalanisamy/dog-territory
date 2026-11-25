@@ -19,6 +19,7 @@ export default function SignIn() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const remember = formData.get("remember") === "on";
+    const returnTo = ((window.history.state?.usr?.from as string | undefined) ?? "");
 
     try {
       const response = await api.post("/auth/login", {
@@ -43,6 +44,12 @@ export default function SignIn() {
       localStorage.setItem("remember", JSON.stringify(remember));
 
       showToast("success", "Signed in successfully. Welcome back!");
+
+      const roleBase = data.user?.role?.toLowerCase() === "user" ? "/user" : data.user?.role?.toLowerCase() === "admin" ? "/admin" : data.user?.role?.toLowerCase() === "volunteer" ? "/volunteer" : data.user?.role?.toLowerCase() === "veterinarian" ? "/veterinarian" : "";
+      if (roleBase && (returnTo === roleBase || returnTo.startsWith(`${roleBase}/`))) {
+        navigate(returnTo, { replace: true });
+        return;
+      }
 
       const user = data.user;
       const role = user.role;

@@ -1,4 +1,5 @@
 import { useEffect, useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { MapPin, Pencil, UserRound, X } from "lucide-react";
 import api from "../../lib/api";
@@ -27,12 +28,23 @@ interface ProfileUser {
   pincode?: string | null;
 }
 
+function normalizeUser(user: ProfileUser): ProfileUser {
+  if (user.location || !user.state || !user.district || !user.area_name || !user.pincode) {
+    return user;
+  }
+  const { state, district, area_name, pincode, ...profile } = user;
+  return {
+    ...profile,
+    location: { state, district, area_name, pincode },
+  };
+}
+
 const userUpdatedEvent = "dog-territory:user-updated";
 
 function readUser(): ProfileUser | null {
   try {
     const raw = localStorage.getItem("user");
-    return raw ? (JSON.parse(raw) as ProfileUser) : null;
+    return raw ? normalizeUser(JSON.parse(raw) as ProfileUser) : null;
   } catch {
     return null;
   }
@@ -40,11 +52,11 @@ function readUser(): ProfileUser | null {
 
 function getLocation(user: ProfileUser): UserLocation | null {
   if (user.location) return user.location;
-  if (user.state && user.district && user.area_name && user.pincode) {
+  if (user.pincode) {
     return {
-      state: user.state,
-      district: user.district,
-      area_name: user.area_name,
+      state: user.state ?? "",
+      district: user.district ?? "",
+      area_name: user.area_name ?? "",
       pincode: user.pincode,
     };
   }
@@ -63,6 +75,9 @@ function roleLabel(role: string): string {
 
 export default function ProfilePage() {
   const [user, setUser] = useState<ProfileUser | null>(readUser);
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [profileError, setProfileError] = useState(false);
+  const navigate = useNavigate();
   const [editingLocation, setEditingLocation] = useState(false);
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileUsername, setProfileUsername] = useState("");
@@ -87,18 +102,24 @@ export default function ProfilePage() {
     let active = true;
     async function loadProfile() {
       const existingUser = readUser();
-      if (!existingUser) return;
+      if (!existingUser) {
+        if (active) setProfileLoading(false);
+        return;
+      }
       try {
         const response = await api.get<ProfileUser>("/users/me");
         if (!active) return;
         const latestUser = readUser();
         if (!latestUser || latestUser.id !== existingUser.id) return;
-        const hydratedUser = { ...latestUser, ...response.data };
+        const hydratedUser = normalizeUser({ ...latestUser, ...response.data });
         localStorage.setItem("user", JSON.stringify(hydratedUser));
         setUser(hydratedUser);
+        setProfileError(false);
         window.dispatchEvent(new Event(userUpdatedEvent));
       } catch {
-        // Keep the signed-in user's cached account visible if the profile request is unavailable.
+        if (active) setProfileError(true);
+      } finally {
+        if (active) setProfileLoading(false);
       }
     }
     void loadProfile();
@@ -128,10 +149,9 @@ export default function ProfilePage() {
       area_name: String(form.get("area_name") ?? "").trim(),
       pincode: String(form.get("pincode") ?? "").trim(),
     };
-    if (!updatedLocation.state || !updatedLocation.district || !updatedLocation.area_name) {
-      showToast("error", "Please complete all location fields.");
-      return;
-    }
+    if (!updatedLocation.state) updatedLocation.state = "";
+    if (!updatedLocation.district) updatedLocation.district = "";
+    if (!updatedLocation.area_name) updatedLocation.area_name = "";
     if (!/^\d{6}$/.test(updatedLocation.pincode)) {
       showToast("error", "PIN code must contain exactly six digits.");
       return;
@@ -142,14 +162,14 @@ export default function ProfilePage() {
       const response = await api.patch("/users/me/location", updatedLocation);
       const data = response.data as { location?: UserLocation } | UserLocation;
       const savedLocation = "location" in data && data.location ? data.location : data as UserLocation;
-      if (!savedLocation || typeof savedLocation !== "object" || !savedLocation.state) {
+      if (!savedLocation || typeof savedLocation !== "object" || !savedLocation.pincode) {
         throw new Error("The server did not return the saved location. Please try again.");
       }
       const latestUser = readUser();
       if (!latestUser || latestUser.id !== user.id) {
         throw new Error("Your session changed. Please sign in again and retry.");
       }
-      const updatedUser = { ...latestUser, location: savedLocation };
+      const updatedUser = normalizeUser({ ...latestUser, location: savedLocation });
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUser(updatedUser);
       window.dispatchEvent(new Event(userUpdatedEvent));
@@ -188,7 +208,7 @@ export default function ProfilePage() {
       if (!latestUser || latestUser.id !== user.id) {
         throw new Error("Your session changed. Please sign in again and retry.");
       }
-      const updatedUser = { ...latestUser, ...response.data };
+      const updatedUser = normalizeUser({ ...latestUser, ...response.data });
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUser(updatedUser);
       window.dispatchEvent(new Event(userUpdatedEvent));
@@ -214,14 +234,20 @@ export default function ProfilePage() {
         <p className="mt-1 text-sm text-slate-500">Your account information and community details.</p>
       </div>
 
-      {!user ? (
+      {profileLoading ? (
+        <section className="rounded-2xl border border-slate-200 bg-white p-8 text-center" role="status">
+          <p className="text-sm text-slate-500">Loading your profile…</p>
+        </section>
+      ) : !user ? (
         <section className="rounded-2xl border border-slate-200 bg-white p-8 text-center">
           <UserRound className="mx-auto mb-3 text-slate-400" size={30} />
-          <h2 className="font-semibold text-slate-900">Profile information unavailable</h2>
-          <p className="mt-2 text-sm text-slate-500">Please sign in again to view your account details.</p>
+          <h2 className="font-semibold text-slate-900">You’re not signed in</h2>
+          <p className="mt-2 text-sm text-slate-500">Sign in to view and update your profile.</p>
+          <Button type="button" className="mt-4" onClick={() => navigate("/signin", { state: { from: window.location.pathname } })}>Sign in</Button>
         </section>
       ) : (
         <>
+          {profileError && <p className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800" role="status">We couldn’t refresh your profile. Showing your saved account information.</p>}
           <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <div className="h-24 bg-gradient-to-r from-indigo-100 via-violet-50 to-teal-50" />
             <div className="flex flex-wrap items-center gap-4 px-5 pb-5 sm:px-7">
@@ -257,9 +283,9 @@ export default function ProfilePage() {
               </div>
               {location ? (
                 <dl className="grid grid-cols-2 gap-4 rounded-xl bg-slate-50 p-4">
-                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">State</dt><dd className="mt-1 break-words text-sm font-semibold text-slate-800">{location.state}</dd></div>
-                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">District</dt><dd className="mt-1 break-words text-sm font-semibold text-slate-800">{location.district}</dd></div>
-                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">Area name</dt><dd className="mt-1 break-words text-sm font-semibold text-slate-800">{location.area_name}</dd></div>
+                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">State</dt><dd className="mt-1 break-words text-sm font-semibold text-slate-800">{location.state || "Not provided"}</dd></div>
+                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">District</dt><dd className="mt-1 break-words text-sm font-semibold text-slate-800">{location.district || "Not provided"}</dd></div>
+                  <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">Area name</dt><dd className="mt-1 break-words text-sm font-semibold text-slate-800">{location.area_name || "Not provided"}</dd></div>
                   <div><dt className="text-xs font-semibold uppercase tracking-wide text-slate-400">PIN code</dt><dd className="mt-1 text-sm font-semibold text-slate-800">{location.pincode}</dd></div>
                 </dl>
               ) : (
@@ -287,9 +313,9 @@ export default function ProfilePage() {
               <p id="profile-location-description">Your area helps us connect you with nearby dogs and community care.</p>
             </div>
             <form className="location-modal-form" onSubmit={saveLocation}>
-              <Input label="State" name="state" autoComplete="address-level1" required maxLength={100} defaultValue={location?.state ?? ""} />
-              <Input label="District" name="district" autoComplete="address-level2" required maxLength={100} defaultValue={location?.district ?? ""} />
-              <Input label="Area name" name="area_name" autoComplete="address-line1" required maxLength={150} defaultValue={location?.area_name ?? ""} />
+              <Input label="State" name="state" autoComplete="address-level1" maxLength={100} defaultValue={location?.state ?? ""} />
+              <Input label="District" name="district" autoComplete="address-level2" maxLength={100} defaultValue={location?.district ?? ""} />
+              <Input label="Area name" name="area_name" autoComplete="address-line1" maxLength={150} defaultValue={location?.area_name ?? ""} />
               <Input label="PIN code" name="pincode" inputMode="numeric" autoComplete="postal-code" required maxLength={6} pattern="[0-9]{6}" title="Enter exactly six digits" hint="Enter your six digit postal PIN code." defaultValue={location?.pincode ?? ""} />
               <div className="location-modal-actions">
                 <Button type="submit" className="location-save-button" disabled={saving}>{saving ? "Saving…" : "Save location"}</Button>

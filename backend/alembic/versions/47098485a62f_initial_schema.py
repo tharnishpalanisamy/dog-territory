@@ -1,8 +1,8 @@
 """initial schema
 
-Revision ID: ee2932233fb7
+Revision ID: 47098485a62f
 Revises: 
-Create Date: 2026-11-23 22:44:38.492698
+Create Date: 2026-11-25 10:00:31.844352
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'ee2932233fb7'
+revision: str = '47098485a62f'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -41,6 +41,7 @@ def upgrade() -> None:
     sa.Column('email', sa.String(length=255), nullable=False),
     sa.Column('username', sa.String(length=100), nullable=False),
     sa.Column('password_hash', sa.String(length=255), nullable=False),
+    sa.Column('phone_number', sa.String(length=20), nullable=True),
     sa.Column('role', sa.Enum('admin', 'volunteer', 'user', 'veterinarian', name='userrole'), nullable=False),
     sa.Column('state', sa.String(length=100), nullable=True),
     sa.Column('district', sa.String(length=100), nullable=True),
@@ -71,7 +72,7 @@ def upgrade() -> None:
     sa.Column('next_booster_due_date', sa.DateTime(timezone=True), nullable=True),
     sa.Column('created_by', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['created_by'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('pincode', 'dog_number', name='uq_dogs_pin_code_dog_number')

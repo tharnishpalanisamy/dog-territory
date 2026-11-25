@@ -1,14 +1,14 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PageHeader, StatCard } from "../../components/app/Shared";
+import { PageHeader, StatCard } from "../../components/app/shared/Shared";
 import PendingVolunteerApplications from
-  "../../components/app/PendingVolunteerApplications";
-import RecentReports from "../../components/app/RecentReports";
-import AssignmentOverview from "../../components/app/AssignmentOverview";
+  "../../components/app/admin/PendingVolunteerApplications";
+import RecentReports from "../../components/app/admin/RecentReports";
+import AssignmentOverview from "../../components/app/admin/AssignmentOverview";
 import RecentActivity, {
   type AssignmentActivity,
-} from "../../components/app/RecentActivity";
+} from "../../components/app/shared/RecentActivity";
 
 
 type User = {

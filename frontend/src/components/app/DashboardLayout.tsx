@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { Avatar } from "./Shared";
+import { Avatar } from "./shared/Shared";
 
 const navigation = [
   { to: "/dashboard", label: "Overview", icon: "▦", end: true },

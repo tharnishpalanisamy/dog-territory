@@ -25,22 +25,25 @@ interface User {
   pincode?: string | null;
 }
 
+function normalizeUser(user: User): User {
+  if (user.location || !user.state || !user.district || !user.area_name || !user.pincode) {
+    return user;
+  }
+  const { state, district, area_name, pincode, ...profile } = user;
+  return { ...profile, location: { state, district, area_name, pincode } };
+}
+
 const dismissalKey = (userId: number) => `location-onboarding-dismissed:${userId}`;
 
 function hasLocation(user: User): boolean {
   const location = user.location ?? user;
-  return Boolean(
-    location.state?.trim() &&
-    location.district?.trim() &&
-    location.area_name?.trim() &&
-    location.pincode?.trim(),
-  );
+  return Boolean(location.pincode?.trim());
 }
 
 function readUser(): User | null {
   try {
     const stored = localStorage.getItem("user");
-    return stored ? JSON.parse(stored) as User : null;
+    return stored ? normalizeUser(JSON.parse(stored) as User) : null;
   } catch {
     return null;
   }
@@ -80,6 +83,10 @@ export default function LocationOnboarding() {
       pincode: String(values.get("pincode") ?? "").trim(),
     };
 
+    if (!location.state) location.state = "";
+    if (!location.district) location.district = "";
+    if (!location.area_name) location.area_name = "";
+
     if (!/^\d{6}$/.test(location.pincode)) {
       showToast("error", "PIN code must contain exactly six digits.");
       return;
@@ -89,7 +96,7 @@ export default function LocationOnboarding() {
     try {
       const response = await api.patch("/users/me/location", location);
       const returnedLocation = response.data?.location ?? response.data;
-      if (!returnedLocation || typeof returnedLocation !== "object") {
+      if (!returnedLocation || typeof returnedLocation !== "object" || !returnedLocation.pincode) {
         throw new Error("The server did not return the saved location. Please try again.");
       }
 
@@ -97,7 +104,7 @@ export default function LocationOnboarding() {
       if (!latestUser || latestUser.id !== user?.id) {
         throw new Error("Your session changed. Please sign in again and retry.");
       }
-      const updatedUser: User = { ...latestUser, location: returnedLocation as UserLocation };
+      const updatedUser = normalizeUser({ ...latestUser, location: returnedLocation as UserLocation });
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUser(updatedUser);
       setOpen(false);
@@ -148,10 +155,10 @@ export default function LocationOnboarding() {
         </div>
 
         <form className="location-modal-form" onSubmit={handleSubmit}>
-          <Input label="State" name="state" autoComplete="address-level1" required maxLength={100} />
-          <Input label="District" name="district" autoComplete="address-level2" required maxLength={100} />
-          <Input label="Area name" name="area_name" autoComplete="address-line1" required maxLength={150} />
-          <Input label="PIN code" name="pincode" inputMode="numeric" autoComplete="postal-code" required maxLength={6} pattern="[0-9]{6}" title="Enter exactly six digits" hint="Enter your six digit postal PIN code." />
+          <Input label="State" name="state" autoComplete="address-level1" maxLength={100} />
+          <Input label="District" name="district" autoComplete="address-level2" maxLength={100} />
+          <Input label="Area name" name="area_name" autoComplete="address-line1" maxLength={150} />
+          <Input label="PIN code" name="pincode" inputMode="numeric" autoComplete="postal-code" required maxLength={6} pattern="[0-9]{6}" title="Enter exactly six digits" hint="PIN code is required to discover nearby dogs. Other location details are optional." />
           <div className="location-modal-actions">
             <Button type="submit" className="location-save-button" disabled={saving}>
               {saving ? "Saving…" : "Save location"}

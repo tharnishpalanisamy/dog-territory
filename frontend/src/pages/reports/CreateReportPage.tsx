@@ -215,6 +215,9 @@ export default function CreateReportPage() {
 
   function validateImage(file: File | undefined) {
     if (!file) return;
+    if (preview) URL.revokeObjectURL(preview);
+    setImage(null);
+    setPreview("");
     if (!ACCEPTED_TYPES.includes(file.type)) {
       setErrors((current) => ({
         ...current,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { reports } from "../../data/mockData";
-import { BackLink, ImageUpload, PageHeader, Pagination, SelectField, StatusBadge, TextField } from "../../components/app/Shared";
+import { BackLink, ImageUpload, PageHeader, Pagination, SelectField, StatusBadge, TextField } from "../../components/app/shared/Shared";
 
 export function ReportsPage() {
   const [layout, setLayout] = useState<"cards" | "table">("cards");

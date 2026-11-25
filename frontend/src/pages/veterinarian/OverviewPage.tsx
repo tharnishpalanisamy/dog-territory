@@ -1,10 +1,10 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PageHeader, StatCard } from "../../components/app/Shared";
-import DogsToExamine from "../../components/app/DogsToExamine";
-import UpcomingCare from '../../components/app/UpcomingCare'
-import RecentMedicalRecords from "../../components/app/RecentMedicalRecords";
+import { PageHeader, StatCard } from "../../components/app/shared/Shared";
+import DogsToExamine from "../../components/app/veterinarian/DogsToExamine";
+import UpcomingCare from '../../components/app/veterinarian/UpcomingCare'
+import RecentMedicalRecords from "../../components/app/veterinarian/RecentMedicalRecords";
 
 type User = {
   id: number;

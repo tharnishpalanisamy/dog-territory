@@ -9,7 +9,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-import api from "../../lib/api";
+import api from "../../../lib/api";
 
 type ReportStatus =
   | "pending"

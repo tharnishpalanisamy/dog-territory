@@ -3,7 +3,6 @@ import {
   Menu,
   Bell,
   UserRound,
-  Settings,
   LogOut,
   ChevronDown,
 } from "lucide-react";

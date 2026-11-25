@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { dogs } from "../../data/mockData";
-import { BackLink, ImageUpload, PageHeader, Pagination, SelectField, StatusBadge, TextField } from "../../components/app/Shared";
+import { BackLink, ImageUpload, PageHeader, Pagination, SelectField, StatusBadge, TextField } from "../../components/app/shared/Shared";
 
 export function DogStatusBadge({ status }: { status: string }) { return <StatusBadge status={status} />; }
 function DogCard({ dog }: { dog: (typeof dogs)[number] }) {

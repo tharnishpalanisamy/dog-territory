@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { PageHeader, StatCard } from "../../components/app/Shared";
+import { PageHeader, StatCard } from "../../components/app/shared/Shared";
 import { ArrowRight, Plus } from "lucide-react";
-import MyRecentReports from "../../components/app/MyRecentReports";
-import RecentlySpottedDogs from "../../components/app/RecentlySpottedDogs";
-import RabiesAwarenessCard from "../../components/app/RabiesAwarenessCard";
+import MyRecentReports from "../../components/app/user/MyRecentReports";
+import RecentlySpottedDogs from "../../components/app/user/RecentlySpottedDogs";
+import RabiesAwarenessCard from "../../components/app/user/RabiesAwarenessCard";
 import api from "../../lib/api";
 
 type UserLocation = {
@@ -27,12 +27,7 @@ type User = {
 
 function hasLocation(user: User): boolean {
   const location = user.location ?? user;
-  return Boolean(
-    location.state?.trim() &&
-    location.district?.trim() &&
-    location.area_name?.trim() &&
-    location.pincode?.trim(),
-  );
+  return Boolean(location.pincode?.trim());
 }
 
 async function fetch_statisitcs() {
@@ -65,15 +60,16 @@ export default function OverviewPage() {
     }
   }, [user, navigate]);
 
-  if (!user) return null;
-
-  const locationProvided = hasLocation(user);
-
   useEffect(() => {
+    if (!user) return;
     fetch_statisitcs()
       .then((res) => setStatistics(res))
       .catch((error) => console.log("Failed to fetch statistics", error));
-  }, []);
+  }, [user]);
+
+  if (!user) return null;
+
+  const locationProvided = hasLocation(user);
 
   return (
     <>

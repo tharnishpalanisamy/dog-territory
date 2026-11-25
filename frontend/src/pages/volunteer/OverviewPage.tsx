@@ -1,11 +1,11 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PageHeader, StatCard } from "../../components/app/Shared";
-import AvailableTasks from "../../components/app/AvailableTasks";
-import MyAssignments from "../../components/app/MyAssignments";
-import RecentActivity from "../../components/app/RecentActivity";
-import type{ AssignmentActivity } from "../../components/app/RecentActivity";
+import { PageHeader, StatCard } from "../../components/app/shared/Shared";
+import AvailableTasks from "../../components/app/volunteer/AvailableTasks";
+import MyAssignments from "../../components/app/volunteer/MyAssignments";
+import RecentActivity from "../../components/app/shared/RecentActivity";
+import type{ AssignmentActivity } from "../../components/app/shared/RecentActivity";
 
 type User = {
   id: number;

@@ -31,8 +31,8 @@ import CreateReportPage, {
   UserReportsPage,
   UserReportDetailsPage,
 } from "../pages/reports/CreateReportPage";
-import ExploreDogs from "../components/app/ExploreDogs";
-import DogDetail from "../components/app/DogDetail";
+import ExploreDogs from "../components/app/dogs/ExploreDogs";
+import DogDetail from "../components/app/dogs/DogDetail";
 import UserVolunteersPage from "../pages/user/UserVolunteersPage";
 import UserVeterinariansPage from "../pages/user/UserVeterinarianPages";
 

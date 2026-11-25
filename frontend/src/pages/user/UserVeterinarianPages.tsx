@@ -91,6 +91,17 @@ const initialForm: VeterinarianForm = {
   years_of_experience: "",
 };
 
+function getProfilePhone(): string {
+  try {
+    const rawUser = localStorage.getItem("user");
+    if (!rawUser) return "";
+    const user = JSON.parse(rawUser) as { phone_number?: string | null };
+    return user.phone_number ?? "";
+  } catch {
+    return "";
+  }
+}
+
 // --------------------------------------------------
 // Helpers
 // --------------------------------------------------
@@ -299,7 +310,7 @@ export default function UserVeterinariansPage() {
   }
 
   function openNewApplicationForm() {
-    setForm(initialForm);
+    setForm({ ...initialForm, phone: getProfilePhone() });
     setLicenseDocument(null);
     setIsEditing(false);
     setShowApplicationForm(true);

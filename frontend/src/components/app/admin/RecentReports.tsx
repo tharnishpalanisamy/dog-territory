@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
-import { reports } from "../../data/mockData";
-import { StatusBadge } from "./Shared";
+import { reports } from "../../../data/mockData";
+import { StatusBadge } from "../shared/Shared";
 import { ArrowRight, MapPin } from "lucide-react";
 
 export default function RecentReports() {
