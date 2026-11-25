@@ -113,7 +113,7 @@ export default function RecentlySpottedDogs() {
 
           <Link
             to="/user/profile"
-            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold !text-white hover:bg-indigo-700"
           >
             Add location <ArrowRight size={16} />
           </Link>

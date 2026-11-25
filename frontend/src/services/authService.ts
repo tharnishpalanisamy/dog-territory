@@ -1,5 +1,6 @@
 
-import api from "../lib/api";
+import api, { BASE_URL } from "../lib/api";
+import axios from "axios";
 import { tokenStore } from "../lib/tokenStore";
 
 import type {
@@ -9,6 +10,12 @@ import type {
   SignupData,
   TokenResponse,
 } from "../types/auth";
+
+const sessionRestoreClient = axios.create({
+  baseURL: BASE_URL,
+  withCredentials: true,
+  headers: { "Content-Type": "application/json" },
+});
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<AuthUser> {
@@ -35,9 +42,7 @@ export const authService = {
   },
 
   async refresh(): Promise<string> {
-    const response = await api.post<TokenResponse>(
-      "/auth/refresh"
-    );
+    const response = await api.post<TokenResponse>("/auth/refresh");
 
     const accessToken = response.data.access_token;
 
@@ -48,6 +53,14 @@ export const authService = {
 
   async getMe(): Promise<AuthUser> {
     const response = await api.get<AuthUser>("/auth/me");
+
+    return response.data;
+  },
+
+  async getMeAfterRefresh(): Promise<AuthUser> {
+    const response = await sessionRestoreClient.get<AuthUser>("/auth/me", {
+      headers: { Authorization: `Bearer ${tokenStore.get()}` },
+    });
 
     return response.data;
   },

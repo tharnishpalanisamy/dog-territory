@@ -10,26 +10,48 @@ type UserRole = "ADMIN" | "VOLUNTEER" | "VETERINARIAN" | "USER";
 
 interface AppLayoutProps {
   role: UserRole;
+  allowedRoles?: UserRole[];
   name?: string;
   email?: string;
 }
 
 export default function AppLayout({
   role,
+  allowedRoles = [role],
   name = "User",
   email,
 }: AppLayoutProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, isLoading, authError, retrySessionRestore } = useAuth();
   const onProfilePage = location.pathname.endsWith("/profile");
   const onRabiesAwarenessPage = location.pathname === "/rabies-awareness";
 
   if (isLoading) {
     return <div className="p-8 text-center text-sm text-slate-500" role="status">Restoring your session…</div>;
   }
-  if (!isAuthenticated) {
+  if (authError) {
+    return (
+      <div className="p-8 text-center text-sm text-slate-600" role="alert">
+        <p>{authError}</p>
+        <button className="mt-3 rounded bg-indigo-600 px-4 py-2 text-white" onClick={() => void retrySessionRestore()}>
+          Retry
+        </button>
+      </div>
+    );
+  }
+  if (!user) {
     return <Navigate to="/signin" replace state={{ from: location.pathname }} />;
+  }
+  const userRole = user.role.toUpperCase() as UserRole;
+  if (!allowedRoles.includes(userRole)) {
+    const homeByRole: Record<UserRole, string> = {
+      ADMIN: "/admin",
+      VOLUNTEER: "/volunteer",
+      VETERINARIAN: "/veterinarian",
+      USER: "/user",
+    };
+    return <Navigate to={homeByRole[userRole]} replace />;
   }
 
   return (

@@ -59,7 +59,7 @@ class AuthService:
                         "area_name": user.area_name,
                         "pincode": user.pincode,
                     }
-                    if user.state and user.district and user.area_name and user.pincode
+                    if any((user.state, user.district, user.area_name, user.pincode))
                     else None
                 ),
             ),

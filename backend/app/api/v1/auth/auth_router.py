@@ -10,11 +10,10 @@ from app.models import User
 from app.schemas import (
     ForgotPasswordRequest,
     LoginUserResponse,
-    RefreshTokenResponse,
     UserCreate,
     UserLogin,
-    UserResponse,
     UserRefreshTokenResponse,
+    UserResponse,
 )
 from app.services.protocol import AuthServiceProtocol, PasswordResetServiceProtocol
 from app.utilities import clear_refresh_cookie, set_refresh_cookie

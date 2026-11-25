@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import React from "react";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
@@ -9,6 +9,7 @@ import { useAuth } from "../../hooks/useAuth";
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { showToast } = useToast();
   const { login } = useAuth();
 
@@ -19,7 +20,7 @@ export default function SignIn() {
 
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    const returnTo = ((window.history.state?.usr?.from as string | undefined) ?? "");
+    const returnTo = (location.state as { from?: string } | null)?.from ?? "";
 
     try {
       const authenticatedUser = await login({ email, password });

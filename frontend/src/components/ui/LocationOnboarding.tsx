@@ -29,8 +29,8 @@ interface User {
 const dismissalKey = (userId: number) => `location-onboarding-dismissed:${userId}`;
 
 function hasLocation(user: User): boolean {
-  const location = user.location ?? user;
-  return Boolean(location.pincode?.trim());
+  const location = user.location;
+  return Boolean(location?.pincode?.trim());
 }
 
 export default function LocationOnboarding() {

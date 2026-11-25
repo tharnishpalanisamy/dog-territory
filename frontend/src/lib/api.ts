@@ -1,10 +1,9 @@
 
-import axios, {
-  type InternalAxiosRequestConfig,
-} from "axios";
+import axios, { type InternalAxiosRequestConfig } from "axios";
 import { tokenStore } from "./tokenStore";
-// const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
-const BASE_URL = 'http://127.0.0.1:8000/api/v1'
+// Development uses the same hostname on both origins (127.0.0.1), allowing
+// credentialed cross-port requests to carry the HttpOnly refresh cookie.
+export const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -28,9 +27,7 @@ interface RetryableRequest extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-interface TokenResponse {
-  access_token: string;
-}
+interface TokenResponse { access_token: string }
 
 let refreshPromise: Promise<string> | null = null; 
 
@@ -84,7 +81,7 @@ api.interceptors.response.use(
       // If another request is already refreshing,
       // wait for that same refresh operation.
       if (!refreshPromise) {
-        refreshPromise = refreshClient.post<TokenResponse>('/auth/refresh').then(
+        refreshPromise = refreshClient.post<TokenResponse>("/auth/refresh").then(
           (response) => {
             const newAccessToken = response.data.access_token ; 
             tokenStore.set(newAccessToken ) 
@@ -103,12 +100,12 @@ api.interceptors.response.use(
       // Retry the original failed request.
       return api(originalRequest);
     } catch (refreshError) {
-      // Only clear the session when refresh is rejected. 
-      tokenStore.clear() 
-
-      window.dispatchEvent(
-        new Event("auth:session-expired")
-      );
+      // A rejected refresh cookie means the session is gone. Network and 5xx
+      // errors are temporary and must not log the user out.
+      if (axios.isAxiosError(refreshError) && refreshError.response?.status === 401) {
+        tokenStore.clear();
+        window.dispatchEvent(new Event("auth:session-expired"));
+      }
 
       return Promise.reject(refreshError);
     }

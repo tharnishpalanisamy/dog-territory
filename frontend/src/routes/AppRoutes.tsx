@@ -40,7 +40,15 @@ function AppRoutes() {
   return (
     <Routes>
       {/* Shared community resource */}
-      <Route path="/rabies-awareness" element={<AppLayout role="USER" />}>
+      <Route
+        path="/rabies-awareness"
+        element={
+          <AppLayout
+            role="USER"
+            allowedRoles={["USER", "VOLUNTEER", "VETERINARIAN", "ADMIN"]}
+          />
+        }
+      >
         <Route index element={<RabiesAwarenessPage />} />
       </Route>
 
