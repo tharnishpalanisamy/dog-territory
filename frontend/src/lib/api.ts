@@ -3,7 +3,7 @@ import axios, { type InternalAxiosRequestConfig } from "axios";
 import { tokenStore } from "./tokenStore";
 // Development uses the same hostname on both origins (127.0.0.1), allowing
 // credentialed cross-port requests to carry the HttpOnly refresh cookie.
-export const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/v1';
+export const BASE_URL = window.RUNTIME_CONFIG.API_URL;
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -12,7 +12,7 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-
+// username/image:version 
 // Separate instance: refresh requests must not recursively
 // trigger the same response interceptor.
 const refreshClient = axios.create({
