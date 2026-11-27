@@ -26,9 +26,20 @@ export default function SignIn() {
       const authenticatedUser = await login({ email, password });
 
       showToast("success", "Signed in successfully. Welcome back!");
-
-      const roleBase = authenticatedUser?.role?.toLowerCase() === "user" ? "/user" : authenticatedUser?.role?.toLowerCase() === "admin" ? "/admin" : authenticatedUser?.role?.toLowerCase() === "volunteer" ? "/volunteer" : authenticatedUser?.role?.toLowerCase() === "veterinarian" ? "/veterinarian" : "";
-      if (roleBase && (returnTo === roleBase || returnTo.startsWith(`${roleBase}/`))) {
+      const roleBase =
+        authenticatedUser?.role?.toLowerCase() === "user"
+          ? "/user"
+          : authenticatedUser?.role?.toLowerCase() === "admin"
+            ? "/admin"
+            : authenticatedUser?.role?.toLowerCase() === "volunteer"
+              ? "/volunteer"
+              : authenticatedUser?.role?.toLowerCase() === "veterinarian"
+                ? "/veterinarian"
+                : "";
+      if (
+        roleBase &&
+        (returnTo === roleBase || returnTo.startsWith(`${roleBase}/`))
+      ) {
         navigate(returnTo, { replace: true });
         return;
       }

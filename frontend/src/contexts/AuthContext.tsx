@@ -46,6 +46,10 @@ function restoreSession(): Promise<AuthUser> {
   return initializationPromise;
 }
 
+function hasStoredSession(): boolean {
+  return localStorage.getItem("hasSession") === "true";
+}
+
 function isAuthenticationFailure(error: unknown): boolean {
   return axios.isAxiosError(error) && error.response?.status === 401;
 }
@@ -64,6 +68,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [authError, setAuthError] = useState<string | null>(null);
 
   const retrySessionRestore = useCallback(async () => {
+    if (!hasStoredSession()) {
+      setUser(null);
+      setAuthError(null);
+      setIsLoading(false);
+      return;
+    }
     setIsLoading(true);
     setAuthError(null);
     try {
@@ -72,6 +82,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       if (isAuthenticationFailure(error)) {
         tokenStore.clear();
+        localStorage.removeItem("hasSession");
         setUser(null);
         setAuthError(null);
       } else {
@@ -87,6 +98,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     let active = true;
 
+    if (!hasStoredSession()) {
+      setIsLoading(false);
+      return () => {
+        active = false;
+      };
+    }
+
     void restoreSession()
       .then((currentUser) => {
         if (active) {
@@ -99,6 +117,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         if (isAuthenticationFailure(error)) {
           tokenStore.clear();
+          localStorage.removeItem("hasSession");
           setUser(null);
           setAuthError(null);
         } else {
@@ -117,6 +136,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const handleSessionExpired = () => {
       tokenStore.clear();
+      localStorage.removeItem("hasSession");
       setUser(null);
       setAuthError(null);
       setIsLoading(false);
@@ -131,6 +151,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setAuthError(null);
     try {
       const currentUser = await authService.login(credentials);
+      localStorage.setItem("hasSession", "true");
       setUser(currentUser);
       return currentUser;
     } finally {

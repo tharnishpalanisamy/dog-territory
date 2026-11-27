@@ -30,6 +30,7 @@ export const authService = {
     const { access_token, user } = response.data;
 
     tokenStore.set(access_token);
+    localStorage.setItem("hasSession", "true");
 
     return user;
   },
@@ -47,6 +48,7 @@ export const authService = {
     const accessToken = response.data.access_token;
 
     tokenStore.set(accessToken);
+    localStorage.setItem("hasSession", "true");
 
     return accessToken;
   },
@@ -71,6 +73,7 @@ export const authService = {
     } finally {
       // Clear frontend authentication state even if
       // the logout request encounters an error.
+      localStorage.removeItem('hasSession')
       tokenStore.clear();
     }
   },

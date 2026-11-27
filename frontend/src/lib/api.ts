@@ -31,6 +31,10 @@ interface TokenResponse { access_token: string }
 
 let refreshPromise: Promise<string> | null = null; 
 
+function hasStoredSession(): boolean {
+  return localStorage.getItem("hasSession") === "true";
+}
+
 // Attach access token to every outgoing request.
 api.interceptors.request.use((config) => {
   // Let the browser add the multipart boundary for FormData requests.
@@ -75,6 +79,12 @@ api.interceptors.response.use(
       return Promise.reject(error) 
     }
 
+    // Public pages can make API calls too. Only attempt cookie refresh when
+    // the user has previously established an authenticated session.
+    if (!hasStoredSession()) {
+      return Promise.reject(error);
+    }
+
     originalRequest._retry = true;
 
     try {
@@ -104,6 +114,7 @@ api.interceptors.response.use(
       // errors are temporary and must not log the user out.
       if (axios.isAxiosError(refreshError) && refreshError.response?.status === 401) {
         tokenStore.clear();
+        localStorage.removeItem("hasSession");
         window.dispatchEvent(new Event("auth:session-expired"));
       }
 
