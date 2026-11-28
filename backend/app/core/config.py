@@ -25,7 +25,8 @@ class Settings(BaseSettings):
     # refresh token cookie settings
     REFRESH_COOKIE_NAME: str = "refresh_token"
 
-    REFRESH_COOKIE_PATH: str = "/api/v1/auth"
+    # The refresh cookie must be sent to auth routes throughout the API.
+    REFRESH_COOKIE_PATH: str = "/api/v1"
 
     COOKIE_SECURE: bool = False
 

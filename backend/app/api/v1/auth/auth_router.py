@@ -60,7 +60,7 @@ async def signup_user(
 @router.post(
     "/refresh",
     response_model=UserRefreshTokenResponse,
-    status_code=status.HTTP_201_CREATED,
+    status_code=status.HTTP_200_OK,
 )
 async def refresh_token(
     response: Response,

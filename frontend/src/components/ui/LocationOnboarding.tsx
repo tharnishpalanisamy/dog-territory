@@ -6,6 +6,7 @@ import Button from "./Button";
 import Input from "./Input";
 import "./LocationOnboarding.css";
 import { useAuth } from "../../hooks/useAuth";
+import { getUserPincode } from "../../types/auth";
 
 interface UserLocation {
   state: string;
@@ -29,8 +30,7 @@ interface User {
 const dismissalKey = (userId: number) => `location-onboarding-dismissed:${userId}`;
 
 function hasLocation(user: User): boolean {
-  const location = user.location;
-  return Boolean(location?.pincode?.trim());
+  return Boolean(getUserPincode(user));
 }
 
 export default function LocationOnboarding() {

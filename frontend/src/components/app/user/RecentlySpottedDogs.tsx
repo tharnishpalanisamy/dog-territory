@@ -4,6 +4,7 @@ import { Dog, MapPin, ArrowRight, Loader2, AlertCircle } from "lucide-react";
 
 import api from "../../../lib/api";
 import { useAuth } from "../../../hooks/useAuth";
+import { getUserPincode } from "../../../types/auth";
 
 type SpottedDog = {
   id: number;
@@ -23,7 +24,7 @@ export default function RecentlySpottedDogs() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  const pincode = user?.location?.pincode?.trim() || null;
+  const pincode = getUserPincode(user);
 
   useEffect(() => {
     let cancelled = false;

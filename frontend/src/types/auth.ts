@@ -11,8 +11,22 @@ export interface AuthUser {
   email: string;
   role: "USER" | "VOLUNTEER" | "VETERINARIAN" | "ADMIN";
   location: UserLocation | null;
+  state?: string | null;
+  district?: string | null;
+  area_name?: string | null;
+  pincode?: string | null;
   phone_number?: string | null;
   created_at?: string;
+}
+
+export function getUserPincode(
+  user:
+    | { location?: { pincode?: string | null } | null; pincode?: string | null }
+    | null
+    | undefined,
+): string | null {
+  const pincode = user?.location?.pincode ?? user?.pincode;
+  return typeof pincode === "string" && pincode.trim() ? pincode.trim() : null;
 }
 
 export interface LoginCredentials {

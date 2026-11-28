@@ -1,0 +1,26 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Development tools
+.ruff_cache/
+.pytest_cache/
+
+# Environment and secrets
+.env
+.env.*
+
+# Git
+.git/
+.gitignore
+
+# Logs and uploaded files
+logs/
+uploads/
+
+# Tests
+tests/

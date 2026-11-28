@@ -48,7 +48,6 @@ export const authService = {
     const accessToken = response.data.access_token;
 
     tokenStore.set(accessToken);
-    localStorage.setItem("hasSession", "true");
 
     return accessToken;
   },

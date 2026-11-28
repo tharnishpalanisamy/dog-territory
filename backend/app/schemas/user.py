@@ -2,7 +2,14 @@ from datetime import datetime
 
 import re
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    field_validator,
+    model_validator,
+)
 
 
 class UserCreate(BaseModel):
@@ -19,6 +26,37 @@ class UserResponse(BaseModel):
     email: EmailStr = Field(max_length=255)
     role: str
     location: "UserLocationResponse | None" = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def build_location_from_user_fields(cls, value: object) -> object:
+        # User stores location fields as columns, while the API exposes them
+        # as one nested object. Ensure /auth/me restores the same shape as login.
+        if isinstance(value, dict):
+            data = value.copy()
+            get_value = data.get
+        else:
+            def get_value(key, default=None):
+                return getattr(value, key, default)
+
+            data = {
+                "id": get_value("id"),
+                "username": get_value("username"),
+                "email": get_value("email"),
+                "role": get_value("role"),
+                "location": get_value("location"),
+            }
+
+        if not data.get("location"):
+            location = {
+                "state": get_value("state"),
+                "district": get_value("district"),
+                "area_name": get_value("area_name"),
+                "pincode": get_value("pincode"),
+            }
+            if any(location.values()):
+                data["location"] = location
+        return data
 
 
 class UserLocationUpdate(BaseModel):

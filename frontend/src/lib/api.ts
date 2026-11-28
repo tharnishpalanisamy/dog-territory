@@ -1,9 +1,17 @@
 
 import axios, { type InternalAxiosRequestConfig } from "axios";
 import { tokenStore } from "./tokenStore";
-// Development uses the same hostname on both origins (127.0.0.1), allowing
-// credentialed cross-port requests to carry the HttpOnly refresh cookie.
+// Cookies are scoped to a host, not a port. Keep the API hostname aligned
+// with the browser's hostname so localhost/127.0.0.1 mismatches are visible.
 export const BASE_URL = window.RUNTIME_CONFIG.API_URL;
+
+const apiOrigin = new URL(BASE_URL, window.location.href).hostname;
+if (apiOrigin !== window.location.hostname) {
+  console.error(
+    `API hostname (${apiOrigin}) differs from frontend hostname ` +
+      `(${window.location.hostname}); browser refresh cookies will not be shared.`,
+  );
+}
 
 const api = axios.create({
   baseURL: BASE_URL,

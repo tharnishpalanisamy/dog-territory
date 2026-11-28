@@ -17,6 +17,7 @@ import {
 import api from "../../../lib/api";
 import Button from "../../ui/Button";
 import { useAuth } from "../../../hooks/useAuth";
+import { getUserPincode } from "../../../types/auth";
 
 interface DogItem {
   id: number;
@@ -103,7 +104,7 @@ export default function ExploreDogs() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const pincode = user?.location?.pincode ?? undefined;
+  const pincode = getUserPincode(user);
   const [dogs, setDogs] = useState<DogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

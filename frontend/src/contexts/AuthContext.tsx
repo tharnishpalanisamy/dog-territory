@@ -50,8 +50,12 @@ function hasStoredSession(): boolean {
   return localStorage.getItem("hasSession") === "true";
 }
 
-function isAuthenticationFailure(error: unknown): boolean {
-  return axios.isAxiosError(error) && error.response?.status === 401;
+function isRefreshAuthenticationFailure(error: unknown): boolean {
+  if (!axios.isAxiosError(error) || error.response?.status !== 401) {
+    return false;
+  }
+
+  return (error.config?.url ?? "").includes("/auth/refresh");
 }
 
 function errorMessage(error: unknown): string {
@@ -80,7 +84,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const currentUser = await restoreSession();
       setUser(currentUser);
     } catch (error) {
-      if (isAuthenticationFailure(error)) {
+      if (isRefreshAuthenticationFailure(error)) {
         tokenStore.clear();
         localStorage.removeItem("hasSession");
         setUser(null);
@@ -115,7 +119,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       .catch((error: unknown) => {
         if (!active) return;
 
-        if (isAuthenticationFailure(error)) {
+        if (isRefreshAuthenticationFailure(error)) {
           tokenStore.clear();
           localStorage.removeItem("hasSession");
           setUser(null);

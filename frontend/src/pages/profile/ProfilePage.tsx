@@ -101,7 +101,10 @@ export default function ProfilePage() {
     }
     void loadProfile();
     return () => { active = false; };
-  }, [authUser, updateUser]);
+    // Only reload when the signed-in identity changes. Updating the shared
+    // auth user with the fetched profile also changes authUser; depending on
+    // the whole object here caused this effect to fetch and update forever.
+  }, [authUser?.id, updateUser]);
 
   useEffect(() => {
     if (!editingLocation) return;

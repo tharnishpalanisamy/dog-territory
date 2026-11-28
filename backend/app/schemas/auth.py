@@ -10,6 +10,8 @@ class UserLogin(BaseModel):
 
 class LoginResponse(BaseModel):
     access_token: str
+    # Internal service result; the login route exposes this only as an
+    # HttpOnly cookie through its separate LoginUserResponse response model.
     refresh_token: str
     token_type: str
     user: UserResponse
